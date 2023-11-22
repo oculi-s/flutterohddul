@@ -1,73 +1,41 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:candlesticks/candlesticks.dart';
-import 'package:http/http.dart' as http;
-import 'package:desktop_window/desktop_window.dart';
+import 'package:flutterohddul/data/api.dart';
+import 'package:flutterohddul/data/element.dart';
+import 'package:flutterohddul/data/price.dart';
 
-void main() async {
-  runApp(MyApp());
-}
-
-class MyApp extends StatefulWidget {
+class PriceChart extends StatefulWidget {
   @override
-  _MyAppState createState() => _MyAppState();
+  _PriceChartState createState() => _PriceChartState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _PriceChartState extends State<PriceChart> {
   List<Candle> candles = [];
-  bool themeIsDark = true;
+  late Stock stock;
+  late PriceData priceData;
 
   @override
   void initState() {
-    DesktopWindow.setWindowSize(Size(400, 800)).then((_) {
-      fetchCandles().then((value) {
-        setState(() {
-          candles = value;
-        });
+    fetchCandles().then((value) {
+      print(value[0].date);
+      setState(() {
+        candles = value;
       });
     });
     super.initState();
   }
 
   Future<List<Candle>> fetchCandles() async {
-    final uri = Uri.parse(
-        "https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1d");
-    final res = await http.get(uri);
-    return (jsonDecode(res.body) as List<dynamic>)
-        .map((e) => Candle.fromJson(e))
-        .toList()
-        .reversed
-        .toList();
+    stock = Stock.fromCode('005930');
+    priceData = await PriceData.read(stock);
+    return priceData.price;
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: themeIsDark ? ThemeData.dark() : ThemeData.light(),
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text("BTCUSDT 1H Chart"),
-          actions: [
-            IconButton(
-              onPressed: () {
-                setState(() {
-                  themeIsDark = !themeIsDark;
-                });
-              },
-              icon: Icon(
-                themeIsDark
-                    ? Icons.wb_sunny_sharp
-                    : Icons.nightlight_round_outlined,
-              ),
-            )
-          ],
-        ),
-        body: Center(
-          child: Candlesticks(
-            candles: candles,
-          ),
-        ),
+    return Scaffold(
+      body: Candlesticks(
+        candles: candles,
       ),
     );
   }

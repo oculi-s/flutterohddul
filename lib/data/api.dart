@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:html';
+import 'package:flutterohddul/data/element.dart';
 import 'package:flutterohddul/env/env.dart';
 import 'package:http/http.dart' as http;
 
@@ -7,28 +9,74 @@ class Meta {
   static final Meta _instance = Meta._();
   factory Meta() => _instance;
 
-  Data? aside;
+  MetaData? aside;
+  MetaData? market;
+  MetaData? meta, group, indutyIndex, induty;
+  bool isDataLoaded() {
+    return Meta().aside != null &&
+        Meta().meta != null &&
+        Meta().market != null &&
+        Meta().group != null &&
+        Meta().induty != null &&
+        Meta().indutyIndex != null;
+  }
+
   Future<void> load() async {
-    aside = await Data.read('/meta/light/aside.json');
+    if (isDataLoaded()) return;
+    aside = await MetaData.read('/meta/light/aside.json');
+    meta = await MetaData.read('/meta/meta.json');
+    market = await MetaData.read('/meta/light/market.json');
+    group = await MetaData.read('/meta/light/group.json');
+    induty = await MetaData.read('/meta/light/index.json');
+    indutyIndex = await MetaData.read('/meta/light/induty.json');
   }
 }
 
-class Data {
-  final bool valid;
-  final String url;
-  final int last;
-  final Map<String, dynamic> data;
+class MetaData {
+  final bool? valid;
+  final String? url;
+  final int? last;
+  final Map<String, dynamic>? data;
+  final Map<String, dynamic>? index;
 
-  Data({
+  MetaData({
     required this.valid,
     required this.url,
     required this.last,
     required this.data,
+    required this.index,
   });
 
-  static Future<Data> read(String url) async {
+  static Future<MetaData> read(String url) async {
+    final jsonData = await Api().read(url: url);
+    return MetaData(
+      valid: true,
+      url: url,
+      last: jsonData['last'] ?? 0,
+      data: jsonData['data'] ?? {},
+      index: jsonData['index'] ?? {},
+    );
+  }
+}
+
+class Api {
+  Api._();
+  static final Api _instance = Api._();
+  factory Api() => _instance;
+  Future<dynamic> read({
+    String? url,
+    Stock? stock,
+  }) async {
     final apiUrl = Uri.parse('https://api.ohddul.com/read');
-    final apiKey = Env.ohddulApi; // 여기에 실제 API 키를 추가하세요
+    String entry() {
+      if (url != null) {
+        return url;
+      } else if (stock != null) {
+        return '/stock/${stock?.code}/price.json';
+      }
+      return '';
+    }
+
     try {
       final res = await http.post(
         apiUrl,
@@ -36,25 +84,22 @@ class Data {
           'Content-Type': 'application/json',
         },
         body: jsonEncode({
-          'apiKey': apiKey,
-          'url': url,
+          'apiKey': Env.ohddulApi,
+          'url': entry(),
         }),
       );
       if (res.statusCode == 200) {
         final data = utf8.decode(res.bodyBytes);
-        print('${url} Loaded');
         final jsonData = json.decode(data);
-        return Data(
-          valid: true,
-          url: url,
-          last: jsonData['last'],
-          data: jsonData['data'],
-        );
+        jsonData['valid'] = true;
+        return jsonData;
       } else {
-        return Data(valid: false, url: url, last: 0, data: {});
+        print('Failed to load data. Status code: ${res.statusCode}');
+        return {'valid': false};
       }
     } catch (e) {
-      return Data(valid: false, url: url, last: 0, data: {});
+      print('Error loading data: $e');
+      return {'valid': false};
     }
   }
 }
