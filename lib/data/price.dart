@@ -15,18 +15,16 @@ class PriceData {
   });
 
   static Future<PriceData> read(Stock stock) async {
-    await Meta().load();
     final jsonData = await Api().read(stock: stock);
     final priceList = List<Candle>.from(jsonData['data']?.map((p) {
-      List<dynamic> candleList = [
-        DateTime.parse(p['d']).millisecondsSinceEpoch,
-        p['o'].toString(),
-        p['h'].toString(),
-        p['l'].toString(),
-        p['c'].toString(),
-        p['v'].toString(),
-      ];
-      return Candle.fromJson(candleList);
+      return Candle(
+        date: DateTime.parse(p['d']),
+        open: p['o'],
+        high: p['h'],
+        low: p['l'],
+        close: p['c'],
+        volume: p['v'],
+      );
     }));
     return PriceData(
       valid: jsonData['valid'],

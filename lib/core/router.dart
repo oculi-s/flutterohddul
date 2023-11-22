@@ -3,7 +3,7 @@ import 'package:flutterohddul/screen/intro.screen.dart';
 import 'package:flutterohddul/screen/splash.screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutterohddul/screen/profile.screen.dart';
-import 'package:flutterohddul/screen/price.screen.dart';
+import 'package:flutterohddul/screen/chart.price.screen.dart';
 
 final GoRouter router = GoRouter(
   initialLocation: '/',

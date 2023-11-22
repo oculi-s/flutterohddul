@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:html';
 import 'package:flutterohddul/data/element.dart';
 import 'package:flutterohddul/env/env.dart';
 import 'package:http/http.dart' as http;
@@ -72,7 +71,7 @@ class Api {
       if (url != null) {
         return url;
       } else if (stock != null) {
-        return '/stock/${stock?.code}/price.json';
+        return '/stock/${stock.code}/price.json';
       }
       return '';
     }

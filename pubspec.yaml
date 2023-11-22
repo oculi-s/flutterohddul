@@ -18,6 +18,7 @@ dependencies:
   kakao_flutter_sdk: ^1.7.0
   envied: ^0.5.2
   provider: ^6.1.1
+  k_chart: ^0.7.1
 
 dev_dependencies:
   flutter_test:

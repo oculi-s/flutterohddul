@@ -19,7 +19,6 @@ class Stock {
 
   factory Stock.fromCode(String code) {
     final data = Meta().meta?.data?[code];
-    print(data);
     final groupName = Meta().group?.index?[code];
     final indutyCode = Meta().indutyIndex?.data?[code];
     return Stock(
