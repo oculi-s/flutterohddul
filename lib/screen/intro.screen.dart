@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutterohddul/core/login.dart';
-import 'package:flutterohddul/data/api.dart';
 import 'package:flutterohddul/screen/chart.price.screen.dart';
 import 'package:flutterohddul/screen/profile.screen.dart';
 
@@ -63,8 +63,8 @@ class _BottomNavigatorState extends State<BottomNavigator> {
 
   void _onCodeChanged(String code) {
     codeController.clear();
-    _widgetOptions[1] = PriceChart(code: code);
     setState(() {
+      _widgetOptions[1] = PriceChart(code: code);
       _stockCode = code;
     });
   }
@@ -76,15 +76,7 @@ class _BottomNavigatorState extends State<BottomNavigator> {
     codeController = TextEditingController();
     _widgetOptions = [
       Text('home'),
-      Column(
-        children: [
-          TextField(
-            controller: codeController,
-            onSubmitted: _onCodeChanged,
-          ),
-          PriceChart(code: _stockCode!),
-        ],
-      ),
+      PriceChart(code: _stockCode!),
       Placeholder(),
       Placeholder(),
       LoginScreen(),
@@ -97,7 +89,14 @@ class _BottomNavigatorState extends State<BottomNavigator> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('ohddul'),
+        title: TextField(
+          controller: codeController,
+          onSubmitted: _onCodeChanged,
+          inputFormatters: <TextInputFormatter>[
+            FilteringTextInputFormatter.allow(RegExp(
+                r'[a-z|A-Z|0-9|ㄱ-ㅎ|ㅏ-ㅣ|가-힣|ᆞ|ᆢ|ᄀᆞ|ᄂᆞ|ᄃᆞ|ᄅᆞ|ᄆᆞ|ᄇᆞ|ᄉᆞ|ᄋᆞ|ᄌᆞ|ᄎᆞ|ᄏᆞ|ᄐᆞ|ᄑᆞ|ᄒᆞ]')),
+          ],
+        ),
         actions: [
           IconButton(
             onPressed: () {

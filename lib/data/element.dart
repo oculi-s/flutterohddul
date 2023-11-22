@@ -1,6 +1,7 @@
 import 'package:flutterohddul/data/api.dart';
 
 class Stock {
+  bool valid = true;
   String? code;
   String? name;
   String? marketType;
@@ -9,6 +10,7 @@ class Stock {
   Induty? induty;
 
   Stock({
+    required this.valid,
     this.code,
     this.name,
     this.induty,
@@ -18,10 +20,14 @@ class Stock {
   });
 
   factory Stock.fromCode(String code) {
-    final data = Meta().meta?.data?[code];
+    final data = Meta().meta?.data?.entries.firstWhere((e) {
+      return e.key == code || e.value['n'] == code;
+    })?.value;
+    if (data == null) return Stock(valid: false);
     final groupName = Meta().group?.index?[code];
     final indutyCode = Meta().indutyIndex?.data?[code];
     return Stock(
+      valid: true,
       code: code,
       name: data?['n'],
       amount: data?['a'],

@@ -17,7 +17,7 @@ class _SplashScreenState extends State<SplashScreen> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       await Meta().load();
 
-      Timer(const Duration(milliseconds: 2500), () {
+      Timer(const Duration(milliseconds: 1500), () {
         router.replace('/intro');
         // router.replace('/result');
       });

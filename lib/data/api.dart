@@ -70,7 +70,7 @@ class Api {
     String entry() {
       if (url != null) {
         return url;
-      } else if (stock != null) {
+      } else if (stock != null && stock.valid) {
         return '/stock/${stock.code}/price.json';
       }
       return '';
