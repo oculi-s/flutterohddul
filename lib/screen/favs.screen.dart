@@ -27,10 +27,14 @@ class _FavScreenState extends State<FavScreen> {
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 20,
+                  color: Color(0xffFFFFFF),
                 ),
               ),
               Text(
                 stock.code!,
+                style: const TextStyle(
+                  color: Color(0xffFFFFFF),
+                ),
               ),
             ],
           ),
@@ -39,7 +43,10 @@ class _FavScreenState extends State<FavScreen> {
             children: [
               Text(
                 stock.currentPrice!.toString(),
-                style: const TextStyle(fontSize: 18),
+                style: const TextStyle(
+                  fontSize: 18,
+                  color: Color(0xffFFFFFF),
+                ),
               ),
               Row(children: [
                 Text(
@@ -71,20 +78,21 @@ class _FavScreenState extends State<FavScreen> {
   }
 
   data() {
-    print(LoginUser().user.favs);
-    return LoginUser().valid
-        ? Column(
-            children: List<Widget>.from(
-            LoginUser().user.favs!.map(
-                  (e) => stock(e),
-                ),
-          ))
-        : Column(
-            children: List<Widget>.from([
-              stock(Stock.fromCode('005930')),
-              stock(Stock.fromCode('000660')),
-            ]),
-          );
+    return Container(
+      child: LoginUser().valid
+          ? Column(
+              children: List<Widget>.from(
+              LoginUser().user.favs!.map(
+                    (e) => stock(e),
+                  ),
+            ))
+          : Column(
+              children: List<Widget>.from([
+                stock(Stock.fromCode('005930')),
+                stock(Stock.fromCode('000660')),
+              ]),
+            ),
+    );
   }
 
   @override

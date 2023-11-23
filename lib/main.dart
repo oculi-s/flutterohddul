@@ -59,12 +59,17 @@ class _MainAppState extends State<MainApp> {
         });
       },
       isLoggedIn: isLoggedIn,
-      child: MaterialApp.router(
-        routerConfig: router,
-        debugShowCheckedModeBanner: false,
-        theme: DarkTheme.getTheme(),
-        darkTheme: LightTheme.getTheme(),
-        themeMode: themeIsDark ? ThemeMode.dark : ThemeMode.light,
+      child: DefaultTextStyle(
+        style: (themeIsDark ? DarkTheme.theme : LightTheme.theme)
+            .textTheme
+            .bodyLarge!,
+        child: MaterialApp.router(
+          routerConfig: router,
+          debugShowCheckedModeBanner: false,
+          theme: DarkTheme.theme,
+          darkTheme: LightTheme.theme,
+          themeMode: themeIsDark ? ThemeMode.dark : ThemeMode.light,
+        ),
       ),
     );
   }

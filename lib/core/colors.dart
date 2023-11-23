@@ -2,44 +2,42 @@ import 'package:flutter/material.dart';
 import 'package:flutterohddul/core/colors.dart';
 
 class DarkTheme {
-  static ThemeData getTheme() {
-    return ThemeData(
-      fontFamily: 'NotoSansKR',
-      canvasColor: AppColors.bgDark,
-      focusColor: Color(0xff006AB5),
-      primaryColor: AppColors.textBright,
-      highlightColor: Color(0xffe5e5e5),
-      textTheme: const TextTheme(
-        bodyLarge: TextStyle(
-          color: AppColors.textBright,
-          fontWeight: FontWeight.w600,
-        ),
+  static ThemeData theme = ThemeData(
+    scaffoldBackgroundColor: AppColors.bgDark,
+    fontFamily: 'NotoSansKR',
+    canvasColor: AppColors.bgDark,
+    focusColor: Color(0xff006AB5),
+    primaryColor: AppColors.textBright,
+    highlightColor: Color(0xffe5e5e5),
+    textTheme: const TextTheme(
+      bodyLarge: TextStyle(
+        color: AppColors.textBright,
+        fontWeight: FontWeight.w600,
       ),
-    );
-  }
+    ),
+  );
 }
 
 class LightTheme {
-  static ThemeData getTheme() {
-    return ThemeData(
-      fontFamily: 'NotoSansKR',
-      canvasColor: AppColors.bgBright,
-      primaryColor: AppColors.textDark,
-      textTheme: const TextTheme(
-        bodyLarge: TextStyle(
-          color: AppColors.textDark,
-          fontWeight: FontWeight.w600,
-        ),
+  static ThemeData theme = ThemeData(
+    scaffoldBackgroundColor: AppColors.bgDark,
+    fontFamily: 'NotoSansKR',
+    canvasColor: AppColors.bgBright,
+    primaryColor: AppColors.textDark,
+    textTheme: const TextTheme(
+      bodyLarge: TextStyle(
+        color: AppColors.textBright,
+        fontWeight: FontWeight.w600,
       ),
-    );
-  }
+    ),
+  );
 }
 
 class AppColors {
   static const Color kakao = Color(0xFFFEE500);
 
   static const Color bgDarker = Color(0xFF030D18);
-  static const Color bgDark = Color(0xFF04091E);
+  static const Color bgDark = Color.fromARGB(255, 1, 2, 7);
   static const Color bgMidDark = Color(0xFF111329);
   static const Color bgMid = Color(0xFF181633);
   static const Color bgMidBright = Color(0xFF16223B);

@@ -112,8 +112,6 @@ class LoginUser {
           },
         );
       }
-      // print(List<Stock>.from(
-      //     favs.keys.map((e) => Stock.fromCode(e)).where((e) => e).toList()));
       valid = true;
       user = User(
         uid: uid,
@@ -124,7 +122,6 @@ class LoginUser {
         thumbnail: thumbnail,
         // pred:pred,
       );
-      print('userdata : ${user.toJson()}');
     } catch (error) {
       print('카카오톡으로 로그인 실패 $error');
     }
