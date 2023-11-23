@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:html';
 import 'package:flutterohddul/data/element.dart';
 import 'package:flutterohddul/env/env.dart';
 import 'package:http/http.dart' as http;
@@ -10,14 +11,15 @@ class Meta {
 
   MetaData? aside;
   MetaData? market;
-  MetaData? meta, group, indutyIndex, induty;
+  MetaData? meta, group, indutyIndex, induty, price, hist;
   bool isDataLoaded() {
     return Meta().aside != null &&
         Meta().meta != null &&
         Meta().market != null &&
         Meta().group != null &&
         Meta().induty != null &&
-        Meta().indutyIndex != null;
+        Meta().indutyIndex != null &&
+        Meta().price != null;
   }
 
   Future<void> load() async {
@@ -28,6 +30,8 @@ class Meta {
     group = await MetaData.read('/meta/light/group.json');
     induty = await MetaData.read('/meta/light/index.json');
     indutyIndex = await MetaData.read('/meta/light/induty.json');
+    price = await MetaData.read('/meta/price.json');
+    hist = await MetaData.read('/meta/hist.json');
   }
 }
 
@@ -52,7 +56,7 @@ class MetaData {
       valid: true,
       url: url,
       last: jsonData['last'] ?? 0,
-      data: jsonData['data'] ?? {},
+      data: jsonData['data'] ?? jsonData,
       index: jsonData['index'] ?? {},
     );
   }

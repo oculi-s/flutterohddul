@@ -4,7 +4,7 @@ import 'package:flutterohddul/data/candledata.dart';
 import 'package:flutterohddul/data/chartstyle.dart';
 
 class PainterParams {
-  final List<CandleData> candles;
+  final List<Candle> candles;
   final ChartStyle style;
   final Size size;
   final double candleWidth;

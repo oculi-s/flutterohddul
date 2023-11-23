@@ -7,7 +7,7 @@ import 'package:flutterohddul/data/painter.dart';
 
 typedef TimeLabelGetter = String Function(int timestamp, int visibleDataCount);
 typedef PriceLabelGetter = String Function(double price);
-typedef OverlayInfoGetter = Map<String, String> Function(CandleData candle);
+typedef OverlayInfoGetter = Map<String, String> Function(Candle candle);
 
 class ChartPainter extends CustomPainter {
   final PainterParams params;
@@ -210,7 +210,7 @@ class ChartPainter extends CustomPainter {
     _drawTapInfoOverlay(canvas, params, candle);
   }
 
-  void _drawTapInfoOverlay(canvas, PainterParams params, CandleData candle) {
+  void _drawTapInfoOverlay(canvas, PainterParams params, Candle candle) {
     final xGap = 8.0;
     final yGap = 4.0;
 

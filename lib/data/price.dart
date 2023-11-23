@@ -6,7 +6,7 @@ class PriceData {
   final bool valid;
   final Stock stock;
   final int last;
-  final List<CandleData> price;
+  final List<Candle> price;
   PriceData({
     required this.valid,
     required this.stock,
@@ -16,8 +16,8 @@ class PriceData {
 
   static Future<PriceData> read(Stock stock) async {
     final jsonData = await Api().read(stock: stock);
-    final priceList = List<CandleData>.from(jsonData['data']?.map((p) {
-      return CandleData(
+    final priceList = List<Candle>.from(jsonData['data']?.map((p) {
+      return Candle(
         timestamp: DateTime.parse(p['d']).millisecondsSinceEpoch,
         open: p['o']?.toDouble(),
         high: p['h']?.toDouble(),

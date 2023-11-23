@@ -1,4 +1,4 @@
-class CandleData {
+class Candle {
   /// The timestamp of this data point, in milliseconds since epoch.
   final int timestamp;
 
@@ -36,7 +36,7 @@ class CandleData {
   /// are changed. Otherwise the UI might not be updated.
   List<double?> trends;
 
-  CandleData({
+  Candle({
     required this.timestamp,
     required this.open,
     required this.close,
@@ -46,7 +46,7 @@ class CandleData {
     List<double?>? trends,
   }) : this.trends = List.unmodifiable(trends ?? []);
 
-  static List<double?> computeMA(List<CandleData> data, [int period = 7]) {
+  static List<double?> computeMA(List<Candle> data, [int period = 7]) {
     // If data is not at least twice as long as the period, return nulls.
     if (data.length < period * 2) return List.filled(data.length, null);
 

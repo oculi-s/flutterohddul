@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutterohddul/core/colors.dart';
 import 'package:flutterohddul/core/router.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
@@ -21,27 +22,50 @@ class MainApp extends StatefulWidget {
   State<MainApp> createState() => _MainAppState();
 }
 
+class ThemeProvider extends InheritedWidget {
+  final bool themeIsDark;
+  final Function() toggleTheme;
+  final bool isLoggedIn;
+
+  const ThemeProvider({
+    Key? key,
+    required this.themeIsDark,
+    required Widget child,
+    required this.toggleTheme,
+    required this.isLoggedIn,
+  }) : super(key: key, child: child);
+
+  static ThemeProvider of(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<ThemeProvider>()!;
+  }
+
+  @override
+  bool updateShouldNotify(ThemeProvider oldWidget) {
+    return themeIsDark != oldWidget.themeIsDark ||
+        isLoggedIn != oldWidget.isLoggedIn;
+  }
+}
+
 class _MainAppState extends State<MainApp> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      routerConfig: router,
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        fontFamily: 'NotoSansKR',
-        primaryColor: const Color(
-          0xff2E3840,
-        ),
-        highlightColor: const Color(
-          0xff6E757D,
-        ),
-      ),
-      builder: (context, child) {
-        return MediaQuery(
-          data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
-          child: child ?? SizedBox.shrink(),
-        );
+    bool themeIsDark = true;
+    bool isLoggedIn = false;
+    return ThemeProvider(
+      themeIsDark: themeIsDark,
+      toggleTheme: () {
+        setState(() {
+          themeIsDark = !themeIsDark;
+        });
       },
+      isLoggedIn: isLoggedIn,
+      child: MaterialApp.router(
+        routerConfig: router,
+        debugShowCheckedModeBanner: false,
+        theme: DarkTheme.getTheme(),
+        darkTheme: LightTheme.getTheme(),
+        themeMode: themeIsDark ? ThemeMode.dark : ThemeMode.light,
+      ),
     );
   }
 }

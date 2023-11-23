@@ -8,6 +8,7 @@ class Stock {
   int? amount;
   Group? group;
   Induty? induty;
+  int? currentPrice, lastPrice, historicalPrice, priceChange;
 
   Stock({
     required this.valid,
@@ -17,6 +18,10 @@ class Stock {
     this.group,
     this.marketType,
     this.amount,
+    this.currentPrice,
+    this.lastPrice,
+    this.historicalPrice,
+    this.priceChange,
   });
 
   factory Stock.fromCode(String code) {
@@ -26,6 +31,9 @@ class Stock {
     if (data == null) return Stock(valid: false);
     final groupName = Meta().group?.index?[code];
     final indutyCode = Meta().indutyIndex?.data?[code];
+    int currentPrice = Meta().price?.data?[code]['c'] ?? 0;
+    int lastPrice = Meta().price?.data?[code]['p'] ?? 0;
+    int historicalPrice = Meta().hist?.data?[code]['h'] ?? 0;
     return Stock(
       valid: true,
       code: code,
@@ -34,6 +42,10 @@ class Stock {
       marketType: data?['t'],
       group: Group.fromName(groupName),
       induty: Induty.fromCode(indutyCode),
+      currentPrice: currentPrice,
+      lastPrice: lastPrice,
+      historicalPrice: historicalPrice,
+      priceChange: lastPrice - currentPrice,
     );
   }
 

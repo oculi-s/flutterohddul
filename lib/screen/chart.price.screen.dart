@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutterohddul/core/chart_painter.dart';
 import 'package:flutterohddul/data/api.dart';
@@ -10,45 +11,30 @@ import 'package:flutterohddul/data/chartstyle.dart';
 import 'package:flutterohddul/data/element.dart';
 import 'package:flutterohddul/data/painter.dart';
 import 'package:flutterohddul/data/price.dart';
+import 'package:flutterohddul/main.dart';
 import 'package:intl/intl.dart' as intl;
 
-class PriceChart extends StatefulWidget {
-  final String code;
-  const PriceChart({
+class PriceScreen extends StatefulWidget {
+  const PriceScreen({
     super.key,
-    required this.code,
   });
 
   @override
-  _PriceChartState createState() => _PriceChartState();
+  _PriceScreenState createState() => _PriceScreenState();
 }
 
-class _PriceChartState extends State<PriceChart> {
+class _PriceScreenState extends State<PriceScreen> {
+  final codeController = TextEditingController();
+  String stockCode = '005930';
   late Stock stock;
   late PriceData priceData;
   bool isLoading = true;
 
   @override
-  void didUpdateWidget(covariant PriceChart oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.code != oldWidget.code) {
-      stock = Stock.fromCode(widget.code);
-      if (stock.valid) {
-        WidgetsBinding.instance.addPostFrameCallback((_) async {
-          priceData = await PriceData.read(stock);
-          setState(() {});
-        });
-      } else {
-        print('!!!!!');
-      }
-    }
-  }
-
-  @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      stock = Stock.fromCode(widget.code);
+      stock = Stock.fromCode(stockCode);
       if (stock.valid) {
         priceData = await PriceData.read(stock);
         setState(() {
@@ -58,32 +44,78 @@ class _PriceChartState extends State<PriceChart> {
     });
   }
 
+  _onCodeChanged(String code) {
+    codeController.clear();
+    setState(() {
+      stockCode = code;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return isLoading
-        ? Container(
-            width: double.infinity,
-            height: 450,
-            alignment: Alignment.center,
-            child: const CircularProgressIndicator(),
-          )
-        : InteractiveChart(
-            candles: priceData.price,
-          );
+    final themeProvider = ThemeProvider.of(context);
+    final theme = Theme.of(context);
+
+    search() {
+      return SizedBox(
+        width: 100,
+        child: TextField(
+          style: theme.textTheme.bodyLarge,
+          controller: codeController,
+          onSubmitted: _onCodeChanged,
+          inputFormatters: <TextInputFormatter>[
+            FilteringTextInputFormatter.allow(RegExp(
+                r'[a-z|A-Z|0-9|ㄱ-ㅎ|ㅏ-ㅣ|가-힣|ᆞ|ᆢ|ᄀᆞ|ᄂᆞ|ᄃᆞ|ᄅᆞ|ᄆᆞ|ᄇᆞ|ᄉᆞ|ᄋᆞ|ᄌᆞ|ᄎᆞ|ᄏᆞ|ᄐᆞ|ᄑᆞ|ᄒᆞ]')),
+          ],
+        ),
+      );
+    }
+
+    change() {
+      return IconButton(
+        onPressed: () {
+          setState(() {
+            themeProvider.toggleTheme();
+          });
+        },
+        icon: Icon(
+          themeProvider.themeIsDark
+              ? Icons.wb_sunny_sharp
+              : Icons.nightlight_round_outlined,
+        ),
+      );
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        title: search(),
+        actions: [change()],
+      ),
+      body: isLoading
+          ? Container(
+              width: double.infinity,
+              height: 450,
+              alignment: Alignment.center,
+              child: const CircularProgressIndicator(),
+            )
+          : InteractiveChart(
+              candles: priceData.price,
+            ),
+    );
   }
 }
 
 class InteractiveChart extends StatefulWidget {
-  /// The full list of [CandleData] to be used for this chart.
+  /// The full list of [Candle] to be used for this chart.
   ///
   /// It needs to have at least 3 data points. If data is sufficiently large,
   /// the chart will default to display the most recent 90 data points when
   /// first opened (configurable with [initialVisibleCandleCount] parameter),
   /// and allow users to freely zoom and pan however they like.
-  final List<CandleData> candles;
+  final List<Candle> candles;
 
   /// The default number of data points to be displayed when the chart is first
-  /// opened. The default value is 90. If [CandleData] does not have enough data
+  /// opened. The default value is 90. If [Candle] does not have enough data
   /// points, the chart will display all of them.
   final int initialVisibleCandleCount;
 
@@ -117,7 +149,7 @@ class InteractiveChart extends StatefulWidget {
   final OverlayInfoGetter? overlayInfo;
 
   /// An optional event, fired when the user clicks on a candlestick.
-  final ValueChanged<CandleData>? onTap;
+  final ValueChanged<Candle>? onTap;
 
   /// An optional event, fired when user zooms in/out.
   ///
@@ -198,13 +230,13 @@ class _InteractiveChartState extends State<InteractiveChart> {
         final xShift = halfCandle - fractionCandle;
 
         // Calculate min and max among the visible data
-        double? highest(CandleData c) {
+        double? highest(Candle c) {
           if (c.high != null) return c.high;
           if (c.open != null && c.close != null) return max(c.open!, c.close!);
           return c.open ?? c.close;
         }
 
-        double? lowest(CandleData c) {
+        double? lowest(Candle c) {
           if (c.low != null) return c.low;
           if (c.open != null && c.close != null) return min(c.open!, c.close!);
           return c.open ?? c.close;
@@ -385,7 +417,7 @@ class _InteractiveChartState extends State<InteractiveChart> {
 
   String defaultPriceLabel(double price) => price.toStringAsFixed(2);
 
-  Map<String, String> defaultOverlayInfo(CandleData candle) {
+  Map<String, String> defaultOverlayInfo(Candle candle) {
     final date = intl.DateFormat.yMMMd()
         .format(DateTime.fromMillisecondsSinceEpoch(candle.timestamp));
     return {
