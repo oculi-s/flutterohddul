@@ -37,9 +37,11 @@ class _PriceScreenState extends State<PriceScreen> {
       stock = Stock.fromCode(stockCode);
       if (stock.valid) {
         priceData = await PriceData.read(stock);
-        setState(() {
-          isLoading = false;
-        });
+        if (mounted) {
+          setState(() {
+            isLoading = false;
+          });
+        }
       }
     });
   }

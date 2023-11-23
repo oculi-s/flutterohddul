@@ -27,7 +27,7 @@ class PriceData {
       );
     })).reversed.toList();
     return PriceData(
-      valid: jsonData['valid'],
+      valid: jsonData.isNotEmpty,
       stock: stock,
       last: jsonData['last'],
       price: priceList,

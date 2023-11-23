@@ -1,33 +1,48 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutterohddul/data/user.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
-
+class LogScreen extends StatefulWidget {
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  _LogScreenState createState() => _LogScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
-  @override
-  void initState() {
-    super.initState();
-  }
+class _LogScreenState extends State<LogScreen> {
+  bool isLoggedIn = LoginUser().valid;
 
   @override
   Widget build(BuildContext context) {
+    return Scaffold(
+      body: isLoggedIn ? logoutScreen() : loginScreen(),
+    );
+  }
+
+  loginScreen() {
     return Scaffold(
       body: Center(
         child: ElevatedButton(
           onPressed: () async {
             await LoginUser().login();
-            // isLoggedIn = true;
+            setState(() {
+              isLoggedIn = LoginUser().valid;
+            });
           },
           child: Text('Login with Kakao'),
+        ),
+      ),
+    );
+  }
+
+  logoutScreen() {
+    return Scaffold(
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () async {
+            await LoginUser().logout();
+            setState(() {
+              isLoggedIn = LoginUser().valid;
+            });
+          },
+          child: Text('Logout'),
         ),
       ),
     );

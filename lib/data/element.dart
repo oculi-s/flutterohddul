@@ -9,6 +9,7 @@ class Stock {
   Group? group;
   Induty? induty;
   int? currentPrice, lastPrice, historicalPrice, priceChange;
+  double? priceChangeRatio;
 
   Stock({
     required this.valid,
@@ -22,30 +23,33 @@ class Stock {
     this.lastPrice,
     this.historicalPrice,
     this.priceChange,
+    this.priceChangeRatio,
   });
 
   factory Stock.fromCode(String code) {
     final data = Meta().meta?.data?.entries.firstWhere((e) {
       return e.key == code || e.value['n'] == code;
-    })?.value;
+    }).value;
     if (data == null) return Stock(valid: false);
     final groupName = Meta().group?.index?[code];
     final indutyCode = Meta().indutyIndex?.data?[code];
-    int currentPrice = Meta().price?.data?[code]['c'] ?? 0;
-    int lastPrice = Meta().price?.data?[code]['p'] ?? 0;
-    int historicalPrice = Meta().hist?.data?[code]['h'] ?? 0;
+    int currentPrice = Meta().price?.data?[code]?['c'] ?? 0;
+    int lastPrice = Meta().price?.data?[code]?['p'] ?? 0;
+    int historicalPrice = Meta().hist?.data?[code]?['h'] ?? 0;
+
     return Stock(
       valid: true,
       code: code,
       name: data?['n'],
       amount: data?['a'],
       marketType: data?['t'],
-      group: Group.fromName(groupName),
+      // group: Group.fromName(groupName),
       induty: Induty.fromCode(indutyCode),
       currentPrice: currentPrice,
       lastPrice: lastPrice,
       historicalPrice: historicalPrice,
       priceChange: lastPrice - currentPrice,
+      priceChangeRatio: (lastPrice - currentPrice) / lastPrice * 100,
     );
   }
 

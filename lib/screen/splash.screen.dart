@@ -42,12 +42,18 @@ class _SplashScreenState extends State<SplashScreen> {
               width: MediaQuery.of(context).size.width,
               height: 0,
             ),
-            SvgPicture.asset(
-              'svg.svg',
+            Image.asset(
+              '/assets/favicon-96x96.png',
               width: 100,
               height: 100,
               alignment: Alignment.center,
             ),
+            // SvgPicture.asset(
+            //   'svg.svg',
+            //   width: 100,
+            //   height: 100,
+            //   alignment: Alignment.center,
+            // ),
             const SizedBox(height: 10),
             Text(
               '오르고 떨어지고',

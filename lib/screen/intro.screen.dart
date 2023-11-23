@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutterohddul/core/colors.dart';
 import 'package:flutterohddul/core/login.dart';
+import 'package:flutterohddul/data/user.dart';
 import 'package:flutterohddul/screen/chart.price.screen.dart';
 import 'package:flutterohddul/screen/favs.screen.dart';
 import 'package:flutterohddul/screen/profile.screen.dart';
@@ -18,9 +19,7 @@ class _MenuScreenState extends State<MenuScreen> {
     const PriceScreen(),
     const Placeholder(),
     const Placeholder(),
-    const LoginScreen(),
-    // widget.isLoggedIn ? Placeholder() : LoginScreen(),
-    // widget.isLoggedIn ? ProfileScreen() : LoginScreen(),
+    LogScreen(),
   ];
 
   void _onItemTapped(int index) {

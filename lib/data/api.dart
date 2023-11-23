@@ -1,8 +1,10 @@
+import 'dart:typed_data';
 import 'dart:convert';
-import 'dart:html';
+import 'package:flutter/material.dart';
 import 'package:flutterohddul/data/element.dart';
 import 'package:flutterohddul/env/env.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 
 class Meta {
   Meta._();
@@ -66,6 +68,7 @@ class Api {
   Api._();
   static final Api _instance = Api._();
   factory Api() => _instance;
+
   Future<dynamic> read({
     String? url,
     Stock? stock,
@@ -94,15 +97,96 @@ class Api {
       if (res.statusCode == 200) {
         final data = utf8.decode(res.bodyBytes);
         final jsonData = json.decode(data);
-        jsonData['valid'] = true;
         return jsonData;
       } else {
         print('Failed to load data. Status code: ${res.statusCode}');
-        return {'valid': false};
+        return {};
       }
     } catch (e) {
       print('Error loading data: $e');
-      return {'valid': false};
+      return {};
+    }
+  }
+
+  Future<bool> write({
+    String? url,
+    Map<String, dynamic>? data,
+  }) async {
+    final apiUrl = Uri.parse('https://api.ohddul.com/write');
+    try {
+      if (url == null && data == null) return false;
+      final res = await http.post(
+        apiUrl,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'apiKey': Env.ohddulApi,
+          'url': url.toString(),
+          'data': jsonEncode(data),
+        }),
+      );
+      if (res.statusCode == 200) {
+        return true;
+      } else {
+        print('Failed to write data. Status code: ${res.statusCode}');
+        return false;
+      }
+    } catch (e) {
+      print('Error writing data: $e');
+      return false;
+    }
+  }
+
+  Future<bool> save({
+    String? url,
+    String? fileUrl,
+  }) async {
+    final apiUrl = Uri.parse('https://api.ohddul.com/save');
+    try {
+      if (url == null && fileUrl == null) return false;
+      final res = await http.post(
+        apiUrl,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'apiKey': Env.ohddulApi,
+          'url': url.toString(),
+          'fileUrl': fileUrl.toString(),
+        }),
+      );
+      if (res.statusCode == 200) {
+        print('File uploaded');
+        return true;
+      } else {
+        print('Failed to upload data. Status code: ${res.statusCode}');
+        return false;
+      }
+    } catch (e) {
+      print('Error upload data: $e');
+      return false;
+    }
+  }
+
+  Future<dynamic> image(
+    String? url,
+  ) async {
+    final apiUrl = Uri.parse('https://api.ohddul.com/read');
+    final res = await http.post(
+      apiUrl,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'apiKey': Env.ohddulApi,
+        'url': url.toString(),
+      }),
+    );
+    if (res.statusCode == 200) {
+      return Image.memory(res.bodyBytes);
+    } else {
+      return null;
     }
   }
 }
