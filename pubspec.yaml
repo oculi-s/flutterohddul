@@ -22,6 +22,7 @@ dependencies:
   intl: ^0.18.1
   flutter_svg: ^2.0.9
   http_parser: ^4.0.2
+  pie_chart: ^5.4.0
 
 dev_dependencies:
   flutter_test:

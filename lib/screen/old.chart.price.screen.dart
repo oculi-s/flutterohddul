@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutterohddul/data/api.dart';
 import 'package:flutterohddul/data/element.dart';
 import 'package:flutterohddul/data/price.dart';
+import 'package:flutterohddul/data/stock.dart';
 import 'package:k_chart/chart_translations.dart';
 import 'package:k_chart/flutter_k_chart.dart';
 import 'package:http/http.dart' as http;

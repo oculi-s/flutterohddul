@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutterohddul/data/api.dart';
-import 'package:flutterohddul/data/element.dart';
+import 'package:flutterohddul/data/stock.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:http/http.dart' as http;
 

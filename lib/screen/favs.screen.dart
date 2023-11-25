@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutterohddul/component/priceview.dart';
 import 'package:flutterohddul/data/api.dart';
-import 'package:flutterohddul/data/element.dart';
+import 'package:flutterohddul/data/stock.dart';
 import 'package:flutterohddul/data/user.dart';
+import 'package:pie_chart/pie_chart.dart';
 
 class FavScreen extends StatefulWidget {
   @override
@@ -26,6 +28,9 @@ class _FavScreenState extends State<FavScreen> {
     '003620',
     '철강',
     '005490',
+    'IT',
+    '035420',
+    '035720'
   ];
 
   @override
@@ -70,32 +75,7 @@ class _FavScreenState extends State<FavScreen> {
   }
 }
 
-class PriceColor extends StatelessWidget {
-  final bool asPercent;
-  final dynamic value;
-  final TextStyle style;
-
-  const PriceColor(
-    this.value, {
-    super.key,
-    required this.asPercent,
-    required this.style,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      value > 0
-          ? '+${asPercent ? value.toStringAsFixed(2) : value}${asPercent ? '%' : ''}'
-          : '${asPercent ? value.toStringAsFixed(2) : value}${asPercent ? '%' : ''}',
-      style: style.copyWith(
-        color: value > 0 ? Colors.green : Colors.red,
-      ),
-    );
-  }
-}
-
-class StockBlock extends StatelessWidget {
+class StockBlock extends StatefulWidget {
   final Stock stock;
 
   const StockBlock({
@@ -103,6 +83,11 @@ class StockBlock extends StatelessWidget {
     required this.stock,
   });
 
+  @override
+  State<StockBlock> createState() => _StockBlockState();
+}
+
+class _StockBlockState extends State<StockBlock> {
   stockelement(BuildContext context) {
     var theme = Theme.of(context);
     return Container(
@@ -133,7 +118,7 @@ class StockBlock extends StatelessWidget {
                 Radius.circular(50),
               ),
             ),
-            child: stock.group?.image ?? const Placeholder(),
+            child: widget.stock.group?.image ?? const Placeholder(),
           ),
           Expanded(
             child: Row(
@@ -142,9 +127,9 @@ class StockBlock extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(stock.name!),
+                    Text(widget.stock.name!),
                     Text(
-                      stock.code!,
+                      widget.stock.code!,
                       style: theme.textTheme.bodySmall,
                     ),
                   ],
@@ -152,17 +137,17 @@ class StockBlock extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text(stock.currentPrice!.toString()),
+                    PriceView(widget.stock.currentPrice!),
                     Row(children: [
-                      PriceColor(
-                        stock.priceChangeRatio!,
-                        asPercent: true,
+                      PriceColorView(
+                        widget.stock.priceChange,
+                        asPercent: false,
                         style: theme.textTheme.bodySmall!,
                       ),
                       const SizedBox(width: 10),
-                      PriceColor(
-                        stock.priceChange,
-                        asPercent: false,
+                      PriceColorView(
+                        widget.stock.priceChangeRatio!,
+                        asPercent: true,
                         style: theme.textTheme.bodySmall!,
                       ),
                     ]),
@@ -176,7 +161,7 @@ class StockBlock extends StatelessWidget {
     );
   }
 
-  stockinfo(BuildContext context) {
+  stockmeta(BuildContext context) {
     var theme = Theme.of(context);
     return Container(
       width: MediaQuery.of(context).size.width,
@@ -184,48 +169,155 @@ class StockBlock extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const SizedBox(height: 30),
+          const SizedBox(height: 10),
           Container(
-            width: 60,
-            height: 60,
-            padding: const EdgeInsets.all(5),
+            width: 25,
+            height: 5,
             decoration: BoxDecoration(
               color: theme.scaffoldBackgroundColor,
               borderRadius: const BorderRadius.all(
                 Radius.circular(50),
               ),
             ),
-            child: stock.group?.image ?? const Placeholder(),
+          ),
+          const SizedBox(height: 20),
+          Container(
+            width: 60,
+            height: 60,
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: theme.scaffoldBackgroundColor,
+              borderRadius: const BorderRadius.all(
+                Radius.circular(50),
+              ),
+            ),
+            child: widget.stock.group?.image ?? const Placeholder(),
           ),
           Text(
-            stock.name!,
+            widget.stock.name!,
             style: theme.textTheme.bodySmall,
           ),
-          Text(
-            stock.currentPrice!.toString(),
+          PriceView(
+            widget.stock.currentPrice!,
             style: theme.textTheme.bodyLarge,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              PriceColor(
-                stock.priceChange,
+              PriceColorView(
+                widget.stock.priceChange,
                 asPercent: false,
                 style: theme.textTheme.bodySmall!,
               ),
               const SizedBox(
                 width: 5,
               ),
-              PriceColor(
-                stock.priceChangeRatio,
+              PriceColorView(
+                widget.stock.priceChangeRatio,
                 asPercent: true,
                 style: theme.textTheme.bodySmall!,
-              )
+              ),
             ],
-          )
+          ),
+          ...stockinfo(context)
         ],
       ),
     );
+  }
+
+  stockinfo(BuildContext context) {
+    var theme = Theme.of(context);
+
+    tile({String? title, value, ratio}) {
+      return Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 8,
+          vertical: 5,
+        ),
+        child: Column(
+          children: [
+            Text(title!),
+            value != null
+                ? PriceView(
+                    value,
+                    style: theme.textTheme.bodySmall,
+                  )
+                : const SizedBox.shrink(),
+            const SizedBox(width: 3),
+            ratio != null
+                ? PercentView(
+                    ratio,
+                    style: theme.textTheme.bodySmall,
+                  )
+                : const SizedBox.shrink()
+          ],
+        ),
+      );
+    }
+
+    return <Widget>[
+      Expanded(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              const SizedBox(height: 30),
+              SizedBox(
+                width: MediaQuery.of(context).size.width,
+                height: 300,
+                child: const Placeholder(),
+              ),
+              const Divider(),
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 5,
+                    ),
+                    child: Column(
+                      children: [
+                        const Text('시총'),
+                        MarketCapView(
+                          widget.stock.marketCap!,
+                          style: theme.textTheme.bodySmall,
+                        )
+                      ],
+                    ),
+                  ),
+                  tile(
+                      title: 'BPS',
+                      value: widget.stock.bps,
+                      ratio: widget.stock.bpsRatio),
+                  tile(
+                      title: 'EPS',
+                      value: widget.stock.eps,
+                      ratio: widget.stock.epsRatio),
+                ],
+              ),
+              const Divider(),
+              const SizedBox(height: 30),
+              SizedBox(
+                width: MediaQuery.of(context).size.width,
+                height: 200,
+                child: const PieChart(
+                  dataMap: {"1": 2},
+                  chartType: ChartType.ring,
+                ),
+              ),
+              const SizedBox(height: 30),
+            ],
+          ),
+        ),
+      ),
+    ];
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    widget.stock.load().then((value) {
+      print(widget.stock.earn?.length);
+    });
   }
 
   @override
@@ -238,18 +330,18 @@ class StockBlock extends StatelessWidget {
           context: context,
           builder: (BuildContext context) {
             return Container(
-              height: MediaQuery.of(context).size.height - 50,
+              height: MediaQuery.of(context).size.height - 20,
               width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
                 color: theme.canvasColor,
                 borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(0),
-                  topRight: Radius.circular(0),
+                  topLeft: Radius.circular(10),
+                  topRight: Radius.circular(10),
                 ),
               ),
               child: SizedBox(
                 height: MediaQuery.of(context).size.height,
-                child: stockinfo(context),
+                child: stockmeta(context),
               ),
             );
           },

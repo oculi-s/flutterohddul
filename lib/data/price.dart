@@ -1,6 +1,6 @@
 import 'package:flutterohddul/data/api.dart';
 import 'package:flutterohddul/data/candledata.dart';
-import 'package:flutterohddul/data/element.dart';
+import 'package:flutterohddul/data/stock.dart';
 
 class PriceData {
   final bool valid;

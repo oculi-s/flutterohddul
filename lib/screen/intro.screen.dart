@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutterohddul/core/colors.dart';
 import 'package:flutterohddul/core/login.dart';
-import 'package:flutterohddul/data/user.dart';
 import 'package:flutterohddul/screen/chart.price.screen.dart';
 import 'package:flutterohddul/screen/favs.screen.dart';
-import 'package:flutterohddul/screen/profile.screen.dart';
 
 class MenuScreen extends StatefulWidget {
   @override
@@ -30,7 +27,6 @@ class _MenuScreenState extends State<MenuScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Scaffold(
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),

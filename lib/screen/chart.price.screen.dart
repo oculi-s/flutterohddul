@@ -5,12 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutterohddul/core/chart_painter.dart';
-import 'package:flutterohddul/data/api.dart';
 import 'package:flutterohddul/data/candledata.dart';
 import 'package:flutterohddul/data/chartstyle.dart';
-import 'package:flutterohddul/data/element.dart';
 import 'package:flutterohddul/data/painter.dart';
 import 'package:flutterohddul/data/price.dart';
+import 'package:flutterohddul/data/stock.dart';
 import 'package:flutterohddul/main.dart';
 import 'package:intl/intl.dart' as intl;
 
