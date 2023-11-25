@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 221.71506 51.765332">
+    <script xmlns=""/>
+    <defs>
+        <radialGradient id="a" cx="0" cy="0" r="1" fx="0" fy="0" gradientTransform="matrix(107.69935 0 0 -107.69935 262.129 51.776)" gradientUnits="userSpaceOnUse" spreadMethod="pad">
+            <stop offset="0" style="stop-opacity:1;stop-color:#ffb978"/>
+            <stop offset="0.7" style="stop-opacity:1;stop-color:#ffb978"/>
+            <stop offset="0.79" style="stop-opacity:1;stop-color:#e90f00"/>
+            <stop offset="1" style="stop-opacity:1;stop-color:#e90f00"/>
+        </radialGradient>
+        <radialGradient id="b" cx="0" cy="0" r="1" fx="0" fy="0" gradientTransform="matrix(107.69973 0 0 -107.69973 262.129 51.776)" gradientUnits="userSpaceOnUse" spreadMethod="pad">
+            <stop offset="0" style="stop-opacity:1;stop-color:#ffb978"/>
+            <stop offset="0.7" style="stop-opacity:1;stop-color:#ffb978"/>
+            <stop offset="0.79" style="stop-opacity:1;stop-color:#e90f00"/>
+            <stop offset="1" style="stop-opacity:1;stop-color:#e90f00"/>
+        </radialGradient>
+        <radialGradient id="c" cx="0" cy="0" r="1" fx="0" fy="0" gradientTransform="matrix(107.69941 0 0 -107.69941 262.129 51.776)" gradientUnits="userSpaceOnUse" spreadMethod="pad">
+            <stop offset="0" style="stop-opacity:1;stop-color:#ffb978"/>
+            <stop offset="0.7" style="stop-opacity:1;stop-color:#ffb978"/>
+            <stop offset="0.79" style="stop-opacity:1;stop-color:#e90f00"/>
+            <stop offset="1" style="stop-opacity:1;stop-color:#e90f00"/>
+        </radialGradient>
+    </defs>
+    <path d="M284.269 104.777h36.369v4.335h-36.369zM309.885 112.287l-.058-.275 4.892-.839.053.25c1.21 5.614 2.122 15.722 2.122 23.876v3.841h-29.671v-4.58h24.676c-.065-7.846-.906-17.01-2.014-22.273M355.224 128.027h-23.27v1.628h22.548v10.451h-27.834v-4.404h22.783v-1.906H326.66v-10.174h28.565zM331.69 109.132h17.432v-2.065H331.69Zm17.432 3.884H331.69v3.558h-5.022v-10.433c0-2.174 1.181-3.372 3.325-3.372h24.104v13.805h-4.975z" style="fill:#434749;fill-opacity:1;fill-rule:nonzero;stroke:none" transform="matrix(1.33333 0 0 -1.33333 -255.78 188.05)"/>
+    <path d="M322.314 122.154v-4.27h15.89v-3.605h5.04v3.605h14.877v4.27z" style="fill:#434749;fill-opacity:1;fill-rule:nonzero;stroke:none" transform="matrix(1.33333 0 0 -1.33333 -255.78 188.05)"/>
+    <path d="M197.486 115.456c3.11-2.705 7.906-4.958 13.803-4.958 3.823 0 6.156 1.408 6.156 3.21 0 2.143-2.787 3.11-7.387 3.956-7.128 1.24-17.108 2.694-17.108 11.597 0 6.31 6.156 11.777 17.237 11.777 6.934 0 12.714-2.173 17.315-5.61l-5.845-6.561c-3.629 2.592-8.36 3.888-12.183 3.888-3.694 0-5.119-1.296-5.119-2.93 0-1.972 2.657-2.772 7.452-3.56 7.128-1.296 16.978-3.223 16.978-11.731 0-7.551-6.416-12.32-18.015-12.32-8.748 0-14.593 2.736-18.935 6.343zm67.78-12.198v21.4l-9.335-21.4h-4.199l-9.28 21.4v-21.4h-9.502v36.847h11.778l9.103-20.882 9.158 20.882h11.78v-36.847z" style="fill:#e90f00;fill-opacity:1;fill-rule:nonzero;stroke:none" transform="matrix(1.33333 0 0 -1.33333 -255.78 188.05)"/>
+    <path d="m262.989 140.105-5.711-13.023c1.604.102 3.221.159 4.851.159 4.307 0 8.529-.366 12.639-1.059v13.923z" style="fill:url(#a);stroke:none" transform="matrix(1.33333 0 0 -1.33333 -255.78 188.05)"/>
+    <path d="M192.95 129.262c0-8.904 9.979-10.358 17.108-11.598 4.6-.846 7.387-1.814 7.387-3.955 0-1.803-2.332-3.212-6.157-3.212-5.896 0-10.692 2.254-13.802 4.959l-5.65-6.9c3.544-2.944 8.091-5.305 14.401-6.075a75.588 75.588 0 0 0 6.141 6.039 75.602 75.602 0 0 0 15.297 10.413c-2.768 4.858-10.181 6.297-15.867 7.332-4.796.788-7.453 1.587-7.453 3.56 0 1.633 1.426 2.93 5.119 2.93 3.823 0 8.554-1.297 12.183-3.888l5.845 6.56c-4.601 3.438-10.381 5.61-17.315 5.61-11.081 0-17.237-5.465-17.237-11.775" style="fill:url(#b);stroke:none" transform="matrix(1.33333 0 0 -1.33333 -255.78 188.05)"/>
+    <path d="M232.95 140.105V121.39a74.885 74.885 0 0 0 9.501 3.254v.015l.006-.013a75.268 75.268 0 0 0 8.253 1.737l-5.981 13.722z" style="fill:url(#c);stroke:none" transform="matrix(1.33333 0 0 -1.33333 -255.78 188.05)"/>
+</svg>

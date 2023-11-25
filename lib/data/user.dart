@@ -13,7 +13,7 @@ class User {
   String? email;
   double? rank;
   int? last, signed;
-  List<Stock>? favs;
+  List<dynamic>? favs;
   Map<String, dynamic>? meta;
   Image? profile, thumbnail;
 
@@ -32,7 +32,7 @@ class User {
       uid: json['uid'].toString(),
       email: json['email'].toString(),
       id: json['id'].toString(),
-      favs: List<Stock>.from(json['favs'].map((e) => Stock.fromCode(e))),
+      favs: List.from(json['favs'].map((e) => Stock.fromCode(e))),
     );
   }
 

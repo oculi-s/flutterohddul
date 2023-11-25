@@ -81,7 +81,7 @@ class _PriceScreenState extends State<PriceScreen> {
           });
         },
         icon: Icon(
-          themeProvider.themeIsDark
+          themeProvider.currentTheme == Brightness.dark
               ? Icons.wb_sunny_sharp
               : Icons.nightlight_round_outlined,
         ),

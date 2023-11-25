@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:flutterohddul/data/api.dart';
 
 class Stock {
@@ -43,7 +45,7 @@ class Stock {
       name: data?['n'],
       amount: data?['a'],
       marketType: data?['t'],
-      // group: Group.fromName(groupName),
+      group: Group.fromName(groupName),
       induty: Induty.fromCode(indutyCode),
       currentPrice: currentPrice,
       lastPrice: lastPrice,
@@ -68,6 +70,7 @@ class Stock {
 class Group {
   String? name;
   List<String>? child;
+  SvgPicture? image;
   int? currentPrice;
   int? lastPrice;
   int? historicalPrice;
@@ -75,15 +78,18 @@ class Group {
   Group({
     this.name,
     this.child,
+    this.image,
     this.currentPrice,
     this.lastPrice,
     this.historicalPrice,
   });
 
-  factory Group.fromName(String name) {
+  static Group? fromName(String? name) {
+    if (name == null) return null;
     final data = Meta().group?.data?[name];
     return Group(
       name: name,
+      image: SvgPicture.asset('assets/group/$name.svg'),
       child: List<String>.from(data?['ch']?.map((e) => e)),
       currentPrice: data?['c'],
       lastPrice: data?['p'],
@@ -118,7 +124,8 @@ class Induty {
     this.historicalPrice,
   });
 
-  factory Induty.fromCode(String code) {
+  static Induty? fromCode(String? code) {
+    if (code == null) return null;
     final data = Meta().induty?.data?[code];
     final child = Meta()
         .indutyIndex

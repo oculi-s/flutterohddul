@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutterohddul/core/colors.dart';
 import 'package:flutterohddul/core/router.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
-import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:flutterohddul/env/env.dart';
-import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,23 +14,21 @@ void main() async {
 }
 
 class MainApp extends StatefulWidget {
-  const MainApp({super.key});
+  const MainApp({Key? key}) : super(key: key);
 
   @override
   State<MainApp> createState() => _MainAppState();
 }
 
 class ThemeProvider extends InheritedWidget {
-  final bool themeIsDark;
+  final ThemeData currentTheme;
   final Function() toggleTheme;
-  final bool isLoggedIn;
 
   const ThemeProvider({
     Key? key,
-    required this.themeIsDark,
+    required this.currentTheme,
     required Widget child,
     required this.toggleTheme,
-    required this.isLoggedIn,
   }) : super(key: key, child: child);
 
   static ThemeProvider of(BuildContext context) {
@@ -41,35 +37,32 @@ class ThemeProvider extends InheritedWidget {
 
   @override
   bool updateShouldNotify(ThemeProvider oldWidget) {
-    return themeIsDark != oldWidget.themeIsDark ||
-        isLoggedIn != oldWidget.isLoggedIn;
+    return currentTheme != oldWidget.currentTheme;
   }
 }
 
 class _MainAppState extends State<MainApp> {
+  // ThemeData currentTheme = DarkTheme.theme;
+  ThemeData currentTheme = LightTheme.theme;
+
   @override
   Widget build(BuildContext context) {
-    bool themeIsDark = true;
-    bool isLoggedIn = false;
     return ThemeProvider(
-      themeIsDark: themeIsDark,
+      currentTheme: currentTheme,
       toggleTheme: () {
         setState(() {
-          themeIsDark = !themeIsDark;
+          currentTheme = currentTheme == DarkTheme.theme
+              ? LightTheme.theme
+              : DarkTheme.theme;
         });
       },
-      isLoggedIn: isLoggedIn,
-      child: DefaultTextStyle(
-        style: (themeIsDark ? DarkTheme.theme : LightTheme.theme)
-            .textTheme
-            .bodyLarge!,
-        child: MaterialApp.router(
-          routerConfig: router,
-          debugShowCheckedModeBanner: false,
-          theme: DarkTheme.theme,
-          darkTheme: LightTheme.theme,
-          themeMode: themeIsDark ? ThemeMode.dark : ThemeMode.light,
-        ),
+      child: MaterialApp.router(
+        routerConfig: router,
+        debugShowCheckedModeBanner: false,
+        theme: LightTheme.theme,
+        darkTheme: DarkTheme.theme,
+        themeMode:
+            currentTheme == DarkTheme.theme ? ThemeMode.dark : ThemeMode.light,
       ),
     );
   }

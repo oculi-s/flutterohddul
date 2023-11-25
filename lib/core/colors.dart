@@ -1,40 +1,109 @@
 import 'package:flutter/material.dart';
-import 'package:flutterohddul/core/colors.dart';
+
+const double size = 15;
 
 class DarkTheme {
   static ThemeData theme = ThemeData(
-    scaffoldBackgroundColor: AppColors.bgDark,
+    scaffoldBackgroundColor: AppColors.dark.backgroundColor,
     fontFamily: 'NotoSansKR',
-    canvasColor: AppColors.bgDark,
-    focusColor: Color(0xff006AB5),
-    primaryColor: AppColors.textBright,
-    highlightColor: Color(0xffe5e5e5),
-    textTheme: const TextTheme(
+    canvasColor: AppColors.dark.blockColor,
+    focusColor: const Color(0xff006AB5),
+    textTheme: TextTheme(
       bodyLarge: TextStyle(
-        color: AppColors.textBright,
+        color: AppColors.dark.defaultTextColor,
         fontWeight: FontWeight.w600,
+        fontSize: size * 1.2,
       ),
+      bodyMedium: TextStyle(
+        color: AppColors.dark.defaultTextColor,
+        fontWeight: FontWeight.w400,
+        fontSize: size,
+      ),
+      bodySmall: TextStyle(
+        color: AppColors.dark.defaultTextColor,
+        fontSize: size * .8,
+      ),
+    ),
+    dividerColor: AppColors.dark.backgroundColor,
+    dividerTheme: DividerThemeData(
+      color: AppColors.dark.backgroundColor,
+      thickness: 0,
     ),
   );
 }
 
 class LightTheme {
   static ThemeData theme = ThemeData(
-    scaffoldBackgroundColor: AppColors.bgDark,
+    scaffoldBackgroundColor: AppColors.light.backgroundColor,
     fontFamily: 'NotoSansKR',
-    canvasColor: AppColors.bgBright,
-    primaryColor: AppColors.textDark,
-    textTheme: const TextTheme(
+    canvasColor: AppColors.light.blockColor,
+    textTheme: TextTheme(
       bodyLarge: TextStyle(
-        color: AppColors.textBright,
+        color: AppColors.light.defaultTextColor,
         fontWeight: FontWeight.w600,
+        fontSize: size * 1.2,
       ),
+      bodyMedium: TextStyle(
+        color: AppColors.light.defaultTextColor,
+        fontWeight: FontWeight.w400,
+        fontSize: size,
+      ),
+      bodySmall: TextStyle(
+        color: AppColors.light.defaultTextColor,
+        fontSize: size * .8,
+      ),
+    ),
+    dividerColor: AppColors.light.backgroundColor,
+    dividerTheme: DividerThemeData(
+      color: AppColors.light.backgroundColor,
+      thickness: 0,
+      endIndent: 0,
+      space: 0,
     ),
   );
 }
 
+class ColorMap {
+  Color backgroundColor;
+  Color blockColor;
+
+  Color defaultTextColor;
+  Color subTextColor;
+  Color indicatorContainerColor;
+  Color borderColor;
+
+  ColorMap({
+    required this.backgroundColor,
+    required this.blockColor,
+    required this.defaultTextColor,
+    required this.subTextColor,
+    required this.indicatorContainerColor,
+    required this.borderColor,
+  });
+}
+
 class AppColors {
-  static const Color kakao = Color(0xFFFEE500);
+  static ColorMap dark = ColorMap(
+    backgroundColor: const Color(0xff2a2e39),
+    blockColor: const Color(0xff131722),
+    defaultTextColor: const Color(0xffD1D4DC),
+    subTextColor: const Color(0xff868993),
+    indicatorContainerColor: const Color(0xff131722),
+    borderColor: const Color(0xff2A2E39),
+  );
+
+  static ColorMap light = ColorMap(
+    backgroundColor: const Color(0xffe0e3eb),
+    blockColor: const Color(0xffFFFFFF),
+    defaultTextColor: const Color(0xff131722),
+    subTextColor: const Color(0xff6a6d78),
+    indicatorContainerColor: const Color(0xffFFFFFF),
+    borderColor: const Color(0xfff0F3FA),
+  );
+  static const Color kakao = Color(0xffFEE500);
+
+  static const Color plus = Color(0xff22ab94);
+  static const Color minus = Color(0xfff23645);
 
   static const Color bgDarker = Color(0xFF030D18);
   static const Color bgDark = Color.fromARGB(255, 1, 2, 7);

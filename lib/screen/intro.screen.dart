@@ -47,13 +47,13 @@ class _MenuScreenState extends State<MenuScreen> {
                   ? const Icon(Icons.insert_chart_rounded)
                   : const Icon(Icons.insert_chart_outlined_rounded,
                       color: Colors.black),
-              label: 'search'),
+              label: '차트'),
           BottomNavigationBarItem(
               icon: _selectedIndex == 2
                   ? const Icon(Icons.shopping_bag)
                   : const Icon(Icons.shopping_bag_outlined,
                       color: Colors.black),
-              label: 'media'),
+              label: '커뮤니티'),
           BottomNavigationBarItem(
               icon: _selectedIndex == 3
                   ? const Icon(Icons.movie)
@@ -63,7 +63,7 @@ class _MenuScreenState extends State<MenuScreen> {
               icon: _selectedIndex == 4
                   ? const Icon(Icons.person)
                   : const Icon(Icons.person_outline),
-              label: 'profile')
+              label: '프로필')
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: AppColors.blue,

@@ -1,11 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-// import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:flutterohddul/core/router.dart';
 import 'package:flutterohddul/data/api.dart';
-import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -22,7 +20,6 @@ class _SplashScreenState extends State<SplashScreen> {
 
       Timer(const Duration(milliseconds: 1000), () {
         router.replace('/intro');
-        // router.replace('/result');
       });
     });
     super.initState();
@@ -42,18 +39,12 @@ class _SplashScreenState extends State<SplashScreen> {
               width: MediaQuery.of(context).size.width,
               height: 0,
             ),
-            Image.asset(
-              '/assets/favicon-96x96.png',
+            SvgPicture.asset(
+              'assets/svg.svg',
               width: 100,
               height: 100,
               alignment: Alignment.center,
             ),
-            // SvgPicture.asset(
-            //   'svg.svg',
-            //   width: 100,
-            //   height: 100,
-            //   alignment: Alignment.center,
-            // ),
             const SizedBox(height: 10),
             Text(
               '오르고 떨어지고',

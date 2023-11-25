@@ -21,7 +21,6 @@ dependencies:
   k_chart: ^0.7.1
   intl: ^0.18.1
   flutter_svg: ^2.0.9
-  flutter_svg_provider: ^1.0.6
   http_parser: ^4.0.2
 
 dev_dependencies:
@@ -35,6 +34,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/
+    - assets/group/
   fonts:
     - family: NotoSansKR
       fonts:
