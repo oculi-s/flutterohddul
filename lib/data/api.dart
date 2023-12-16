@@ -1,11 +1,8 @@
-import 'dart:typed_data';
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutterohddul/data/element.dart';
 import 'package:flutterohddul/data/stock.dart';
 import 'package:flutterohddul/env/env.dart';
 import 'package:http/http.dart' as http;
-import 'package:http_parser/http_parser.dart';
 
 class Meta {
   Meta._();

@@ -35,8 +35,11 @@ class _FavScreenState extends State<FavScreen> {
 
   @override
   void initState() {
-    defaultList = List.from(defaultCode
-        .map((e) => Meta().meta?.data?[e] != null ? Stock.fromCode(e) : e));
+    defaultList = List.from(
+      defaultCode.map(
+        (e) => Meta().meta?.data?[e] != null ? Stock.fromCode(e) : e,
+      ),
+    );
     super.initState();
   }
 
@@ -88,7 +91,7 @@ class StockBlock extends StatefulWidget {
 }
 
 class _StockBlockState extends State<StockBlock> {
-  stockelement(BuildContext context) {
+  stockListBarElement(BuildContext context) {
     var theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(
@@ -161,7 +164,7 @@ class _StockBlockState extends State<StockBlock> {
     );
   }
 
-  stockmeta(BuildContext context) {
+  stockSlideScreen(BuildContext context) {
     var theme = Theme.of(context);
     return Container(
       width: MediaQuery.of(context).size.width,
@@ -219,13 +222,13 @@ class _StockBlockState extends State<StockBlock> {
               ),
             ],
           ),
-          ...stockinfo(context)
+          ...stockInfoinSlide(context)
         ],
       ),
     );
   }
 
-  stockinfo(BuildContext context) {
+  stockInfoinSlide(BuildContext context) {
     var theme = Theme.of(context);
 
     tile({String? title, value, ratio}) {
@@ -315,9 +318,7 @@ class _StockBlockState extends State<StockBlock> {
   @override
   void initState() {
     super.initState();
-    widget.stock.load().then((value) {
-      print(widget.stock.earn?.length);
-    });
+    widget.stock.load();
   }
 
   @override
@@ -341,13 +342,13 @@ class _StockBlockState extends State<StockBlock> {
               ),
               child: SizedBox(
                 height: MediaQuery.of(context).size.height,
-                child: stockmeta(context),
+                child: stockSlideScreen(context),
               ),
             );
           },
         );
       },
-      child: stockelement(context),
+      child: stockListBarElement(context),
     );
   }
 }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutterohddul/core/router.dart';
 import 'package:flutterohddul/data/api.dart';
+import 'package:flutterohddul/data/market.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -17,10 +18,10 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       await Meta().load();
-
-      Timer(const Duration(milliseconds: 1000), () {
-        router.replace('/intro');
-      });
+      await Market().load();
+      router.replace('/menu');
+      // Timer(const Duration(milliseconds: 1000), () {
+      // });
     });
     super.initState();
   }
