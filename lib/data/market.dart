@@ -9,6 +9,7 @@ class Market {
   EcosData baserate = EcosData(valid: false);
   EcosData cpi = EcosData(valid: false);
   EcosData ppi = EcosData(valid: false);
+  // MultiGroupData marketsum = MultiGroupData(valid:false);
 
   bool isDataLoaded() {
     return baserate.valid! && cpi.valid! && ppi.valid!;
@@ -23,35 +24,73 @@ class Market {
   }
 }
 
+// class MultiGroupData {
+//   bool? valid;
+//   DateTime? last;
+//   Map<String, GroupData> data = {};
+// MultiGroupData({
+//   required this.valid,
+// });
+// Future<bool> read(String url) async {
+//     try {
+//       final jsonData = await Api().read(url: url);
+//       final Map raw = jsonData['data'] ?? jsonData;
+
+//       int lastTime = int.parse(jsonData['last'].toString());
+//       valid = true;
+//       last = DateTime.fromMillisecondsSinceEpoch(lastTime);
+//       data = Map.fromEntries(raw.entries.map(
+//         (e) {
+//           var name = e.key;
+//           var data = e.value;
+//           return MapEntry(
+//             name,
+//             GroupData.from(name, data),
+//           );
+//         },
+//       ));
+//       return true;
+//     } catch (e) {
+//       return false;
+//     }
+//   }
+// }
+
+// class GroupData {
+// String? code, name;
+// }
+
 /**
  * [https://ecos.bok.or.kr/api/#/](한국은행 open Api)
  * 
  */
 class EcosData {
-  late bool? valid;
-  late DateTime? last;
-  late Map<String, CountryData> data = {};
+  bool? valid;
+  bool? withPrev;
+  DateTime? last;
+  Map<String, CountryData> data = {};
 
   EcosData({
     required this.valid,
   });
 
-  Future<bool> read(String url, [bool withPrev = true]) async {
+  Future<bool> read(String url, [bool prev = true]) async {
     try {
       final jsonData = await Api().read(url: url);
       final Map raw = jsonData['data'] ?? jsonData;
 
       int lastTime = int.parse(jsonData['last'].toString());
-      DateTime lastDateTime = DateTime.fromMillisecondsSinceEpoch(lastTime);
       valid = true;
-      last = lastDateTime;
+      withPrev = prev;
+      last = DateTime.fromMillisecondsSinceEpoch(lastTime);
       data = Map.fromEntries(raw.entries.map(
         (e) {
-          final name = e.key;
-          final data = e.value;
+          var name = e.key;
+          name = name == '유로 지역' ? '유로존' : name;
+          var data = e.value;
           return MapEntry(
             name,
-            CountryData.from(name, data, withPrev),
+            CountryData.from(name, data, prev),
           );
         },
       ));
@@ -68,6 +107,7 @@ class CountryData {
   List<DateAndValue> yoy = [];
   List<DateAndValue> mom = [];
   DateTime? minX, maxX;
+  bool? withPrev;
   int? length;
 
   CountryData({
@@ -78,24 +118,27 @@ class CountryData {
   static CountryData from(
     String name,
     List<dynamic> raw, [
-    bool withPrev = true,
+    bool prev = true,
   ]) {
     final data = List<DateAndValue>.from(
       raw.map((e) {
         var d = e['d'] ?? e['date'] ?? e[0] ?? '';
         var v = e['v'] ?? e['value'] ?? e[1] ?? '0';
-        return DateAndValue.from(d, v);
+        var nv = double.parse(v).toStringAsFixed(2);
+        return DateAndValue.from(d, nv);
       }),
     );
+    data.sort((a, b) => a.d!.compareTo(b.d!));
     final res = CountryData(
       name: name,
       data: data,
     );
+    res.withPrev = prev;
     res.minX = data.first.d;
     res.maxX = data.last.d;
     res.length = data.length;
     // yoy와 mom데이터를 추가하면
-    if (withPrev) {
+    if (prev) {
       res.yoy = List<DateAndValue>.from(data.map(
         (e) {
           final ld = DateTime(e.d!.year - 1, e.d!.month);
