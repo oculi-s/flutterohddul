@@ -8,6 +8,10 @@
 /ios/
 /data/
 
+.firebaserc
+firebase.json
+.firebase/
+
 # Miscellaneous
 *.class
 *.log
