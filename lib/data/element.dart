@@ -18,8 +18,8 @@ class Group {
         name: name,
         image: ([double width = 30, double height = 30]) => SvgLoader.asset(
           'assets/group/$name.svg',
-          width: width,
-          height: height,
+          width: width.toDouble(),
+          height: height.toDouble(),
         ),
         children: List.from(groupdata?['ch']?.map((e) => e)),
         currentPrice: groupdata?['c'],
@@ -60,6 +60,8 @@ class GroupData {
     this.historicalPrice,
     required this.image,
   });
+
+  String get imageUrl => 'assets/group/$name.svg';
 
   Map<String, dynamic> toJson() {
     return {

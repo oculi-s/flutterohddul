@@ -1,4 +1,5 @@
 import 'package:flutterohddul/data/api.dart';
+import 'package:flutterohddul/data/candledata.dart';
 import 'package:flutterohddul/data/element.dart';
 
 class Stock {
@@ -59,6 +60,7 @@ class StockData {
   double? bpsRatio, epsRatio;
   double? priceChangeRatio;
   List<Earn>? earn;
+  Price? price;
 
   StockData({
     required this.valid,
@@ -78,8 +80,12 @@ class StockData {
     this.eps,
     this.bpsRatio,
     this.epsRatio,
-    this.earn,
   });
+
+  Future<bool> addPrice() async {
+    price = await Price.read(this);
+    return true;
+  }
 
   Future<bool> addEarn() async {
     var data = await Api().read(url: '/stock/$code/earnFixed.json');
@@ -98,6 +104,47 @@ class StockData {
       'group': group?.toJson(),
       'induty': induty?.toJson(),
     };
+  }
+}
+
+class Price {
+  final bool valid;
+  final StockData stock;
+  final int last;
+  final List<Candle> candles;
+  Price({
+    required this.valid,
+    required this.stock,
+    required this.last,
+    required this.candles,
+  });
+
+  static Future<Price> read(StockData stock) async {
+    final jsonData = await Api().read(stock: stock);
+    final candles = List<Candle>.from(jsonData['data']?.map((p) {
+      return Candle(
+        timestamp: DateTime.parse(p['d']).millisecondsSinceEpoch,
+        o: p['o']?.toDouble(),
+        h: p['h']?.toDouble(),
+        l: p['l']?.toDouble(),
+        c: p['c']?.toDouble(),
+        v: p['v']?.toDouble(),
+      );
+    })).reversed.toList();
+    // [20, 60, 120]
+
+    [60].forEach((period) {
+      final ma = Candle.bollinger(candles, period);
+      for (int i = 0; i < candles.length; i++) {
+        candles[i].trends.addAll(ma[i]);
+      }
+    });
+    return Price(
+      valid: jsonData.isNotEmpty,
+      stock: stock,
+      last: jsonData['last'],
+      candles: candles,
+    );
   }
 }
 

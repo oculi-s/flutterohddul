@@ -2,9 +2,11 @@ import 'dart:ui';
 import 'package:flutter/widgets.dart';
 import 'package:flutterohddul/data/candledata.dart';
 import 'package:flutterohddul/data/chartstyle.dart';
+import 'package:flutterohddul/data/stock.dart';
 
 class PainterParams {
   final List<Candle> candles;
+  final StockData stock;
   final ChartStyle style;
   final Size size;
   final double candleWidth;
@@ -21,6 +23,7 @@ class PainterParams {
   final List<double?>? trailingTrends;
 
   PainterParams({
+    required this.stock,
     required this.candles,
     required this.style,
     required this.size,
@@ -43,14 +46,18 @@ class PainterParams {
       size.height - style.timeLabelHeight;
 
   double get volumeHeight => chartHeight * style.volumeHeightFactor;
-
   double get priceHeight => chartHeight - volumeHeight;
+  double get rangePrice => maxPrice - minPrice;
 
   int getCandleIndexFromOffset(double x) {
     final adjustedPos = x - xShift + candleWidth / 2;
     final i = adjustedPos ~/ candleWidth;
     return i;
   }
+
+  double fitHeight(double dy) =>
+      maxPrice - dy / priceHeight * (maxPrice - minPrice);
+  double fitWidth(double dx) => maxVol - dx / chartWidth * (maxVol - minVol);
 
   double fitPrice(double y) =>
       priceHeight * (maxPrice - y) / (maxPrice - minPrice);
@@ -83,6 +90,7 @@ class PainterParams {
     double lerpField(double getField(PainterParams p)) =>
         lerpDouble(getField(a), getField(b), t)!;
     return PainterParams(
+      stock: b.stock,
       candles: b.candles,
       style: b.style,
       size: b.size,

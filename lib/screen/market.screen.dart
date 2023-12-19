@@ -1,15 +1,9 @@
-import 'dart:math';
-
 import 'package:country_flags/country_flags.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutterohddul/chart/ecoschart.dart';
 import 'package:flutterohddul/chart/treemap.dart';
-import 'package:flutterohddul/data/element.dart';
 import 'package:flutterohddul/data/market.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'package:flutterohddul/data/stock.dart';
-import 'package:intl/intl.dart';
 
 class MarketScreen extends StatefulWidget {
   @override

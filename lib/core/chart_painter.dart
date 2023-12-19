@@ -1,11 +1,13 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutterohddul/chart/pricechart.dart';
 import 'package:flutterohddul/data/candledata.dart';
 import 'package:flutterohddul/data/painter.dart';
+import 'package:flutterohddul/data/stock.dart';
 
-typedef TimeLabelGetter = String Function(int timestamp, int visibleDataCount);
+typedef TimeLabelGetter = String Function(int timestamp, int visibleDataCount,
+    [bool isTapped]);
 typedef PriceLabelGetter = String Function(double price);
 typedef OverlayInfoGetter = Map<String, String> Function(Candle candle);
 
@@ -24,6 +26,7 @@ class ChartPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    double x = _drawBasicMeta(canvas, params);
     // Draw time labels (dates) & price labels
     _drawTimeLabels(canvas, params);
     _drawPriceGridAndLabels(canvas, params);
@@ -45,9 +48,29 @@ class ChartPainter extends CustomPainter {
     // Draw tap highlight & overlay
     if (params.tapPosition != null) {
       if (params.tapPosition!.dx < params.chartWidth) {
-        _drawTapHighlightAndOverlay(canvas, params);
+        _drawTapHighlightAndOverlay(canvas, params, x);
       }
     }
+  }
+
+  double _drawBasicMeta(canvas, PainterParams params) {
+    double x = 10;
+    StockData stock = params.stock;
+
+    TextPainter makeTP(String text) => TextPainter(
+          text: TextSpan(
+            text: text,
+            style: params.style.stockMetaStyle,
+          ),
+        )
+          ..textDirection = TextDirection.ltr
+          ..layout();
+    final nameTp = makeTP(stock.name!);
+    final codeTp = makeTP(stock.code!);
+    nameTp.paint(canvas, Offset(x, 8));
+    codeTp.paint(canvas, Offset(x, 25));
+    x += nameTp.width + 3;
+    return x;
   }
 
   void _drawTimeLabels(canvas, PainterParams params) {
@@ -113,10 +136,10 @@ class ChartPainter extends CustomPainter {
     final thickWidth = max(params.candleWidth * 0.8, 0.8);
     final thinWidth = max(params.candleWidth * 0.2, 0.2);
     // Draw price bar
-    final open = candle.open;
-    final close = candle.close;
-    final high = candle.high;
-    final low = candle.low;
+    final open = candle.o;
+    final close = candle.c;
+    final high = candle.h;
+    final low = candle.l;
     if (open != null && close != null) {
       final color = open > close
           ? params.style.priceLossColor
@@ -139,7 +162,7 @@ class ChartPainter extends CustomPainter {
       }
     }
     // Draw volume bar
-    final volume = candle.volume;
+    final volume = candle.v;
     if (volume != null) {
       canvas.drawLine(
         Offset(x, params.chartHeight),
@@ -153,9 +176,9 @@ class ChartPainter extends CustomPainter {
     for (int j = 0; j < candle.trends.length; j++) {
       final trendLinePaint = params.style.trendLineStyles.at(j) ??
           (Paint()
-            ..strokeWidth = 2.0
+            ..strokeWidth = 1
             ..strokeCap = StrokeCap.round
-            ..color = Colors.blue);
+            ..color = params.style.priceGainColor);
 
       final pt = candle.trends.at(j); // current data point
       final prevPt = params.candles.at(i - 1)?.trends.at(j);
@@ -192,22 +215,127 @@ class ChartPainter extends CustomPainter {
     }
   }
 
-  void _drawTapHighlightAndOverlay(canvas, PainterParams params) {
+  void _drawTapHighlightAndOverlay(canvas, PainterParams params, double x) {
     final pos = params.tapPosition!;
     final i = params.getCandleIndexFromOffset(pos.dx);
     final candle = params.candles[i];
     canvas.save();
     canvas.translate(params.xShift, 0.0);
     // Draw highlight bar (selection box)
-    canvas.drawLine(
-        Offset(i * params.candleWidth, 0.0),
-        Offset(i * params.candleWidth, params.chartHeight),
-        Paint()
-          ..strokeWidth = max(params.candleWidth * 0.88, 1.0)
-          ..color = params.style.selectionHighlightColor);
+    final paintdash = Paint()
+      ..strokeWidth = .2
+      ..color = params.style.selectionHighlightColor;
+
+    double dashWidth = 5.0;
+    double dashSpace = 10.0;
+    double currentY = 0;
+    double currentX = 0;
+    while (currentY < params.chartHeight) {
+      canvas.drawLine(
+        Offset(pos.dx, currentY),
+        Offset(pos.dx, currentY + dashWidth),
+        paintdash,
+      );
+      currentY += dashSpace;
+    }
+
+    while (currentX < params.chartWidth) {
+      canvas.drawLine(
+        Offset(currentX, pos.dy),
+        Offset(currentX + dashWidth, pos.dy),
+        paintdash,
+      );
+      currentX += dashSpace;
+    }
     canvas.restore();
+
+    double y = params.fitHeight(pos.dy);
+    final priceTp = TextPainter(
+      text: TextSpan(
+        text: getPriceLabel(y),
+        style: params.style.overlayGridTextStyle,
+      ),
+    )
+      ..textDirection = TextDirection.ltr
+      ..layout();
+
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Offset(
+              params.chartWidth - 3,
+              pos.dy - priceTp.height / 2,
+            ) &
+            Size(params.style.priceLabelWidth, 16),
+        Radius.circular(0),
+      ),
+      Paint()..color = params.style.overlayGridBackgroundColor,
+    );
+    priceTp.paint(
+      canvas,
+      Offset(
+        params.chartWidth + 4,
+        pos.dy - priceTp.height / 2,
+      ),
+    );
+
+    final timeTp = TextPainter(
+      text: TextSpan(
+        text: getTimeLabel(candle.timestamp, params.candles.length, true),
+        style: params.style.overlayGridTextStyle,
+      ),
+    )
+      ..textDirection = TextDirection.ltr
+      ..layout();
+
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Offset(
+              pos.dx - timeTp.width / 2 - 5,
+              params.chartHeight,
+            ) &
+            Size(timeTp.width + 10, 16),
+        Radius.circular(0),
+      ),
+      Paint()..color = params.style.overlayGridBackgroundColor,
+    );
+    timeTp.paint(
+        canvas,
+        Offset(
+          pos.dx - timeTp.width / 2,
+          params.chartHeight,
+        ));
     // Draw info pane
-    _drawTapInfoOverlay(canvas, params, candle);
+    // _drawTapInfoOverlay(canvas, params, candle);
+    _drawTapOHLCInfo(canvas, params, candle, x);
+  }
+
+  void _drawTapOHLCInfo(canvas, PainterParams params, Candle candle, double x) {
+    double diff = (candle.c! - candle.o!) / candle.o! * 100;
+    TextStyle priceStyle = diff > 0
+        ? params.style.overlayPriceGainStyle
+        : params.style.overlayPriceLossStyle;
+
+    TextPainter makeTP(String text, [bool isPrice = false]) => TextPainter(
+          text: TextSpan(
+            text: text,
+            style: isPrice ? priceStyle : params.style.overlayTextStyle,
+          ),
+        )
+          ..textDirection = TextDirection.ltr
+          ..layout();
+    final info = getOverlayInfo(candle);
+    if (info.isEmpty) return;
+    final labels = info.keys.map((text) => makeTP(text)).toList();
+    final values = info.values.map((text) => makeTP(text, true)).toList();
+
+    for (int i = 0; i < labels.length; i++) {
+      labels[i].paint(canvas, Offset(x, 10));
+      x += labels[i].width + 1;
+      values[i].paint(canvas, Offset(x, 10));
+      x += values[i].width + 5;
+    }
+
+    makeTP('(${diff.asPercent()})', true).paint(canvas, Offset(x, 10));
   }
 
   void _drawTapInfoOverlay(canvas, PainterParams params, Candle candle) {
