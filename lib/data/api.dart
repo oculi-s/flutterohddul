@@ -36,7 +36,7 @@ class Meta {
 }
 
 class MetaData {
-  final bool? valid;
+  bool valid = false;
   final String? url;
   final int? last;
   final Map<String, dynamic>? data;
@@ -69,7 +69,7 @@ class Api {
 
   Future<dynamic> read({
     String? url,
-    Stock? stock,
+    StockData? stock,
   }) async {
     final apiUrl = Uri.parse('https://api.ohddul.com/read');
     String entry() {

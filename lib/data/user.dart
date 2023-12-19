@@ -32,7 +32,7 @@ class User {
       uid: json['uid'].toString(),
       email: json['email'].toString(),
       id: json['id'].toString(),
-      favs: List.from(json['favs'].map((e) => Stock.fromCode(e))),
+      favs: List.from(json['favs'].map((e) => Stock().fromCode(e))),
     );
   }
 
@@ -117,7 +117,7 @@ class LoginUser {
         uid: uid,
         email: json?['email'],
         id: meta?['id'] ?? json?['profile']?['nickname'] ?? uid,
-        favs: List<Stock>.from(favs.keys.map((e) => Stock.fromCode(e))),
+        favs: List<StockData>.from(favs.keys.map((e) => Stock().fromCode(e))),
         profile: profile,
         thumbnail: thumbnail,
         // pred:pred,

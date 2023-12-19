@@ -2,13 +2,57 @@ import 'package:flutterohddul/data/api.dart';
 import 'package:flutterohddul/data/element.dart';
 
 class Stock {
+  Stock._();
+  static final Stock _instance = Stock._();
+  factory Stock() => _instance;
+
+  Map<String, StockData> data = {};
+  StockData fromCode(String code) {
+    final data = Meta().meta?.data?.entries.firstWhere((e) {
+      return e.key == code || e.value['n'] == code;
+    }).value;
+    if (data == null) return StockData(valid: false);
+    if (data[code] != null) return data[code];
+    final groupName = Meta().group?.index?[code];
+    final indutyCode = Meta().indutyIndex?.data?[code];
+    int currentPrice = Meta().price?.data?[code]?['c'] ?? 0;
+    int lastPrice = Meta().price?.data?[code]?['p'] ?? 0;
+    int historicalPrice = Meta().hist?.data?[code]?['h'] ?? 0;
+    int bps = Meta().price?.data?[code]?['bps'] ?? 0;
+    int eps = Meta().price?.data?[code]?['eps'] ?? 0;
+
+    data[code] = StockData(
+      valid: true,
+      code: code,
+      name: data?['n'],
+      amount: data?['a'],
+      marketType: data?['t'],
+      group: Group().data[groupName],
+      induty: Induty().data[indutyCode],
+      currentPrice: currentPrice,
+      lastPrice: lastPrice,
+      historicalPrice: historicalPrice,
+      priceChange: lastPrice - currentPrice,
+      priceChangeRatio: (lastPrice - currentPrice) / lastPrice * 100,
+      marketCap: (currentPrice * data['a']).toInt(),
+      bps: bps,
+      eps: eps,
+      bpsRatio: (bps / currentPrice).toDouble(),
+      epsRatio: (eps / currentPrice).toDouble(),
+    );
+    return data[code];
+  }
+}
+
+class StockData {
   bool valid = true;
   String? code;
   String? name;
   String? marketType;
   int? amount;
-  Group? group;
-  Induty? induty;
+  GroupData? group;
+  IndutyData? induty;
+
   int? currentPrice, lastPrice, historicalPrice, priceChange;
   int? marketCap;
   int? bps, eps;
@@ -16,7 +60,7 @@ class Stock {
   double? priceChangeRatio;
   List<Earn>? earn;
 
-  Stock({
+  StockData({
     required this.valid,
     this.code,
     this.name,
@@ -37,41 +81,7 @@ class Stock {
     this.earn,
   });
 
-  factory Stock.fromCode(String code) {
-    final data = Meta().meta?.data?.entries.firstWhere((e) {
-      return e.key == code || e.value['n'] == code;
-    }).value;
-    if (data == null) return Stock(valid: false);
-    final groupName = Meta().group?.index?[code];
-    final indutyCode = Meta().indutyIndex?.data?[code];
-    int currentPrice = Meta().price?.data?[code]?['c'] ?? 0;
-    int lastPrice = Meta().price?.data?[code]?['p'] ?? 0;
-    int historicalPrice = Meta().hist?.data?[code]?['h'] ?? 0;
-    int bps = Meta().price?.data?[code]?['bps'] ?? 0;
-    int eps = Meta().price?.data?[code]?['eps'] ?? 0;
-
-    return Stock(
-      valid: true,
-      code: code,
-      name: data?['n'],
-      amount: data?['a'],
-      marketType: data?['t'],
-      group: Group.fromName(groupName),
-      induty: Induty.fromCode(indutyCode),
-      currentPrice: currentPrice,
-      lastPrice: lastPrice,
-      historicalPrice: historicalPrice,
-      priceChange: lastPrice - currentPrice,
-      priceChangeRatio: (lastPrice - currentPrice) / lastPrice * 100,
-      marketCap: (currentPrice * data['a']).toInt(),
-      bps: bps,
-      eps: eps,
-      bpsRatio: (bps / currentPrice).toDouble(),
-      epsRatio: (eps / currentPrice).toDouble(),
-    );
-  }
-
-  Future<bool> load() async {
+  Future<bool> addEarn() async {
     var data = await Api().read(url: '/stock/$code/earnFixed.json');
     earn = List<Earn>.from(data['data']
         .map((e) => Earn.fromJson(e))

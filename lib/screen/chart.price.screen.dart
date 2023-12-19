@@ -25,7 +25,7 @@ class PriceScreen extends StatefulWidget {
 class _PriceScreenState extends State<PriceScreen> {
   final codeController = TextEditingController();
   String stockCode = '005930';
-  late Stock stock;
+  late StockData stock;
   late PriceData priceData;
   bool isLoading = true;
 
@@ -33,7 +33,7 @@ class _PriceScreenState extends State<PriceScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      stock = Stock.fromCode(stockCode);
+      stock = Stock().fromCode(stockCode);
       if (stock.valid) {
         priceData = await PriceData.read(stock);
         if (mounted) {

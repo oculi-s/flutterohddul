@@ -1,4 +1,5 @@
 import 'package:flutterohddul/data/api.dart';
+import 'package:flutterohddul/data/element.dart';
 import 'package:intl/intl.dart';
 
 class Market {
@@ -9,7 +10,6 @@ class Market {
   EcosData baserate = EcosData(valid: false);
   EcosData cpi = EcosData(valid: false);
   EcosData ppi = EcosData(valid: false);
-  // MultiGroupData marketsum = MultiGroupData(valid:false);
 
   bool isDataLoaded() {
     return baserate.valid! && cpi.valid! && ppi.valid!;
@@ -20,45 +20,10 @@ class Market {
     await baserate.read('/meta/rate.json', false);
     await cpi.read('/meta/cpi.json');
     await ppi.read('/meta/ppi.json');
+    await Group().addTree();
     return true;
   }
 }
-
-// class MultiGroupData {
-//   bool? valid;
-//   DateTime? last;
-//   Map<String, GroupData> data = {};
-// MultiGroupData({
-//   required this.valid,
-// });
-// Future<bool> read(String url) async {
-//     try {
-//       final jsonData = await Api().read(url: url);
-//       final Map raw = jsonData['data'] ?? jsonData;
-
-//       int lastTime = int.parse(jsonData['last'].toString());
-//       valid = true;
-//       last = DateTime.fromMillisecondsSinceEpoch(lastTime);
-//       data = Map.fromEntries(raw.entries.map(
-//         (e) {
-//           var name = e.key;
-//           var data = e.value;
-//           return MapEntry(
-//             name,
-//             GroupData.from(name, data),
-//           );
-//         },
-//       ));
-//       return true;
-//     } catch (e) {
-//       return false;
-//     }
-//   }
-// }
-
-// class GroupData {
-// String? code, name;
-// }
 
 /**
  * [https://ecos.bok.or.kr/api/#/](한국은행 open Api)

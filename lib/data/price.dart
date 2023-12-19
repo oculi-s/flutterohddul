@@ -4,7 +4,7 @@ import 'package:flutterohddul/data/stock.dart';
 
 class PriceData {
   final bool valid;
-  final Stock stock;
+  final StockData stock;
   final int last;
   final List<Candle> price;
   PriceData({
@@ -14,7 +14,7 @@ class PriceData {
     required this.price,
   });
 
-  static Future<PriceData> read(Stock stock) async {
+  static Future<PriceData> read(StockData stock) async {
     final jsonData = await Api().read(stock: stock);
     final priceList = List<Candle>.from(jsonData['data']?.map((p) {
       return Candle(

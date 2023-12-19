@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutterohddul/component/priceview.dart';
+import 'package:flutterohddul/utils/priceview.dart';
 import 'package:flutterohddul/data/api.dart';
 import 'package:flutterohddul/data/stock.dart';
 import 'package:flutterohddul/data/user.dart';
@@ -37,7 +37,7 @@ class _FavScreenState extends State<FavScreen> {
   void initState() {
     defaultList = List.from(
       defaultCode.map(
-        (e) => Meta().meta?.data?[e] != null ? Stock.fromCode(e) : e,
+        (e) => Meta().meta?.data?[e] != null ? Stock().fromCode(e) : e,
       ),
     );
     super.initState();
@@ -49,7 +49,7 @@ class _FavScreenState extends State<FavScreen> {
           ? Column(
               children: List<Widget>.from(
                 LoginUser().user.favs!.map(
-                      (e) => e.runtimeType == Stock
+                      (e) => e.runtimeType == StockData
                           ? StockBlock(stock: e)
                           : DividerBlock(text: e),
                     ),
@@ -57,7 +57,7 @@ class _FavScreenState extends State<FavScreen> {
             )
           : Column(
               children: List<Widget>.from(defaultList.map(
-                (stock) => stock.runtimeType == Stock
+                (stock) => stock.runtimeType == StockData
                     ? StockBlock(stock: stock)
                     : DividerBlock(text: stock),
               )),
@@ -79,7 +79,7 @@ class _FavScreenState extends State<FavScreen> {
 }
 
 class StockBlock extends StatefulWidget {
-  final Stock stock;
+  final StockData stock;
 
   const StockBlock({
     super.key,
@@ -121,7 +121,7 @@ class _StockBlockState extends State<StockBlock> {
                 Radius.circular(50),
               ),
             ),
-            child: widget.stock.group?.image ?? const Placeholder(),
+            child: widget.stock.group!.image(),
           ),
           Expanded(
             child: Row(
@@ -194,7 +194,7 @@ class _StockBlockState extends State<StockBlock> {
                 Radius.circular(50),
               ),
             ),
-            child: widget.stock.group?.image ?? const Placeholder(),
+            child: widget.stock.group!.image(),
           ),
           Text(
             widget.stock.name!,
@@ -318,7 +318,7 @@ class _StockBlockState extends State<StockBlock> {
   @override
   void initState() {
     super.initState();
-    widget.stock.load();
+    widget.stock.addEarn();
   }
 
   @override

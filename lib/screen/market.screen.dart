@@ -3,8 +3,12 @@ import 'dart:math';
 import 'package:country_flags/country_flags.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:flutterohddul/chart/ecoschart.dart';
+import 'package:flutterohddul/chart/treemap.dart';
+import 'package:flutterohddul/data/element.dart';
 import 'package:flutterohddul/data/market.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutterohddul/data/stock.dart';
 import 'package:intl/intl.dart';
 
 class MarketScreen extends StatefulWidget {
@@ -14,38 +18,60 @@ class MarketScreen extends StatefulWidget {
 
 class BarState {
   String name;
-  IconData icon;
+  IconData? icon;
   List<BarState> child;
+  dynamic data;
   BarState({
     required this.name,
     required this.icon,
     required this.child,
+    required this.data,
   });
+  BarState from(List<int> currentIndex) {
+    return child[currentIndex[0]].child[currentIndex[1]];
+  }
 }
 
 class _MarketScreenState extends State<MarketScreen> {
-  final _currentBar = [
-    BarState(
-      name: "세계경제",
-      icon: Icons.language_rounded,
-      child: [
-        BarState(name: "기준금리", icon: Icons.bar_chart_rounded, child: []),
-        BarState(name: "CPI", icon: Icons.trending_up_rounded, child: []),
-      ],
-    ),
-    BarState(
-      name: "국내경제",
-      icon: Icons.flag_rounded,
-      child: [
-        BarState(name: "시총비중", icon: Icons.pie_chart_rounded, child: []),
-      ],
-    )
-  ];
-  final _currentData = [
-    Market().baserate,
-    Market().cpi,
-    // Market().ppi,
-  ];
+  final _currentBar = BarState(
+    name: "",
+    icon: null,
+    child: [
+      BarState(
+        name: "세계경제",
+        icon: Icons.language_rounded,
+        child: [
+          BarState(
+            name: "기준금리",
+            icon: Icons.bar_chart_rounded,
+            child: [],
+            data: Market().baserate,
+          ),
+          BarState(
+            name: "CPI",
+            icon: Icons.trending_up_rounded,
+            child: [],
+            data: Market().cpi,
+          ),
+        ],
+        data: null,
+      ),
+      BarState(
+        name: "한국경제",
+        icon: Icons.flag_rounded,
+        child: [
+          BarState(
+            name: "시총비중 (그룹)",
+            icon: Icons.pie_chart_rounded,
+            child: [],
+            data: null,
+          ),
+        ],
+        data: null,
+      )
+    ],
+    data: null,
+  );
   final _countryName = {
     "KR": "한국",
     "US": "미국",
@@ -100,7 +126,7 @@ class _MarketScreenState extends State<MarketScreen> {
   Widget toggleCountryElement(String code) {
     var theme = Theme.of(context);
     final name = _countryName[code];
-    final cdata = _currentData[_currentIndex[0]].data[name];
+    final cdata = _currentBar.from(_currentIndex).data.data[name];
 
     return Expanded(
       child: GestureDetector(
@@ -169,159 +195,14 @@ class _MarketScreenState extends State<MarketScreen> {
     );
   }
 
-  LineChartBarData? ecosChartElement(String code, EcosData data) {
-    if (!_countryName.containsKey(code)) return null;
-    final name = _countryName[code];
-    if (!data.data.containsKey(name)) return null;
-    var cdata = data.data[name]!;
-    final raw = data.withPrev! ? cdata.yoy : cdata.data;
-    List<FlSpot> spots = raw!
-        .where((e) =>
-            e.d!.millisecondsSinceEpoch >
-            DateTime.now().subtract(duration).millisecondsSinceEpoch)
-        .map((e) => FlSpot(
-              e.d!.millisecondsSinceEpoch.toDouble(),
-              e.v!,
-            ))
-        .toList();
-
-    if (!_legendVisibility[code]!) {
-      return null;
-    }
-
-    var color = _countryColor[code] ??
-        Color.fromARGB(
-          255,
-          Random().nextInt(256),
-          Random().nextInt(256),
-          Random().nextInt(256),
-        );
-
-    return LineChartBarData(
-      spots: spots,
-      color: color,
-      barWidth: 2,
-      dotData: FlDotData(show: false),
-      belowBarData: BarAreaData(
-        color: color.withOpacity(.1),
-        show: true,
-      ),
-    );
-  }
-
-  Widget ecosChart(EcosData data) {
-    var theme = Theme.of(context);
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 8),
-      decoration: BoxDecoration(
-        color: theme.canvasColor,
-        border: Border(
-          bottom: BorderSide(
-            width: 1.2,
-            color: theme.dividerColor,
-          ),
-        ),
-      ),
-      child: SizedBox(
-        width: MediaQuery.of(context).size.width,
-        height: 300,
-        child: LineChart(
-          LineChartData(
-            titlesData: FlTitlesData(
-              rightTitles: AxisTitles(),
-              topTitles: AxisTitles(),
-              leftTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: true,
-                  interval: 1,
-                  reservedSize: 40,
-                  getTitlesWidget: (double value, TitleMeta meta) {
-                    if (value == meta.min || value == meta.max) return Text('');
-                    return SideTitleWidget(
-                      child: Text(
-                        value.toString(),
-                        style: theme.textTheme.bodySmall,
-                      ),
-                      axisSide: meta.axisSide,
-                    );
-                  },
-                ),
-              ),
-              bottomTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: true,
-                  interval: duration.inMilliseconds / 5,
-                  reservedSize: 30,
-                  getTitlesWidget: (double value, TitleMeta meta) {
-                    final d =
-                        DateTime.fromMillisecondsSinceEpoch(value.toInt());
-                    if (value == meta.min || value == meta.max) return Text('');
-                    return SideTitleWidget(
-                      axisSide: meta.axisSide,
-                      child: Text(
-                        DateFormat('yyyy-MM').format(d),
-                        style: theme.textTheme.bodySmall,
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ),
-            borderData: FlBorderData(
-              show: true,
-              border: Border.all(
-                color: theme.dividerColor,
-                width: 1,
-              ),
-            ),
-            maxX: DateTime.now().millisecondsSinceEpoch.toDouble(),
-            lineBarsData: List<LineChartBarData>.from(
-              _countryName.keys
-                  .map((e) => ecosChartElement(e, data))
-                  .where((e) => e != null),
-            ),
-            lineTouchData: LineTouchData(
-              enabled: true,
-              touchTooltipData: LineTouchTooltipData(
-                fitInsideHorizontally: true,
-                tooltipBgColor: theme.canvasColor,
-                getTooltipItems: (List<LineBarSpot> touchedBarSpots) {
-                  touchedBarSpots.sort((a, b) => a.barIndex - b.barIndex);
-                  var res = touchedBarSpots.map((e) {
-                    return LineTooltipItem(
-                      '●  ',
-                      TextStyle(
-                        color: _countryColorTooltip.values.toList()[e.barIndex],
-                      ),
-                      children: [
-                        TextSpan(
-                          text: _countryNameTooltip.values.toList()[e.barIndex],
-                          style: theme.textTheme.bodyMedium,
-                        ),
-                        const TextSpan(text: '  '),
-                        TextSpan(),
-                        TextSpan(text: e.y.toString(), style: TextStyle()),
-                      ],
-                      textAlign: TextAlign.left,
-                    );
-                  }).toList();
-                  return res;
-                },
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget innerData() {
+    var bar = _currentBar.from(_currentIndex);
     var theme = Theme.of(context);
-    if (_currentIndex[0] == 0)
+    if (_currentIndex[0] == 0) {
       return Column(
         children: [
           Text(
-            _currentBar[_currentIndex[0]].child[_currentIndex[1]].name,
+            bar.name,
             style: theme.textTheme.bodyLarge,
             textAlign: TextAlign.start,
           ),
@@ -330,11 +211,23 @@ class _MarketScreenState extends State<MarketScreen> {
             children: _countryName.keys.map(toggleCountryElement).toList(),
           ),
           SizedBox(height: 5),
-          ecosChart(_currentData[_currentIndex[1]]),
+          EcosChartWidget(
+            currentBar: bar,
+            countryColor: _countryColor,
+            countryColorTooltip: _countryColorTooltip,
+            countryName: _countryName,
+            countryNameTooltip: _countryNameTooltip,
+            duration: duration,
+            legendVisibility: _legendVisibility,
+          ),
         ],
       );
-    else
-      return Placeholder();
+    } else if (_currentIndex[0] == 1) {
+      return Container(
+        child: TreeMapWidget(),
+      );
+    }
+    return Placeholder();
   }
 
   void _toggleListVisibility() {
@@ -345,8 +238,8 @@ class _MarketScreenState extends State<MarketScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print(_currentIndex);
     var theme = Theme.of(context);
+    int i = _currentIndex[0];
     return SafeArea(
       child: Container(
         alignment: Alignment.topCenter,
@@ -357,7 +250,7 @@ class _MarketScreenState extends State<MarketScreen> {
                 top: 0,
                 child: BottomNavigationBar(
                   currentIndex: _currentIndex[0],
-                  items: _currentBar
+                  items: _currentBar.child
                       .map(
                         (e) => BottomNavigationBarItem(
                           icon: Icon(e.icon),
@@ -367,8 +260,11 @@ class _MarketScreenState extends State<MarketScreen> {
                       .toList(),
                   onTap: (i) {
                     setState(() {
+                      if (_currentIndex[0] == i) {
+                        _toggleListVisibility();
+                      }
                       _currentIndex[0] = i;
-                      _toggleListVisibility();
+                      _currentIndex[1] = 0;
                     });
                   },
                 )),
@@ -386,23 +282,22 @@ class _MarketScreenState extends State<MarketScreen> {
               top: 60,
               child: AnimatedContainer(
                 duration: Duration(milliseconds: 200),
-                height: _isListVisible
-                    ? _currentBar[_currentIndex[0]].child.length * 50
-                    : 0,
+                height:
+                    _isListVisible ? _currentBar.child[i].child.length * 50 : 0,
                 child: Container(
                   decoration: BoxDecoration(color: theme.canvasColor),
                   child: ListView.builder(
                     shrinkWrap: true,
-                    itemCount: _currentBar[_currentIndex[0]].child.length,
-                    itemBuilder: (ctx, i) {
+                    itemCount: _currentBar.child[i].child.length,
+                    itemBuilder: (ctx, j) {
                       return ListTile(
                         title: Text(
-                          _currentBar[_currentIndex[0]].child[i].name,
+                          _currentBar.from([i, j]).name,
                           style: theme.textTheme.bodyMedium,
                         ),
                         onTap: () {
                           setState(() {
-                            _currentIndex[1] = i;
+                            _currentIndex[1] = j;
                             _toggleListVisibility();
                           });
                         },
