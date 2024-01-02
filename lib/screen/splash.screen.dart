@@ -3,6 +3,7 @@ import 'package:flutterohddul/core/router.dart';
 import 'package:flutterohddul/data/api.dart';
 import 'package:flutterohddul/data/element.dart';
 import 'package:flutterohddul/data/market.dart';
+import 'package:flutterohddul/utils/screen.utils.dart';
 import 'package:flutterohddul/utils/svgloader.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -31,14 +32,14 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: theme.canvasColor,
+      backgroundColor: theme.colorScheme.primary,
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(
-              width: MediaQuery.of(context).size.width,
+              width: Screen(context).w,
               height: 0,
             ),
             SvgLoader.asset(

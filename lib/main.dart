@@ -14,7 +14,7 @@ void main() async {
 }
 
 class MainApp extends StatefulWidget {
-  const MainApp({Key? key}) : super(key: key);
+  const MainApp({super.key});
 
   @override
   State<MainApp> createState() => _MainAppState();
@@ -42,24 +42,32 @@ class ThemeProvider extends InheritedWidget {
 }
 
 class _MainAppState extends State<MainApp> {
-  ThemeMode themeMode = ThemeMode.system;
+  late Brightness brightness;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  ThemeMode get themeMode =>
+      brightness == Brightness.light ? ThemeMode.light : ThemeMode.dark;
 
   @override
   Widget build(BuildContext context) {
+    brightness = MediaQuery.of(context).platformBrightness;
     return ThemeProvider(
-      currentTheme:
-          themeMode == ThemeMode.dark ? DarkTheme.theme : LightTheme.theme,
+      currentTheme: MyTheme(brightness: brightness).theme,
       toggleTheme: () {
         setState(() {
-          themeMode =
-              themeMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
+          brightness = brightness == Brightness.light
+              ? Brightness.light
+              : Brightness.dark;
         });
       },
       child: MaterialApp.router(
         routerConfig: router,
         debugShowCheckedModeBanner: false,
-        theme: LightTheme.theme,
-        darkTheme: DarkTheme.theme,
+        theme: MyTheme(brightness: brightness).theme,
         themeMode: themeMode,
       ),
     );

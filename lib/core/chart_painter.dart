@@ -103,7 +103,7 @@ class ChartPainter extends CustomPainter {
   }
 
   void _drawPriceGridAndLabels(canvas, PainterParams params) {
-    [0.0, 0.25, 0.5, 0.75, 1.0]
+    [0.0, 0.225, 0.45, 0.675, 0.9]
         .map((v) => ((params.maxPrice - params.minPrice) * v) + params.minPrice)
         .forEach((y) {
       canvas.drawLine(

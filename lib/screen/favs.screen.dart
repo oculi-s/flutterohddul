@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutterohddul/main.dart';
 import 'package:flutterohddul/utils/priceview.dart';
 import 'package:flutterohddul/data/api.dart';
 import 'package:flutterohddul/data/stock.dart';
 import 'package:flutterohddul/data/user.dart';
+import 'package:flutterohddul/utils/screen.utils.dart';
 import 'package:pie_chart/pie_chart.dart';
 
 class FavScreen extends StatefulWidget {
@@ -109,7 +112,7 @@ class StockBlock extends StatefulWidget {
 }
 
 class _StockBlockState extends State<StockBlock> {
-  stockListBarElement(BuildContext context) {
+  _stockListBarElement(BuildContext context) {
     var theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(
@@ -117,7 +120,7 @@ class _StockBlockState extends State<StockBlock> {
         vertical: 5,
       ),
       decoration: BoxDecoration(
-        color: theme.canvasColor,
+        color: theme.colorScheme.primary,
         border: Border(
           bottom: BorderSide(
             width: 1.2,
@@ -134,7 +137,7 @@ class _StockBlockState extends State<StockBlock> {
             padding: const EdgeInsets.all(5),
             margin: const EdgeInsets.only(right: 10),
             decoration: BoxDecoration(
-              color: theme.scaffoldBackgroundColor,
+              color: theme.colorScheme.background,
               borderRadius: const BorderRadius.all(
                 Radius.circular(50),
               ),
@@ -182,10 +185,10 @@ class _StockBlockState extends State<StockBlock> {
     );
   }
 
-  stockSlideScreen(BuildContext context) {
+  _stockSlideScreen(BuildContext context) {
     var theme = Theme.of(context);
     return Container(
-      width: MediaQuery.of(context).size.width,
+      width: Screen(context).w,
       alignment: Alignment.topCenter,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -195,7 +198,7 @@ class _StockBlockState extends State<StockBlock> {
             width: 25,
             height: 5,
             decoration: BoxDecoration(
-              color: theme.scaffoldBackgroundColor,
+              color: theme.colorScheme.background,
               borderRadius: const BorderRadius.all(
                 Radius.circular(50),
               ),
@@ -207,7 +210,7 @@ class _StockBlockState extends State<StockBlock> {
             height: 60,
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: theme.scaffoldBackgroundColor,
+              color: theme.colorScheme.background,
               borderRadius: const BorderRadius.all(
                 Radius.circular(50),
               ),
@@ -216,11 +219,11 @@ class _StockBlockState extends State<StockBlock> {
           ),
           Text(
             widget.stock.name,
-            style: theme.textTheme.bodySmall,
+            style: theme.textTheme.labelLarge,
           ),
           PriceView(
             widget.stock.currentPrice,
-            style: theme.textTheme.bodyLarge,
+            style: theme.textTheme.labelLarge,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -228,7 +231,7 @@ class _StockBlockState extends State<StockBlock> {
               PriceColorView(
                 widget.stock.priceChange,
                 asPercent: false,
-                style: theme.textTheme.bodySmall,
+                style: theme.textTheme.labelSmall,
               ),
               const SizedBox(
                 width: 5,
@@ -236,7 +239,7 @@ class _StockBlockState extends State<StockBlock> {
               PriceColorView(
                 widget.stock.priceChangeRatio,
                 asPercent: true,
-                style: theme.textTheme.bodySmall,
+                style: theme.textTheme.labelSmall,
               ),
             ],
           ),
@@ -283,7 +286,7 @@ class _StockBlockState extends State<StockBlock> {
             children: [
               const SizedBox(height: 30),
               SizedBox(
-                width: MediaQuery.of(context).size.width,
+                width: Screen(context).w,
                 height: 300,
                 child: const Placeholder(),
               ),
@@ -318,7 +321,7 @@ class _StockBlockState extends State<StockBlock> {
               const Divider(),
               const SizedBox(height: 30),
               SizedBox(
-                width: MediaQuery.of(context).size.width,
+                width: Screen(context).w,
                 height: 200,
                 child: const PieChart(
                   dataMap: {"1": 2},
@@ -349,24 +352,24 @@ class _StockBlockState extends State<StockBlock> {
           context: context,
           builder: (BuildContext context) {
             return Container(
-              height: MediaQuery.of(context).size.height - 20,
-              width: MediaQuery.of(context).size.width,
+              height: Screen(context).h - 20,
+              width: Screen(context).w,
               decoration: BoxDecoration(
-                color: theme.canvasColor,
+                color: theme.colorScheme.primary,
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(10),
                   topRight: Radius.circular(10),
                 ),
               ),
               child: SizedBox(
-                height: MediaQuery.of(context).size.height,
-                child: stockSlideScreen(context),
+                height: Screen(context).h,
+                child: _stockSlideScreen(context),
               ),
             );
           },
         );
       },
-      child: stockListBarElement(context),
+      child: _stockListBarElement(context),
     );
   }
 }
@@ -388,7 +391,7 @@ class DividerBlock extends StatelessWidget {
         vertical: 5,
       ),
       decoration: BoxDecoration(
-        color: theme.canvasColor,
+        color: theme.colorScheme.primary,
       ),
       child: Container(
         alignment: Alignment.centerLeft,

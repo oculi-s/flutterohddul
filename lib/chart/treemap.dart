@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutterohddul/data/element.dart';
 import 'package:flutterohddul/utils/colorconvert.dart';
 import 'package:flutterohddul/utils/group.color.dart';
+import 'package:flutterohddul/utils/screen.utils.dart';
 
 double dim = 1;
 
@@ -198,24 +199,19 @@ class _TreeMapWidgetState extends State<TreeMapWidget> {
 
   @override
   Widget build(BuildContext context) {
-    var w = MediaQuery.of(context).size.width;
-    var h = MediaQuery.of(context).size.height -
-        kToolbarHeight -
-        kBottomNavigationBarHeight -
-        20;
     var theme = Theme.of(context);
     return Container(
-      width: w,
-      height: h,
+      width: Screen(context).w,
+      height: Screen(context).c,
       child: Stack(
         children: Group().data.values.where((e) => e.tree != null).map((e) {
           var name = e.name;
           var rect = e.tree!;
           return Positioned(
-            left: rect.x / dim * w,
-            top: rect.y / dim * h,
-            width: rect.dx / dim * w,
-            height: rect.dy / dim * h,
+            left: Screen(context).ratio.w(rect.x / dim),
+            top: Screen(context).ratio.c(rect.y / dim),
+            width: Screen(context).ratio.w(rect.dx / dim),
+            height: Screen(context).ratio.c(rect.dy / dim),
             child: Container(
               color: darken(groupBg[name] ?? Colors.grey, 0.15).withOpacity(.8),
               child: LayoutBuilder(
@@ -230,12 +226,12 @@ class _TreeMapWidgetState extends State<TreeMapWidget> {
                         height: h * 0.2,
                         child: e.image(w * 0.6, h * 0.3),
                       ),
-                      SizedBox(
-                        height: h * 0.2,
+                      FittedBox(
+                        fit: BoxFit.contain,
                         child: Text(
                           '${(rect.value! * 100).toStringAsFixed(1)}%',
                           style: TextStyle(
-                            fontSize: h * 0.1,
+                            fontSize: w * .2,
                             color: groupText[name] ?? Colors.white,
                           ),
                         ),

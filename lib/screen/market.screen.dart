@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:flutterohddul/chart/ecoschart.dart';
 import 'package:flutterohddul/chart/treemap.dart';
 import 'package:flutterohddul/data/market.dart';
+import 'package:flutterohddul/utils/screen.utils.dart';
 
 class MarketScreen extends StatefulWidget {
   @override
@@ -148,7 +149,7 @@ class _MarketScreenState extends State<MarketScreen> {
           decoration: BoxDecoration(
             color: !_legendVisibility[code]!
                 ? theme.highlightColor
-                : theme.canvasColor,
+                : theme.colorScheme.primary,
             border: Border(
               bottom: BorderSide(
                 width: 1.2,
@@ -189,7 +190,7 @@ class _MarketScreenState extends State<MarketScreen> {
     );
   }
 
-  Widget innerData() {
+  Widget _innerData() {
     var bar = _currentBar.from(_currentIndex);
     var theme = Theme.of(context);
     if (_currentIndex[0] == 0) {
@@ -197,7 +198,7 @@ class _MarketScreenState extends State<MarketScreen> {
         children: [
           Text(
             bar.name,
-            style: theme.textTheme.bodyLarge,
+            style: theme.textTheme.labelLarge,
             textAlign: TextAlign.start,
           ),
           Row(
@@ -240,7 +241,7 @@ class _MarketScreenState extends State<MarketScreen> {
         child: Stack(
           children: [
             Positioned(
-                width: MediaQuery.of(context).size.width,
+                width: Screen(context).w,
                 top: 0,
                 child: BottomNavigationBar(
                   currentIndex: _currentIndex[0],
@@ -263,15 +264,15 @@ class _MarketScreenState extends State<MarketScreen> {
                   },
                 )),
             Positioned(
-              width: MediaQuery.of(context).size.width,
+              width: Screen(context).w,
               top: 60,
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 5),
-                child: innerData(),
+                child: _innerData(),
               ),
             ),
             Positioned(
-              width: MediaQuery.of(context).size.width,
+              width: Screen(context).w,
               left: 0,
               top: 60,
               child: AnimatedContainer(
@@ -279,7 +280,7 @@ class _MarketScreenState extends State<MarketScreen> {
                 height:
                     _isListVisible ? _currentBar.child[i].child.length * 50 : 0,
                 child: Container(
-                  decoration: BoxDecoration(color: theme.canvasColor),
+                  decoration: BoxDecoration(color: theme.colorScheme.primary),
                   child: ListView.builder(
                     shrinkWrap: true,
                     itemCount: _currentBar.child[i].child.length,

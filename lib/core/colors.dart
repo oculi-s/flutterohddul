@@ -1,104 +1,54 @@
 import 'package:flutter/material.dart';
 
-const double size = 15;
+const double _size = 15;
 
-class DarkTheme {
-  static ThemeData theme = ThemeData(
-    colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xff2a2e39)),
-    scaffoldBackgroundColor: AppColors.dark.backgroundColor,
-    canvasColor: AppColors.dark.blockColor,
-    textTheme: TextTheme(
-      bodyLarge: TextStyle(
-        color: AppColors.dark.defaultTextColor,
-        fontWeight: FontWeight.w600,
-        fontSize: size * 1.2,
-      ),
-      bodyMedium: TextStyle(
-        color: AppColors.dark.defaultTextColor,
-        fontWeight: FontWeight.w400,
-        fontSize: size,
-      ),
-      bodySmall: TextStyle(
-        color: AppColors.dark.defaultTextColor,
-        fontSize: size * .8,
-      ),
-    ),
-    dividerColor: AppColors.dark.backgroundColor,
-    dividerTheme: DividerThemeData(
-      color: AppColors.dark.backgroundColor,
-      thickness: 0,
-    ),
+_appliedTextTheme(textStyle) {
+  return TextTheme(
+    bodySmall: textStyle,
+    bodyMedium: textStyle,
+    bodyLarge: textStyle,
+    labelSmall: textStyle,
+    labelMedium: textStyle,
+    labelLarge: textStyle,
+    displaySmall: textStyle,
+    displayMedium: textStyle,
+    displayLarge: textStyle,
   );
 }
 
-class LightTheme {
-  static ThemeData theme = ThemeData(
-    colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xff111329)),
-    scaffoldBackgroundColor: AppColors.light.backgroundColor,
-    canvasColor: AppColors.light.blockColor,
-    textTheme: TextTheme(
-      bodyLarge: TextStyle(
-        color: AppColors.light.defaultTextColor,
-        fontWeight: FontWeight.w600,
-        fontSize: size * 1.2,
-      ),
-      bodyMedium: TextStyle(
-        color: AppColors.light.defaultTextColor,
-        fontWeight: FontWeight.w400,
-        fontSize: size,
-      ),
-      bodySmall: TextStyle(
-        color: AppColors.light.defaultTextColor,
-        fontSize: size * .8,
-      ),
-    ),
-    dividerColor: AppColors.light.backgroundColor,
-    dividerTheme: DividerThemeData(
-      color: AppColors.light.backgroundColor,
-      thickness: 0,
-      endIndent: 0,
-      space: 0,
-    ),
-  );
-}
+class MyTheme {
+  Brightness brightness;
 
-class ColorMap {
-  Color backgroundColor;
-  Color blockColor;
+  MyTheme({
+    required this.brightness,
+  }) {
+    theme = ThemeData(
+      brightness: brightness,
+      colorScheme: const ColorScheme.dark().copyWith(
+        brightness: brightness,
+        background: _backgroundColor,
+        primary: _primary,
+      ),
+      dividerColor: _dividerColor,
+      dividerTheme: DividerThemeData(
+        color: _dividerColor,
+        thickness: 0,
+      ),
+      textTheme: _appliedTextTheme(_textStyle),
+    );
+  }
+  bool get _d => brightness == Brightness.dark;
+  Color get _textColor => _d ? Color(0xffD1D4DC) : Color(0xff131722);
+  Color get _backgroundColor => _d ? Color(0xff2a2e39) : Color(0xffe0e3eb);
+  Color get _dividerColor => _d ? Color(0xff2A2E39) : Color(0xfff0F3FA);
 
-  Color defaultTextColor;
-  Color subTextColor;
-  Color indicatorContainerColor;
-  Color borderColor;
+  Color get _primary => _d ? Color(0xff131722) : Color(0xffFFFFFF);
 
-  ColorMap({
-    required this.backgroundColor,
-    required this.blockColor,
-    required this.defaultTextColor,
-    required this.subTextColor,
-    required this.indicatorContainerColor,
-    required this.borderColor,
-  });
+  TextStyle get _textStyle => TextStyle(color: _textColor);
+  late ThemeData theme;
 }
 
 class AppColors {
-  static ColorMap dark = ColorMap(
-    backgroundColor: const Color(0xff2a2e39),
-    blockColor: const Color(0xff131722),
-    defaultTextColor: const Color(0xffD1D4DC),
-    subTextColor: const Color(0xff868993),
-    indicatorContainerColor: const Color(0xff131722),
-    borderColor: const Color(0xff2A2E39),
-  );
-
-  static ColorMap light = ColorMap(
-    backgroundColor: const Color(0xffe0e3eb),
-    blockColor: const Color(0xffFFFFFF),
-    defaultTextColor: const Color(0xff131722),
-    subTextColor: const Color(0xff6a6d78),
-    indicatorContainerColor: const Color(0xffFFFFFF),
-    borderColor: const Color(0xfff0F3FA),
-  );
   static const Color kakao = Color(0xffFEE500);
 
   static const Color plus = Color(0xff22ab94);

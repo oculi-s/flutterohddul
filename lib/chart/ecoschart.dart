@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutterohddul/data/market.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutterohddul/screen/market.screen.dart';
+import 'package:flutterohddul/utils/screen.utils.dart';
 import 'package:intl/intl.dart';
 
 class EcosChartWidget extends StatefulWidget {
@@ -75,7 +76,7 @@ class _EcosChartWidgetState extends State<EcosChartWidget> {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
-        color: theme.canvasColor,
+        color: theme.colorScheme.primary,
         border: Border(
           bottom: BorderSide(
             width: 1.2,
@@ -84,7 +85,7 @@ class _EcosChartWidgetState extends State<EcosChartWidget> {
         ),
       ),
       child: SizedBox(
-        width: MediaQuery.of(context).size.width,
+        width: Screen(context).w,
         height: 300,
         child: LineChart(
           LineChartData(
@@ -145,7 +146,7 @@ class _EcosChartWidgetState extends State<EcosChartWidget> {
               enabled: true,
               touchTooltipData: LineTouchTooltipData(
                 fitInsideHorizontally: true,
-                tooltipBgColor: theme.canvasColor,
+                tooltipBgColor: theme.colorScheme.primary,
                 getTooltipItems: (List<LineBarSpot> touchedBarSpots) {
                   touchedBarSpots.sort((a, b) => a.barIndex - b.barIndex);
                   var res = touchedBarSpots.map((e) {
