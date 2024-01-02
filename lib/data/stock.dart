@@ -9,11 +9,11 @@ class Stock {
 
   Map<String, StockData> data = {};
   StockData fromCode(String code) {
-    final data = Meta().meta?.data?.entries.firstWhere((e) {
+    final stock = Meta().meta?.data?.entries.firstWhere((e) {
       return e.key == code || e.value['n'] == code;
-    }).value;
-    if (data == null) return StockData(valid: false);
-    if (data[code] != null) return data[code];
+    });
+    if (stock == null) return StockData(valid: false);
+    if (data[code] != null) return data[code]!;
     final groupName = Meta().group?.index?[code];
     final indutyCode = Meta().indutyIndex?.data?[code];
     int currentPrice = Meta().price?.data?[code]?['c'] ?? 0;
@@ -21,66 +21,61 @@ class Stock {
     int historicalPrice = Meta().hist?.data?[code]?['h'] ?? 0;
     int bps = Meta().price?.data?[code]?['bps'] ?? 0;
     int eps = Meta().price?.data?[code]?['eps'] ?? 0;
+    print(stock);
 
     data[code] = StockData(
       valid: true,
-      code: code,
-      name: data?['n'],
-      amount: data?['a'],
-      marketType: data?['t'],
+      code: stock.key,
+      name: stock.value['n'],
+      amount: stock.value['a'],
+      marketType: stock.value['t'],
       group: Group().data[groupName],
       induty: Induty().data[indutyCode],
       currentPrice: currentPrice,
       lastPrice: lastPrice,
       historicalPrice: historicalPrice,
-      priceChange: lastPrice - currentPrice,
-      priceChangeRatio: (lastPrice - currentPrice) / lastPrice * 100,
-      marketCap: (currentPrice * data['a']).toInt(),
       bps: bps,
       eps: eps,
-      bpsRatio: (bps / currentPrice).toDouble(),
-      epsRatio: (eps / currentPrice).toDouble(),
     );
-    return data[code];
+    return data[code]!;
   }
 }
 
 class StockData {
   bool valid = true;
-  String? code;
-  String? name;
+  String code;
+  String name;
   String? marketType;
   int? amount;
   GroupData? group;
   IndutyData? induty;
 
-  int? currentPrice, lastPrice, historicalPrice, priceChange;
-  int? marketCap;
-  int? bps, eps;
-  double? bpsRatio, epsRatio;
-  double? priceChangeRatio;
+  int currentPrice, lastPrice, historicalPrice;
+  int bps, eps;
   List<Earn>? earn;
   Price? price;
 
   StockData({
     required this.valid,
-    this.code,
-    this.name,
+    this.code = '',
+    this.name = '',
     this.induty,
     this.group,
     this.marketType,
     this.amount,
-    this.currentPrice,
-    this.lastPrice,
-    this.historicalPrice,
-    this.priceChange,
-    this.priceChangeRatio,
-    this.marketCap,
-    this.bps,
-    this.eps,
-    this.bpsRatio,
-    this.epsRatio,
+    this.currentPrice = 0,
+    this.lastPrice = 0,
+    this.historicalPrice = 0,
+    this.bps = 0,
+    this.eps = 0,
   });
+
+  int get marketCap => (currentPrice! * amount!).toInt();
+  int get priceChange => (lastPrice! - currentPrice!);
+  double get priceChangeRatio =>
+      (lastPrice! - currentPrice!) / lastPrice! * 100;
+  double get bpsRatio => bps! / currentPrice!;
+  double get epsRatio => eps! / currentPrice!;
 
   Future<bool> addPrice() async {
     price = await Price.read(this);

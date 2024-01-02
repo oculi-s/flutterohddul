@@ -25,11 +25,11 @@ class ThemeProvider extends InheritedWidget {
   final Function() toggleTheme;
 
   const ThemeProvider({
-    Key? key,
+    super.key,
     required this.currentTheme,
     required Widget child,
     required this.toggleTheme,
-  }) : super(key: key, child: child);
+  }) : super(child: child);
 
   static ThemeProvider of(BuildContext context) {
     return context.dependOnInheritedWidgetOfExactType<ThemeProvider>()!;
@@ -42,18 +42,17 @@ class ThemeProvider extends InheritedWidget {
 }
 
 class _MainAppState extends State<MainApp> {
-  // ThemeData currentTheme = DarkTheme.theme;
-  ThemeData currentTheme = LightTheme.theme;
+  ThemeMode themeMode = ThemeMode.system;
 
   @override
   Widget build(BuildContext context) {
     return ThemeProvider(
-      currentTheme: currentTheme,
+      currentTheme:
+          themeMode == ThemeMode.dark ? DarkTheme.theme : LightTheme.theme,
       toggleTheme: () {
         setState(() {
-          currentTheme = currentTheme == DarkTheme.theme
-              ? LightTheme.theme
-              : DarkTheme.theme;
+          themeMode =
+              themeMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
         });
       },
       child: MaterialApp.router(
@@ -61,8 +60,7 @@ class _MainAppState extends State<MainApp> {
         debugShowCheckedModeBanner: false,
         theme: LightTheme.theme,
         darkTheme: DarkTheme.theme,
-        themeMode:
-            currentTheme == DarkTheme.theme ? ThemeMode.dark : ThemeMode.light,
+        themeMode: themeMode,
       ),
     );
   }

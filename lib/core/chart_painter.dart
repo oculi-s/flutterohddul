@@ -26,7 +26,7 @@ class ChartPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    double x = _drawBasicMeta(canvas, params);
+    _drawBasicMeta(canvas, params);
     // Draw time labels (dates) & price labels
     _drawTimeLabels(canvas, params);
     _drawPriceGridAndLabels(canvas, params);
@@ -48,12 +48,12 @@ class ChartPainter extends CustomPainter {
     // Draw tap highlight & overlay
     if (params.tapPosition != null) {
       if (params.tapPosition!.dx < params.chartWidth) {
-        _drawTapHighlightAndOverlay(canvas, params, x);
+        _drawTapHighlightAndOverlay(canvas, params);
       }
     }
   }
 
-  double _drawBasicMeta(canvas, PainterParams params) {
+  void _drawBasicMeta(canvas, PainterParams params) {
     double x = 10;
     StockData stock = params.stock;
 
@@ -68,9 +68,9 @@ class ChartPainter extends CustomPainter {
     final nameTp = makeTP(stock.name!);
     final codeTp = makeTP(stock.code!);
     nameTp.paint(canvas, Offset(x, 8));
-    codeTp.paint(canvas, Offset(x, 25));
     x += nameTp.width + 3;
-    return x;
+    codeTp.paint(canvas, Offset(x, 8));
+    x += nameTp.width + 3;
   }
 
   void _drawTimeLabels(canvas, PainterParams params) {
@@ -174,11 +174,10 @@ class ChartPainter extends CustomPainter {
     }
     // Draw trend line
     for (int j = 0; j < candle.trends.length; j++) {
-      final trendLinePaint = params.style.trendLineStyles.at(j) ??
-          (Paint()
-            ..strokeWidth = 1
-            ..strokeCap = StrokeCap.round
-            ..color = params.style.priceGainColor);
+      final trendLinePaint = params.style.trendLineStyles.at(j) ?? Paint()
+        ..strokeWidth = 1
+        ..strokeCap = StrokeCap.round
+        ..color = params.style.priceGainColor;
 
       final pt = candle.trends.at(j); // current data point
       final prevPt = params.candles.at(i - 1)?.trends.at(j);
@@ -215,7 +214,7 @@ class ChartPainter extends CustomPainter {
     }
   }
 
-  void _drawTapHighlightAndOverlay(canvas, PainterParams params, double x) {
+  void _drawTapHighlightAndOverlay(canvas, PainterParams params) {
     final pos = params.tapPosition!;
     final i = params.getCandleIndexFromOffset(pos.dx);
     final candle = params.candles[i];
@@ -306,10 +305,10 @@ class ChartPainter extends CustomPainter {
         ));
     // Draw info pane
     // _drawTapInfoOverlay(canvas, params, candle);
-    _drawTapOHLCInfo(canvas, params, candle, x);
+    _drawTapOHLCInfo(canvas, params, candle);
   }
 
-  void _drawTapOHLCInfo(canvas, PainterParams params, Candle candle, double x) {
+  void _drawTapOHLCInfo(canvas, PainterParams params, Candle candle) {
     double diff = (candle.c! - candle.o!) / candle.o! * 100;
     TextStyle priceStyle = diff > 0
         ? params.style.overlayPriceGainStyle
@@ -328,16 +327,18 @@ class ChartPainter extends CustomPainter {
     final labels = info.keys.map((text) => makeTP(text)).toList();
     final values = info.values.map((text) => makeTP(text, true)).toList();
 
+    double x = 10, y = 30;
     for (int i = 0; i < labels.length; i++) {
-      labels[i].paint(canvas, Offset(x, 10));
+      labels[i].paint(canvas, Offset(x, y));
       x += labels[i].width + 1;
-      values[i].paint(canvas, Offset(x, 10));
+      values[i].paint(canvas, Offset(x, y));
       x += values[i].width + 5;
     }
 
-    makeTP('(${diff.asPercent()})', true).paint(canvas, Offset(x, 10));
+    makeTP('(${diff.asPercent()})', true).paint(canvas, Offset(x, y));
   }
 
+  /*
   void _drawTapInfoOverlay(canvas, PainterParams params, Candle candle) {
     final xGap = 8.0;
     final yGap = 4.0;
@@ -413,6 +414,7 @@ class ChartPainter extends CustomPainter {
 
     canvas.restore();
   }
+  */
 
   @override
   bool shouldRepaint(ChartPainter oldDelegate) =>

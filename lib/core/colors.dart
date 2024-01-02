@@ -4,10 +4,9 @@ const double size = 15;
 
 class DarkTheme {
   static ThemeData theme = ThemeData(
+    colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xff2a2e39)),
     scaffoldBackgroundColor: AppColors.dark.backgroundColor,
-    fontFamily: 'NotoSansKR',
     canvasColor: AppColors.dark.blockColor,
-    focusColor: const Color(0xff006AB5),
     textTheme: TextTheme(
       bodyLarge: TextStyle(
         color: AppColors.dark.defaultTextColor,
@@ -34,8 +33,8 @@ class DarkTheme {
 
 class LightTheme {
   static ThemeData theme = ThemeData(
+    colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xff111329)),
     scaffoldBackgroundColor: AppColors.light.backgroundColor,
-    fontFamily: 'NotoSansKR',
     canvasColor: AppColors.light.blockColor,
     textTheme: TextTheme(
       bodyLarge: TextStyle(
@@ -106,7 +105,7 @@ class AppColors {
   static const Color minus = Color(0xfff23645);
 
   static const Color bgDarker = Color(0xFF030D18);
-  static const Color bgDark = Color.fromARGB(255, 1, 2, 7);
+  static const Color bgDark = Color(0xFF010207);
   static const Color bgMidDark = Color(0xFF111329);
   static const Color bgMid = Color(0xFF181633);
   static const Color bgMidBright = Color(0xFF16223B);

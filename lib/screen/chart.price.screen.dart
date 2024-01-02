@@ -1,3 +1,4 @@
+import 'package:candlesticks/candlesticks.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutterohddul/chart/pricechart.dart';
@@ -18,26 +19,23 @@ class _PriceScreenState extends State<PriceScreen> {
   final codeController = TextEditingController();
   String stockCode = '005930';
   late StockData stock;
-  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
     stock = Stock().fromCode(stockCode);
-    if (stock.valid) {
-      stock.addPrice().then((e) {
-        setState(() {
-          isLoading = false;
-        });
-      });
-    }
   }
 
   _onCodeChanged(String code) {
     codeController.clear();
-    setState(() {
-      stockCode = code;
-    });
+    stockCode = code;
+    stock = Stock().fromCode(stockCode);
+    print(stock.toJson());
+    if (stock.valid) {
+      setState(() {
+        stock.addPrice();
+      });
+    }
   }
 
   @override
@@ -45,7 +43,7 @@ class _PriceScreenState extends State<PriceScreen> {
     final themeProvider = ThemeProvider.of(context);
     final theme = Theme.of(context);
 
-    search() {
+    _search() {
       return SizedBox(
         width: 100,
         child: TextField(
@@ -60,42 +58,34 @@ class _PriceScreenState extends State<PriceScreen> {
       );
     }
 
-    change() {
-      return IconButton(
-        onPressed: () {
-          setState(() {
-            themeProvider.toggleTheme();
-          });
-        },
-        icon: Icon(
-          themeProvider.currentTheme == Brightness.dark
-              ? Icons.wb_sunny_sharp
-              : Icons.nightlight_round_outlined,
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _search(),
+        FutureBuilder(
+          future: stock.addPrice(),
+          builder: (BuildContext context, snapshot) => snapshot.hasData
+              ? Container(
+                  height: 300,
+                  decoration: BoxDecoration(color: theme.canvasColor),
+                  child: PriceChartWidget(
+                    stock: stock,
+                    candles: stock.price!.candles,
+                    initialVisibleCandleCount: 100,
+                    style: ChartStyle(
+                      selectionHighlightColor: Colors.black,
+                      overlayBackgroundColor: Colors.transparent,
+                    ),
+                  ),
+                )
+              : Container(
+                  width: double.infinity,
+                  height: 450,
+                  alignment: Alignment.center,
+                  child: const CircularProgressIndicator(),
+                ),
         ),
-      );
-    }
-
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        title: search(),
-        actions: [change()],
-      ),
-      body: isLoading
-          ? Container(
-              width: double.infinity,
-              height: 450,
-              alignment: Alignment.center,
-              child: const CircularProgressIndicator(),
-            )
-          : PriceChartWidget(
-              stock: stock,
-              candles: stock.price!.candles,
-              initialVisibleCandleCount: 100,
-              style: ChartStyle(
-                selectionHighlightColor: Colors.black,
-              ),
-            ),
+      ],
     );
   }
 }

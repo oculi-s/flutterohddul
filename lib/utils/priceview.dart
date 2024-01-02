@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 class PriceColorView extends StatelessWidget {
   final bool asPercent;
   final dynamic value;
-  final TextStyle style;
+  final TextStyle? style;
 
   const PriceColorView(
     this.value, {
@@ -19,7 +19,7 @@ class PriceColorView extends StatelessWidget {
       value > 0
           ? '+${asPercent ? value.toStringAsFixed(2) : NumberFormat('#,###,###').format(value)}${asPercent ? '%' : ''}'
           : '${asPercent ? value.toStringAsFixed(2) : NumberFormat('#,###,###').format(value)}${asPercent ? '%' : ''}',
-      style: style.copyWith(
+      style: style?.copyWith(
         color: value > 0 ? Colors.green : Colors.red,
       ),
     );

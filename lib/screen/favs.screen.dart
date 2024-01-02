@@ -47,7 +47,7 @@ class _FavScreenState extends State<FavScreen> {
     return Container(
       child: LoginUser().valid
           ? Column(
-              children: List<Widget>.from(
+              children: List.from(
                 LoginUser().user.favs!.map(
                       (e) => e.runtimeType == StockData
                           ? StockBlock(stock: e)
@@ -56,7 +56,7 @@ class _FavScreenState extends State<FavScreen> {
               ),
             )
           : Column(
-              children: List<Widget>.from(defaultList.map(
+              children: List.from(defaultList.map(
                 (stock) => stock.runtimeType == StockData
                     ? StockBlock(stock: stock)
                     : DividerBlock(text: stock),
@@ -71,7 +71,25 @@ class _FavScreenState extends State<FavScreen> {
       child: Scaffold(
         body: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 3),
-          child: data(),
+          child: Container(
+            child: LoginUser().valid
+                ? Column(
+                    children: List.from(
+                      LoginUser().user.favs!.map(
+                            (e) => e.runtimeType == StockData
+                                ? StockBlock(stock: e)
+                                : DividerBlock(text: e),
+                          ),
+                    ),
+                  )
+                : Column(
+                    children: List.from(defaultList.map(
+                      (stock) => stock.runtimeType == StockData
+                          ? StockBlock(stock: stock)
+                          : DividerBlock(text: stock),
+                    )),
+                  ),
+          ),
         ),
       ),
     );
@@ -130,9 +148,9 @@ class _StockBlockState extends State<StockBlock> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(widget.stock.name!),
+                    Text(widget.stock.name),
                     Text(
-                      widget.stock.code!,
+                      widget.stock.code,
                       style: theme.textTheme.bodySmall,
                     ),
                   ],
@@ -140,7 +158,7 @@ class _StockBlockState extends State<StockBlock> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    PriceView(widget.stock.currentPrice!),
+                    PriceView(widget.stock.currentPrice),
                     Row(children: [
                       PriceColorView(
                         widget.stock.priceChange,
@@ -149,7 +167,7 @@ class _StockBlockState extends State<StockBlock> {
                       ),
                       const SizedBox(width: 10),
                       PriceColorView(
-                        widget.stock.priceChangeRatio!,
+                        widget.stock.priceChangeRatio,
                         asPercent: true,
                         style: theme.textTheme.bodySmall!,
                       ),
@@ -197,11 +215,11 @@ class _StockBlockState extends State<StockBlock> {
             child: widget.stock.group!.image(),
           ),
           Text(
-            widget.stock.name!,
+            widget.stock.name,
             style: theme.textTheme.bodySmall,
           ),
           PriceView(
-            widget.stock.currentPrice!,
+            widget.stock.currentPrice,
             style: theme.textTheme.bodyLarge,
           ),
           Row(
@@ -210,7 +228,7 @@ class _StockBlockState extends State<StockBlock> {
               PriceColorView(
                 widget.stock.priceChange,
                 asPercent: false,
-                style: theme.textTheme.bodySmall!,
+                style: theme.textTheme.bodySmall,
               ),
               const SizedBox(
                 width: 5,
@@ -218,7 +236,7 @@ class _StockBlockState extends State<StockBlock> {
               PriceColorView(
                 widget.stock.priceChangeRatio,
                 asPercent: true,
-                style: theme.textTheme.bodySmall!,
+                style: theme.textTheme.bodySmall,
               ),
             ],
           ),
@@ -281,7 +299,7 @@ class _StockBlockState extends State<StockBlock> {
                       children: [
                         const Text('시총'),
                         MarketCapView(
-                          widget.stock.marketCap!,
+                          widget.stock.marketCap,
                           style: theme.textTheme.bodySmall,
                         )
                       ],

@@ -55,7 +55,7 @@ class _MenuScreenState extends State<MenuScreen> {
               icon: _selectedIndex == 3
                   ? const Icon(Icons.movie)
                   : const Icon(Icons.movie_outlined),
-              label: '경제지표'),
+              label: '시황'),
           BottomNavigationBarItem(
               icon: _selectedIndex == 4
                   ? const Icon(Icons.person)

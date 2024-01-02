@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutterohddul/core/chart_painter.dart';
 import 'package:flutterohddul/data/candledata.dart';
 import 'package:flutterohddul/data/chartstyle.dart';
@@ -202,14 +201,14 @@ class _PriceChartWidgetState extends State<PriceChartWidget> {
         );
 
         return Listener(
-          onPointerSignal: (signal) {
-            if (signal is PointerScrollEvent) {
-              final dy = signal.scrollDelta.dy;
+          onPointerSignal: (e) {
+            if (e is PointerScrollEvent) {
+              final dy = e.scrollDelta.dy;
               if (dy.abs() > 0) {
-                _onScaleStart(signal.position);
+                _onScaleStart(e.position);
                 _onScaleUpdate(
                   dy > 0 ? 0.9 : 1.1,
-                  signal.position,
+                  e.position,
                   w,
                 );
               }
@@ -222,14 +221,11 @@ class _PriceChartWidgetState extends State<PriceChartWidget> {
             }),
             child: GestureDetector(
               // Tap and hold to view candle details
-              onTapDown: (e) => setState(() {
-                _tapPosition = e.localPosition;
-              }),
-              onTapCancel: () => setState(() => _tapPosition = null),
-              onTapUp: (_) {
+              // onTapCancel: () => setState(() => _tapPosition = null),
+              onTapUp: (e) {
                 // Fire callback event and reset _tapPosition
-                if (widget.onTap != null) _fireOnTapEvent();
-                setState(() => _tapPosition = null);
+                // if (widget.onTap != null) _fireOnTapEvent();
+                setState(() => _tapPosition = e.globalPosition);
               },
               // Pan and zoom
               onScaleStart: (e) => _onScaleStart(e.localFocalPoint),
@@ -273,6 +269,7 @@ class _PriceChartWidgetState extends State<PriceChartWidget> {
     setState(() {
       _candleWidth = candleWidth;
       _startOffset = startOffset;
+      _tapPosition = focalPoint;
     });
   }
 
