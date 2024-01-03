@@ -231,7 +231,7 @@ class _TreeMapWidgetState extends State<TreeMapWidget> {
                         child: Text(
                           '${(rect.value! * 100).toStringAsFixed(1)}%',
                           style: TextStyle(
-                            fontSize: w * .2,
+                            fontSize: h * .2,
                             color: groupText[name] ?? Colors.white,
                           ),
                         ),

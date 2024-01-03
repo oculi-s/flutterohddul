@@ -1,10 +1,11 @@
 import 'dart:math';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:flutterohddul/chart/pricechart.dart';
 import 'package:flutterohddul/data/candledata.dart';
 import 'package:flutterohddul/data/painter.dart';
 import 'package:flutterohddul/data/stock.dart';
+import 'package:flutterohddul/utils/formatter.dart';
 
 typedef TimeLabelGetter = String Function(int timestamp, int visibleDataCount,
     [bool isTapped]);
@@ -15,13 +16,11 @@ class ChartPainter extends CustomPainter {
   final PainterParams params;
   final TimeLabelGetter getTimeLabel;
   final PriceLabelGetter getPriceLabel;
-  final OverlayInfoGetter getOverlayInfo;
 
   ChartPainter({
     required this.params,
     required this.getTimeLabel,
     required this.getPriceLabel,
-    required this.getOverlayInfo,
   });
 
   @override
@@ -34,11 +33,6 @@ class ChartPainter extends CustomPainter {
     // Draw prices, volumes & trend line
     canvas.save();
     canvas.clipRect(Offset.zero & Size(params.chartWidth, params.chartHeight));
-    // canvas.drawRect(
-    //   // apply yellow tint to clipped area (for debugging)
-    //   Offset.zero & Size(params.chartWidth, params.chartHeight),
-    //   Paint()..color = Colors.yellow[100]!,
-    // );
     canvas.translate(params.xShift, 0);
     for (int i = 0; i < params.candles.length; i++) {
       _drawSingleDay(canvas, params, i);
@@ -83,6 +77,13 @@ class ChartPainter extends CustomPainter {
       if (index < params.candles.length) {
         final candle = params.candles[index];
         final visibleDataCount = params.candles.length;
+        canvas.drawLine(
+          Offset(x, 0),
+          Offset(x, params.chartHeight),
+          Paint()
+            ..strokeWidth = 0.3
+            ..color = params.style.priceGridLineColor,
+        );
         final timeTp = TextPainter(
           text: TextSpan(
             text: getTimeLabel(candle.timestamp, visibleDataCount),
@@ -110,7 +111,7 @@ class ChartPainter extends CustomPainter {
         Offset(0, params.fitPrice(y)),
         Offset(params.chartWidth, params.fitPrice(y)),
         Paint()
-          ..strokeWidth = 0.5
+          ..strokeWidth = 0.3
           ..color = params.style.priceGridLineColor,
       );
       final priceTp = TextPainter(
@@ -173,43 +174,19 @@ class ChartPainter extends CustomPainter {
       );
     }
     // Draw trend line
-    for (int j = 0; j < candle.trends.length; j++) {
+    for (int j = 0; j < candle.line.length; j++) {
       final trendLinePaint = params.style.trendLineStyles.at(j) ?? Paint()
         ..strokeWidth = 1
-        ..strokeCap = StrokeCap.round
-        ..color = params.style.priceGainColor;
+        ..strokeCap = StrokeCap.round;
 
-      final pt = candle.trends.at(j); // current data point
-      final prevPt = params.candles.at(i - 1)?.trends.at(j);
+      final pt = candle.line.at(j); // current data point
+      final prevPt = params.candles.at(i - 1)?.line.at(j);
       if (pt != null && prevPt != null) {
         canvas.drawLine(
           Offset(x - params.candleWidth, params.fitPrice(prevPt)),
           Offset(x, params.fitPrice(pt)),
           trendLinePaint,
         );
-      }
-      if (i == 0) {
-        // In the front, draw an extra line connecting to out-of-window data
-        if (pt != null && params.leadingTrends?.at(j) != null) {
-          canvas.drawLine(
-            Offset(x - params.candleWidth,
-                params.fitPrice(params.leadingTrends!.at(j)!)),
-            Offset(x, params.fitPrice(pt)),
-            trendLinePaint,
-          );
-        }
-      } else if (i == params.candles.length - 1) {
-        // At the end, draw an extra line connecting to out-of-window data
-        if (pt != null && params.trailingTrends?.at(j) != null) {
-          canvas.drawLine(
-            Offset(x, params.fitPrice(pt)),
-            Offset(
-              x + params.candleWidth,
-              params.fitPrice(params.trailingTrends!.at(j)!),
-            ),
-            trendLinePaint,
-          );
-        }
       }
     }
   }
@@ -304,7 +281,6 @@ class ChartPainter extends CustomPainter {
           params.chartHeight,
         ));
     // Draw info pane
-    // _drawTapInfoOverlay(canvas, params, candle);
     _drawTapOHLCInfo(canvas, params, candle);
   }
 
@@ -322,20 +298,57 @@ class ChartPainter extends CustomPainter {
         )
           ..textDirection = TextDirection.ltr
           ..layout();
-    final info = getOverlayInfo(candle);
-    if (info.isEmpty) return;
-    final labels = info.keys.map((text) => makeTP(text)).toList();
-    final values = info.values.map((text) => makeTP(text, true)).toList();
+    final _info = {
+      "O": candle.o?.asPrice() ?? "-",
+      "H": candle.h?.asPrice() ?? "-",
+      "L": candle.l?.asPrice() ?? "-",
+      "C": candle.c?.asPrice() ?? "-",
+    };
+    if (_info.isEmpty) return;
+    final labels = _info.keys.map((text) => makeTP(text)).toList();
+    final values = _info.values.map((text) => makeTP(text, true)).toList();
 
     double x = 10, y = 30;
     for (int i = 0; i < labels.length; i++) {
       labels[i].paint(canvas, Offset(x, y));
-      x += labels[i].width + 1;
+      x += labels[i].width + 2;
       values[i].paint(canvas, Offset(x, y));
       x += values[i].width + 5;
     }
-
     makeTP('(${diff.asPercent()})', true).paint(canvas, Offset(x, y));
+
+    x = 10;
+    y = 50;
+    final _infoTrends = {
+      "BB": candle.line[0]?.asPrice() ?? "-",
+      "하단": candle.line[1]?.asPrice() ?? "-",
+      "상단": candle.line[2]?.asPrice() ?? "-",
+    };
+
+    TextPainter makeTrendsTP(String text, int i, [bool isPrice = false]) =>
+        TextPainter(
+          text: TextSpan(
+            text: text,
+            style: isPrice
+                ? params.style.overlayTextStyle
+                    .copyWith(color: params.style.trendLineStyles[i].color)
+                : params.style.overlayTextStyle,
+          ),
+        )
+          ..textDirection = TextDirection.ltr
+          ..layout();
+    final labelsTrends = _infoTrends.keys
+        .mapIndexed((index, text) => makeTrendsTP(text, index))
+        .toList();
+    final valuesTrends = _infoTrends.values
+        .mapIndexed((index, text) => makeTrendsTP(text, index, true))
+        .toList();
+    for (int i = 0; i < candle.line.length; i++) {
+      labelsTrends[i].paint(canvas, Offset(x, y));
+      x += labelsTrends[i].width + 2;
+      valuesTrends[i].paint(canvas, Offset(x, y));
+      x += valuesTrends[i].width + 5;
+    }
   }
 
   /*

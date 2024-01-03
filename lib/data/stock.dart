@@ -13,7 +13,7 @@ class Stock {
       return e.key == code || e.value['n'] == code;
     });
     if (stock == null) return StockData(valid: false);
-    if (data[code] != null) return data[code]!;
+    if (data[code] is StockData) return data[code]!;
     final groupName = Meta().group?.index?[code];
     final indutyCode = Meta().indutyIndex?.data?[code];
     int currentPrice = Meta().price?.data?[code]?['c'] ?? 0;
@@ -21,7 +21,6 @@ class Stock {
     int historicalPrice = Meta().hist?.data?[code]?['h'] ?? 0;
     int bps = Meta().price?.data?[code]?['bps'] ?? 0;
     int eps = Meta().price?.data?[code]?['eps'] ?? 0;
-    print(stock);
 
     data[code] = StockData(
       valid: true,
@@ -46,7 +45,7 @@ class StockData {
   String code;
   String name;
   String? marketType;
-  int? amount;
+  int amount;
   GroupData? group;
   IndutyData? induty;
 
@@ -62,7 +61,7 @@ class StockData {
     this.induty,
     this.group,
     this.marketType,
-    this.amount,
+    this.amount = 0,
     this.currentPrice = 0,
     this.lastPrice = 0,
     this.historicalPrice = 0,
@@ -70,12 +69,12 @@ class StockData {
     this.eps = 0,
   });
 
-  int get marketCap => (currentPrice! * amount!).toInt();
-  int get priceChange => (lastPrice! - currentPrice!);
-  double get priceChangeRatio =>
-      (lastPrice! - currentPrice!) / lastPrice! * 100;
-  double get bpsRatio => bps! / currentPrice!;
-  double get epsRatio => eps! / currentPrice!;
+  int get marketCap => (currentPrice * amount).toInt();
+  int get priceChange => (currentPrice - lastPrice);
+  double get priceChangeRatio => priceChange / lastPrice * 100;
+  double get bpsRatio => bps / currentPrice;
+  double get epsRatio => eps / currentPrice;
+  double get tick => currentPrice >= 1000000 ? 5 : 1;
 
   Future<bool> addPrice() async {
     price = await Price.read(this);
@@ -103,12 +102,10 @@ class StockData {
 }
 
 class Price {
-  final bool valid;
   final StockData stock;
   final int last;
   final List<Candle> candles;
   Price({
-    required this.valid,
     required this.stock,
     required this.last,
     required this.candles,
@@ -126,16 +123,9 @@ class Price {
         v: p['v']?.toDouble(),
       );
     })).reversed.toList();
-    // [20, 60, 120]
 
-    [60].forEach((period) {
-      final ma = Candle.bollinger(candles, period);
-      for (int i = 0; i < candles.length; i++) {
-        candles[i].trends.addAll(ma[i]);
-      }
-    });
+    addbollinger(candles, 60);
     return Price(
-      valid: jsonData.isNotEmpty,
       stock: stock,
       last: jsonData['last'],
       candles: candles,

@@ -7,7 +7,7 @@ import 'package:flutterohddul/data/candledata.dart';
 import 'package:flutterohddul/data/chartstyle.dart';
 import 'package:flutterohddul/data/painter.dart';
 import 'package:flutterohddul/data/stock.dart';
-import 'package:intl/intl.dart' as intl;
+import 'package:flutterohddul/utils/formatter.dart';
 
 class PriceChartWidget extends StatefulWidget {
   final StockData stock;
@@ -60,7 +60,6 @@ class PriceChartWidget extends StatefulWidget {
   /// An optional event, fired when user zooms in/out.
   ///
   /// This provides the width of a candlestick at the current zoom level.
-  final ValueChanged<double>? onCandleResize;
 
   const PriceChartWidget({
     Key? key,
@@ -72,7 +71,6 @@ class PriceChartWidget extends StatefulWidget {
     this.priceLabel,
     this.overlayInfo,
     this.onTap,
-    this.onCandleResize,
   })  : style = style ?? const ChartStyle(),
         assert(candles.length >= 3,
             "InteractiveChart requires 3 or more CandleData"),
@@ -124,8 +122,6 @@ class _PriceChartWidgetState extends State<PriceChartWidget> {
 
         // If possible, find neighbouring trend line data,
         // so the chart could draw better-connected lines
-        final leadingTrends = widget.candles.at(start - 1)?.trends;
-        final trailingTrends = widget.candles.at(end + 1)?.trends;
 
         // Find the horizontal shift needed when drawing the candles.
         // First, always shift the chart by half a candle, because when we
@@ -163,9 +159,10 @@ class _PriceChartWidgetState extends State<PriceChartWidget> {
             .fold(double.infinity, min);
 
         // 애니메이션 끔
-        final child = TweenAnimationBuilder(
-          tween: PainterParamsTween(
-            end: PainterParams(
+        final child = CustomPaint(
+          size: size,
+          painter: ChartPainter(
+            params: PainterParams(
               stock: widget.stock,
               candles: candlesInRange,
               style: widget.style,
@@ -178,26 +175,10 @@ class _PriceChartWidgetState extends State<PriceChartWidget> {
               minVol: minVol,
               xShift: xShift,
               tapPosition: _tapPosition,
-              leadingTrends: leadingTrends,
-              trailingTrends: trailingTrends,
             ),
+            getTimeLabel: widget.timeLabel ?? defaultTimeLabel,
+            getPriceLabel: widget.priceLabel ?? defaultPriceLabel,
           ),
-          duration: Duration(milliseconds: 0),
-          curve: Curves.easeOut,
-          builder: (_, PainterParams params, __) {
-            _prevParams = params;
-            return RepaintBoundary(
-              child: CustomPaint(
-                size: size,
-                painter: ChartPainter(
-                  params: params,
-                  getTimeLabel: widget.timeLabel ?? defaultTimeLabel,
-                  getPriceLabel: widget.priceLabel ?? defaultPriceLabel,
-                  getOverlayInfo: widget.overlayInfo ?? defaultOverlayInfo,
-                ),
-              ),
-            );
-          },
         );
 
         return Listener(
@@ -231,6 +212,9 @@ class _PriceChartWidgetState extends State<PriceChartWidget> {
               onScaleStart: (e) => _onScaleStart(e.localFocalPoint),
               onScaleUpdate: (e) =>
                   _onScaleUpdate(e.scale, e.localFocalPoint, w),
+              onScaleEnd: (e) {
+                print(e);
+              },
               child: child,
             ),
           ),
@@ -261,10 +245,6 @@ class _PriceChartWidgetState extends State<PriceChartWidget> {
     final focalPointFactor = focalPoint.dx / w;
     startOffset -= zoomAdjustment * focalPointFactor;
     startOffset = startOffset.clamp(0, _getMaxStartOffset(w, candleWidth));
-    // Fire candle width resize event
-    if (candleWidth != _candleWidth) {
-      widget.onCandleResize?.call(candleWidth);
-    }
     // Apply changes
     setState(() {
       _candleWidth = candleWidth;
@@ -333,19 +313,6 @@ class _PriceChartWidgetState extends State<PriceChartWidget> {
 
   String defaultPriceLabel(double price) => price.asPrice();
 
-  Map<String, String> defaultOverlayInfo(Candle candle) {
-    // final date = intl.DateFormat("yy-MM-dd")
-    //     .format(DateTime.fromMillisecondsSinceEpoch(candle.timestamp));
-    return {
-      // "": date,
-      "O": candle.o?.asPrice() ?? "-",
-      "H": candle.h?.asPrice() ?? "-",
-      "L": candle.l?.asPrice() ?? "-",
-      "C": candle.c?.asPrice() ?? "-",
-      // "거래량": candle.v?.asAbbreviated() ?? "-",
-    };
-  }
-
   void _fireOnTapEvent() {
     if (_prevParams == null || _tapPosition == null) return;
     final params = _prevParams!;
@@ -353,26 +320,5 @@ class _PriceChartWidgetState extends State<PriceChartWidget> {
     final selected = params.getCandleIndexFromOffset(dx);
     final candle = params.candles[selected];
     widget.onTap?.call(candle);
-  }
-}
-
-extension Formatting on double {
-  String asPrice() {
-    const format = "#,###";
-    return intl.NumberFormat(format).format(this);
-  }
-
-  String asPercent() {
-    final format = this < 100 ? "##0.00" : "#,###";
-    final v = intl.NumberFormat(format, "en_US").format(this);
-    return "${this >= 0 ? '+' : ''}$v%";
-  }
-
-  String asAbbreviated() {
-    if (this < 1000) return toStringAsFixed(3);
-    if (this >= 1e18) return toStringAsExponential(3);
-    final s = intl.NumberFormat("#,###", "en_US").format(this).split(",");
-    const suffixes = ["K", "M", "B", "T", "Q"];
-    return "${s[0]}.${s[1]}${suffixes[s.length - 2]}";
   }
 }

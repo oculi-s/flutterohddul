@@ -26,6 +26,7 @@ dependencies:
   country_flags: ^2.2.0
   fl_chart: ^0.65.0
   flutter_secure_storage: ^9.0.0
+  collection: ^1.18.0
 
 dev_dependencies:
   flutter_test:
