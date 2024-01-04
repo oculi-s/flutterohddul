@@ -1,28 +1,27 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutterohddul/data/api.dart';
 import 'package:flutterohddul/data/stock.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
-import 'package:http/http.dart' as http;
 
 class User {
-  String? uid;
-  String? id;
+  String uid, id;
   String? email;
-  double? rank;
+  double rank;
   int? last, signed;
-  List<dynamic>? favs;
-  Map<String, dynamic>? meta;
+  List<dynamic> favs;
+  Map<String, dynamic> meta, pred;
   Image? profile, thumbnail;
 
   User({
-    this.uid,
-    this.id,
-    this.email,
-    this.favs,
-    this.meta,
+    this.uid = '',
+    this.id = '',
+    this.email = '',
+    this.rank = 1000,
+    this.favs = const [],
+    this.meta = const {},
+    this.pred = const {},
     this.profile,
     this.thumbnail,
   });
@@ -36,69 +35,64 @@ class User {
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
+  @override
+  String toString() {
+    return jsonEncode({
       'uid': uid,
       'id': id,
       'favs': favs,
       'meta': meta,
-    };
+    });
   }
 }
 
-class LoginUser {
-  LoginUser._();
-  static final LoginUser _instance = LoginUser._();
-  factory LoginUser() => _instance;
-  User user = User();
-  bool valid = false;
+class Log {
+  Log._();
+  static final Log _instance = Log._();
+  factory Log() => _instance;
+  User? user;
 
   Future<void> login() async {
     try {
-      bool isInstalled = await isKakaoTalkInstalled();
-      OAuthToken token = isInstalled
+      await isKakaoTalkInstalled()
           ? await UserApi.instance.loginWithKakaoTalk()
           : await UserApi.instance.loginWithKakaoAccount();
-      final url = Uri.https('kapi.kakao.com', '/v2/user/me');
-      final res = await http.get(
-        url,
-        headers: {
-          HttpHeaders.authorizationHeader: 'Bearer ${token.accessToken}'
-        },
-      );
-      final uid = jsonDecode(res.body)?['id']?.toString();
-      final json = jsonDecode(res.body)?['kakao_account'];
-      final now = DateTime.now().millisecondsSinceEpoch;
-      if (json == null) return;
+      final kakao = await UserApi.instance.me();
+      String uid = kakao.id.toString();
+      int now = DateTime.now().millisecondsSinceEpoch;
+
+      if (kakao.properties == null) return;
       var meta = await Api().read(url: '/user/$uid/meta.json');
       var favs = await Api().read(url: '/user/$uid/favs.json');
-      // var pred = await Api().read(url: '/user/$uid/pred.json');
+      var pred = await Api().read(url: '/user/$uid/pred.json');
 
-      var profileUrl = json?['profile']?['profile_image_url'];
-      var thumbnailUrl = json?['profile']?['thumbnail_image_url'];
+      var ac = kakao.kakaoAccount;
+      var profileUrl = ac?.profile?.profileImageUrl;
+      var thumbnailUrl = ac?.profile?.thumbnailImageUrl;
+
       var profile = await Api().image('/user/$uid/profile.png');
-      if (profile == null) {
+      var thumbnail = await Api().image('/user/$uid/thumbnail.png');
+      if (profile == null && profileUrl != null) {
         await Api().save(
           url: '/user/$uid/profile.png',
           fileUrl: profileUrl,
         );
         profile = Image.network(profileUrl);
       }
-      var thumbnail = await Api().image('/user/$uid/thumbnail.png');
-      if (thumbnail == null) {
+      if (thumbnail == null && thumbnailUrl != null) {
         await Api().save(
           url: '/user/$uid/thumbnail.png',
           fileUrl: thumbnailUrl,
         );
         thumbnail = Image.network(thumbnailUrl);
       }
-      if (meta.isNotEmpty) {
+      if (meta.isEmpty) {
         await Api().write(
           url: '/user/$uid/meta.json',
           data: {
             'uid': uid,
-            'id': json?['profile']?['nickname'],
-            'email': json?['email'],
+            'id': ac?.profile?.nickname,
+            'email': ac?.email,
             'signed': now,
             'last': now,
           },
@@ -112,15 +106,14 @@ class LoginUser {
           },
         );
       }
-      valid = true;
       user = User(
         uid: uid,
-        email: json?['email'],
-        id: meta?['id'] ?? json?['profile']?['nickname'] ?? uid,
+        email: ac?.email,
+        id: meta?['id'] ?? ac?.profile?.nickname ?? uid,
         favs: List<StockData>.from(favs.keys.map((e) => Stock().fromCode(e))),
         profile: profile,
         thumbnail: thumbnail,
-        // pred:pred,
+        pred: pred,
       );
     } catch (error) {
       print('카카오톡으로 로그인 실패 $error');
@@ -129,7 +122,5 @@ class LoginUser {
 
   Future<void> logout() async {
     await UserApi.instance.logout();
-    user = User();
-    valid = false;
   }
 }

@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutterohddul/utils/base/base.dart';
+import 'package:flutterohddul/utils/colors/colors.main.dart';
 import 'package:flutterohddul/utils/priceview.dart';
 import 'package:flutterohddul/data/api.dart';
 import 'package:flutterohddul/data/stock.dart';
 import 'package:flutterohddul/data/user.dart';
 import 'package:flutterohddul/utils/screen.utils.dart';
 import 'package:pie_chart/pie_chart.dart';
+
+import '../external/stockslide.dart';
 
 class FavScreen extends StatefulWidget {
   @override
@@ -46,10 +50,10 @@ class _FavScreenState extends State<FavScreen> {
 
   Widget data() {
     return Container(
-      child: LoginUser().valid
+      child: Log().user != null
           ? Column(
               children: List.from(
-                LoginUser().user.favs!.map(
+                Log().user!.favs.map(
                       (e) => e.runtimeType == StockData
                           ? StockBlock(stock: e)
                           : DividerBlock(text: e),
@@ -68,36 +72,29 @@ class _FavScreenState extends State<FavScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 3),
-          child: Container(
-            child: LoginUser().valid
-                ? Column(
-                    children: List.from(
-                      LoginUser().user.favs!.map(
-                            (e) => e.runtimeType == StockData
-                                ? StockBlock(stock: e)
-                                : DividerBlock(text: e),
-                          ),
+    return Section(
+      child: Log().user != null
+          ? Column(
+              children: List.from(
+                Log().user!.favs.map(
+                      (e) => e.runtimeType == StockData
+                          ? StockBlock(stock: e)
+                          : DividerBlock(text: e),
                     ),
-                  )
-                : Column(
-                    children: List.from(defaultList.map(
-                      (stock) => stock.runtimeType == StockData
-                          ? StockBlock(stock: stock)
-                          : DividerBlock(text: stock),
-                    )),
-                  ),
-          ),
-        ),
-      ),
+              ),
+            )
+          : Column(
+              children: List.from(defaultList.map(
+                (stock) => stock.runtimeType == StockData
+                    ? StockBlock(stock: stock)
+                    : DividerBlock(text: stock),
+              )),
+            ),
     );
   }
 }
 
-class StockBlock extends StatefulWidget {
+class StockBlock extends StatelessWidget {
   final StockData stock;
 
   const StockBlock({
@@ -105,11 +102,6 @@ class StockBlock extends StatefulWidget {
     required this.stock,
   });
 
-  @override
-  State<StockBlock> createState() => _StockBlockState();
-}
-
-class _StockBlockState extends State<StockBlock> {
   _stockListBarElement(BuildContext context) {
     var theme = Theme.of(context);
     return Container(
@@ -118,7 +110,6 @@ class _StockBlockState extends State<StockBlock> {
         vertical: 5,
       ),
       decoration: BoxDecoration(
-        color: theme.colorScheme.primary,
         border: Border(
           bottom: BorderSide(
             width: 1.2,
@@ -140,7 +131,7 @@ class _StockBlockState extends State<StockBlock> {
                 Radius.circular(50),
               ),
             ),
-            child: widget.stock.group!.image(),
+            child: stock.group!.image(),
           ),
           Expanded(
             child: Row(
@@ -149,9 +140,9 @@ class _StockBlockState extends State<StockBlock> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(widget.stock.name),
+                    Text(stock.name),
                     Text(
-                      widget.stock.code,
+                      stock.code,
                       style: theme.textTheme.bodySmall,
                     ),
                   ],
@@ -159,16 +150,16 @@ class _StockBlockState extends State<StockBlock> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    PriceView(widget.stock.currentPrice),
+                    PriceView(stock.currentPrice),
                     Row(children: [
                       PriceColorView(
-                        widget.stock.priceChange,
+                        stock.priceChange,
                         asPercent: false,
                         style: theme.textTheme.bodySmall!,
                       ),
                       const SizedBox(width: 10),
                       PriceColorView(
-                        widget.stock.priceChangeRatio,
+                        stock.priceChangeRatio,
                         asPercent: true,
                         style: theme.textTheme.bodySmall!,
                       ),
@@ -183,163 +174,6 @@ class _StockBlockState extends State<StockBlock> {
     );
   }
 
-  _stockSlideScreen(BuildContext context) {
-    var theme = Theme.of(context);
-    return Container(
-      width: Screen(context).w,
-      alignment: Alignment.topCenter,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const SizedBox(height: 10),
-          Container(
-            width: 25,
-            height: 5,
-            decoration: BoxDecoration(
-              color: theme.colorScheme.background,
-              borderRadius: const BorderRadius.all(
-                Radius.circular(50),
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
-          Container(
-            width: 60,
-            height: 60,
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: theme.colorScheme.background,
-              borderRadius: const BorderRadius.all(
-                Radius.circular(50),
-              ),
-            ),
-            child: widget.stock.group!.image(),
-          ),
-          Text(
-            widget.stock.name,
-            style: theme.textTheme.labelLarge,
-          ),
-          PriceView(
-            widget.stock.currentPrice,
-            style: theme.textTheme.labelLarge,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              PriceColorView(
-                widget.stock.priceChange,
-                asPercent: false,
-                style: theme.textTheme.labelSmall,
-              ),
-              const SizedBox(
-                width: 5,
-              ),
-              PriceColorView(
-                widget.stock.priceChangeRatio,
-                asPercent: true,
-                style: theme.textTheme.labelSmall,
-              ),
-            ],
-          ),
-          ...stockInfoinSlide(context)
-        ],
-      ),
-    );
-  }
-
-  stockInfoinSlide(BuildContext context) {
-    var theme = Theme.of(context);
-
-    tile({String? title, value, ratio}) {
-      return Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 8,
-          vertical: 5,
-        ),
-        child: Column(
-          children: [
-            Text(title!),
-            value != null
-                ? PriceView(
-                    value,
-                    style: theme.textTheme.bodySmall,
-                  )
-                : const SizedBox.shrink(),
-            const SizedBox(width: 3),
-            ratio != null
-                ? PercentView(
-                    ratio,
-                    style: theme.textTheme.bodySmall,
-                  )
-                : const SizedBox.shrink()
-          ],
-        ),
-      );
-    }
-
-    return <Widget>[
-      Expanded(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(height: 30),
-              SizedBox(
-                width: Screen(context).w,
-                height: 300,
-                child: const Placeholder(),
-              ),
-              const Divider(),
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 5,
-                    ),
-                    child: Column(
-                      children: [
-                        const Text('시총'),
-                        MarketCapView(
-                          widget.stock.marketCap,
-                          style: theme.textTheme.bodySmall,
-                        )
-                      ],
-                    ),
-                  ),
-                  tile(
-                      title: 'BPS',
-                      value: widget.stock.bps,
-                      ratio: widget.stock.bpsRatio),
-                  tile(
-                      title: 'EPS',
-                      value: widget.stock.eps,
-                      ratio: widget.stock.epsRatio),
-                ],
-              ),
-              const Divider(),
-              const SizedBox(height: 30),
-              SizedBox(
-                width: Screen(context).w,
-                height: 200,
-                child: const PieChart(
-                  dataMap: {"1": 2},
-                  chartType: ChartType.ring,
-                ),
-              ),
-              const SizedBox(height: 30),
-            ],
-          ),
-        ),
-      ),
-    ];
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    widget.stock.addEarn();
-  }
-
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
@@ -349,21 +183,7 @@ class _StockBlockState extends State<StockBlock> {
           isScrollControlled: true,
           context: context,
           builder: (BuildContext context) {
-            return Container(
-              height: Screen(context).h - 20,
-              width: Screen(context).w,
-              decoration: BoxDecoration(
-                color: theme.colorScheme.primary,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(10),
-                  topRight: Radius.circular(10),
-                ),
-              ),
-              child: SizedBox(
-                height: Screen(context).h,
-                child: _stockSlideScreen(context),
-              ),
-            );
+            return StockSlide(stock: stock);
           },
         );
       },
@@ -387,9 +207,6 @@ class DividerBlock extends StatelessWidget {
       padding: const EdgeInsets.symmetric(
         horizontal: 10,
         vertical: 5,
-      ),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.primary,
       ),
       child: Container(
         alignment: Alignment.centerLeft,

@@ -38,7 +38,7 @@ class Meta {
 class MetaData {
   bool valid = false;
   final String? url;
-  final int? last;
+  final DateTime? last;
   final Map<String, dynamic>? data;
   final Map<String, dynamic>? index;
 
@@ -55,7 +55,7 @@ class MetaData {
     return MetaData(
       valid: true,
       url: url,
-      last: jsonData['last'] ?? 0,
+      last: DateTime.fromMillisecondsSinceEpoch(jsonData['last'] ?? 0),
       data: jsonData['data'] ?? jsonData,
       index: jsonData['index'] ?? {},
     );
@@ -170,20 +170,24 @@ class Api {
   Future<dynamic> image(
     String? url,
   ) async {
-    final apiUrl = Uri.parse('https://api.ohddul.com/read');
-    final res = await http.post(
-      apiUrl,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({
-        'apiKey': Env.ohddulApi,
-        'url': url.toString(),
-      }),
-    );
-    if (res.statusCode == 200) {
-      return Image.memory(res.bodyBytes);
-    } else {
+    try {
+      final apiUrl = Uri.parse('https://api.ohddul.com/read');
+      final res = await http.post(
+        apiUrl,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'apiKey': Env.ohddulApi,
+          'url': url.toString(),
+        }),
+      );
+      if (res.statusCode == 200) {
+        return Image.memory(res.bodyBytes);
+      } else {
+        return null;
+      }
+    } catch (e) {
       return null;
     }
   }

@@ -14,7 +14,7 @@ class Screen {
 }
 
 class Ratio {
-  Screen _screen;
+  final Screen _screen;
   Ratio(this._screen);
 
   double w(double r) => _screen.w * r;

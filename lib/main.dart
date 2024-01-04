@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutterohddul/core/colors.dart';
+import 'package:flutterohddul/utils/colors/colors.main.dart';
 import 'package:flutterohddul/core/router.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:flutterohddul/env/env.dart';
@@ -21,12 +21,12 @@ class MainApp extends StatefulWidget {
 }
 
 class ThemeProvider extends InheritedWidget {
-  final ThemeData currentTheme;
   final Function() toggleTheme;
+  final Brightness brightness;
 
   const ThemeProvider({
     super.key,
-    required this.currentTheme,
+    required this.brightness,
     required Widget child,
     required this.toggleTheme,
   }) : super(child: child);
@@ -37,17 +37,12 @@ class ThemeProvider extends InheritedWidget {
 
   @override
   bool updateShouldNotify(ThemeProvider oldWidget) {
-    return currentTheme != oldWidget.currentTheme;
+    return brightness != oldWidget.brightness;
   }
 }
 
 class _MainAppState extends State<MainApp> {
   late Brightness brightness;
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   ThemeMode get themeMode =>
       brightness == Brightness.light ? ThemeMode.light : ThemeMode.dark;
@@ -56,7 +51,7 @@ class _MainAppState extends State<MainApp> {
   Widget build(BuildContext context) {
     brightness = MediaQuery.of(context).platformBrightness;
     return ThemeProvider(
-      currentTheme: MyTheme(brightness: brightness).theme,
+      brightness: brightness,
       toggleTheme: () {
         setState(() {
           brightness = brightness == Brightness.light

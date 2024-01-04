@@ -1,4 +1,9 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutterohddul/data/stock.dart';
+import 'package:flutterohddul/external/stock.dart';
+import 'package:flutterohddul/external/stockslide.dart';
+import 'package:flutterohddul/screen/favs.screen.dart';
 import 'package:flutterohddul/screen/menu.screen.dart';
 import 'package:flutterohddul/screen/splash.screen.dart';
 import 'package:go_router/go_router.dart';
@@ -30,7 +35,13 @@ final GoRouter router = GoRouter(
         return MenuScreen();
       },
     ),
+    // GoRoute(
+    //   path: '/stock/:code',
+    //   builder: (context, state) {
 
+    //     // return MenuScreen(i: 0);
+    //   },
+    // ),
     // GoRoute(
     //   path: '/price/:code',
     //   pageBuilder: (context, state) {

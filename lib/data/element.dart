@@ -12,21 +12,24 @@ class Group {
   Future<void> load() async {
     if (Meta().group == null) return;
     final groupdatalist = Meta().group?.data;
-    await Future.forEach(groupdatalist!.keys, (name) async {
-      var groupdata = groupdatalist[name];
-      data[name] = GroupData(
-        name: name,
-        image: ([double width = 30, double height = 30]) => SvgLoader.asset(
-          'assets/group/$name.svg',
-          width: width.toDouble(),
-          height: height.toDouble(),
-        ),
-        children: List.from(groupdata?['ch']?.map((e) => e)),
-        currentPrice: groupdata?['c'],
-        lastPrice: groupdata?['p'],
-        historicalPrice: groupdata?['h'],
-      );
-    });
+    await Future.forEach(
+      groupdatalist!.keys,
+      (name) async {
+        var groupdata = groupdatalist[name];
+        data[name] = GroupData(
+          name: name,
+          image: ([double width = 30, double height = 30]) => SvgLoader.asset(
+            'assets/group/$name.svg',
+            width: width.toDouble(),
+            height: height.toDouble(),
+          ),
+          children: List.from(groupdata?['ch']?.map((e) => e)),
+          currentPrice: groupdata?['c'],
+          lastPrice: groupdata?['p'],
+          historicalPrice: groupdata?['h'],
+        );
+      },
+    );
   }
 
   GroupData? fromName(String name) {

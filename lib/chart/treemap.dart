@@ -1,9 +1,11 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutterohddul/data/api.dart';
 import 'package:flutterohddul/data/element.dart';
-import 'package:flutterohddul/utils/colorconvert.dart';
-import 'package:flutterohddul/utils/group.color.dart';
+import 'package:flutterohddul/utils/base/base.dart';
+import 'package:flutterohddul/utils/colors/colors.convert.dart';
+import 'package:flutterohddul/utils/colors/colors.vars.dart';
 import 'package:flutterohddul/utils/screen.utils.dart';
 
 double dim = 1;
@@ -199,49 +201,67 @@ class _TreeMapWidgetState extends State<TreeMapWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: Screen(context).w,
-      height: Screen(context).c,
-      child: Stack(
-        children: Group().data.values.where((e) => e.tree != null).map((e) {
-          var name = e.name;
-          var rect = e.tree!;
-          return Positioned(
-            left: Screen(context).ratio.w(rect.x / dim),
-            top: Screen(context).ratio.c(rect.y / dim),
-            width: Screen(context).ratio.w(rect.dx / dim),
-            height: Screen(context).ratio.c(rect.dy / dim),
-            child: Container(
-              color: darken(groupBg[name] ?? Colors.grey, 0.15).withOpacity(.8),
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  var w = constraints.maxWidth;
-                  var h = constraints.maxHeight;
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: w * 0.6,
-                        height: h * 0.2,
-                        child: e.image(w * 0.6, h * 0.3),
+    return Section(
+      child: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.all(8),
+            height: Screen(context).c,
+            child: LayoutBuilder(builder: (context, constraints) {
+              var w = constraints.maxWidth;
+              var h = constraints.maxHeight;
+              return Stack(
+                children:
+                    Group().data.values.where((e) => e.tree != null).map((e) {
+                  var name = e.name;
+                  var rect = e.tree!;
+                  return Positioned(
+                    left: w * rect.x / dim,
+                    top: h * rect.y / dim,
+                    width: w * rect.dx / dim,
+                    height: h * rect.dy / dim,
+                    child: Container(
+                      color: (groupColor[name] ?? Colors.grey)
+                          .darken()
+                          .withOpacity(.8),
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          var w = constraints.maxWidth;
+                          var h = constraints.maxHeight;
+                          return Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                width: w * 0.6,
+                                height: h * 0.2,
+                                child: e.image(w * 0.6, h * 0.3),
+                              ),
+                              FittedBox(
+                                fit: BoxFit.contain,
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 10),
+                                  child: Text(
+                                    '${(rect.value! * 100).toStringAsFixed(1)}%',
+                                    style: TextStyle(
+                                      fontSize: h * .2,
+                                      color:
+                                          groupTextColor[name] ?? Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
                       ),
-                      FittedBox(
-                        fit: BoxFit.contain,
-                        child: Text(
-                          '${(rect.value! * 100).toStringAsFixed(1)}%',
-                          style: TextStyle(
-                            fontSize: h * .2,
-                            color: groupText[name] ?? Colors.white,
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   );
-                },
-              ),
-            ),
-          );
-        }).toList(),
+                }).toList(),
+              );
+            }),
+          ),
+          Last(data: Meta().price),
+        ],
       ),
     );
   }

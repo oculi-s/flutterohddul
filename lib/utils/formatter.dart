@@ -1,6 +1,6 @@
 import 'package:intl/intl.dart' as intl;
 
-extension Formatting on double {
+extension DoubleFormatter on double {
   String asPrice() {
     const format = "#,###";
     return intl.NumberFormat(format).format(this);
@@ -18,5 +18,11 @@ extension Formatting on double {
     final s = intl.NumberFormat("#,###", "en_US").format(this).split(",");
     const suffixes = ["K", "M", "B", "T", "Q"];
     return "${s[0]}.${s[1]}${suffixes[s.length - 2]}";
+  }
+}
+
+extension DTFormatter on DateTime {
+  String asString() {
+    return intl.DateFormat('yyyy-MM-dd hh:mm:ss').format(this);
   }
 }

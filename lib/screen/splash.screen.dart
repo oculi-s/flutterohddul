@@ -50,12 +50,14 @@ class _SplashScreenState extends State<SplashScreen> {
             const SizedBox(height: 10),
             Text(
               '오르고 떨어지고',
-              style: theme.textTheme.bodyLarge,
+              style: theme.textTheme.bodyLarge!
+                  .copyWith(fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 3),
             Text(
               '오떨',
-              style: theme.textTheme.bodyLarge,
+              style: theme.textTheme.bodyLarge!
+                  .copyWith(fontWeight: FontWeight.w600),
             ),
           ],
         ),

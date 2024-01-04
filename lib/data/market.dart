@@ -30,13 +30,14 @@ class Market {
  * 
  */
 class EcosData {
-  bool? valid;
-  bool? withPrev;
+  bool valid;
+  bool withPrev;
   DateTime? last;
   Map<String, CountryData> data = {};
 
   EcosData({
     required this.valid,
+    this.withPrev = true,
   });
 
   Future<bool> read(String url, [bool prev = true]) async {

@@ -42,19 +42,13 @@ flutter:
     - assets/img/
     - assets/group/
   fonts:
-    - family: NotoSansKR
+    - family: NanumSquare
       fonts:
-        - asset: assets/font/NotoSansKR-ExtraLight.ttf
-          weight: 200
-        - asset: assets/font/NotoSansKR-Light.ttf
+        - asset: assets/font/NanumSquareL.ttf
           weight: 300
-        - asset: assets/font/NotoSansKR-Regular.ttf
+        - asset: assets/font/NanumSquareR.ttf
           weight: 400
-        - asset: assets/font/NotoSansKR-Medium.ttf
-          weight: 500
-        - asset: assets/font/NotoSansKR-SemiBold.ttf
-          weight: 600
-        - asset: assets/font/NotoSansKR-Bold.ttf
+        - asset: assets/font/NanumSquareB.ttf
           weight: 700
-        - asset: assets/font/NotoSansKR-Black.ttf
+        - asset: assets/font/NanumSquareEB.ttf
           weight: 900

@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutterohddul/data/api.dart';
 import 'package:flutterohddul/data/candledata.dart';
 import 'package:flutterohddul/data/element.dart';
@@ -9,7 +10,7 @@ class Stock {
 
   Map<String, StockData> data = {};
   StockData fromCode(String code) {
-    final stock = Meta().meta?.data?.entries.firstWhere((e) {
+    final stock = Meta().meta?.data?.entries.firstWhereOrNull((e) {
       return e.key == code || e.value['n'] == code;
     });
     if (stock == null) return StockData(valid: false);
@@ -38,6 +39,14 @@ class Stock {
     );
     return data[code]!;
   }
+
+  StockData hasName(String name) {
+    final stock = Meta().meta?.data?.entries.firstWhereOrNull((e) {
+      return e.value['n'] == name;
+    });
+    if (stock == null) return StockData(valid: false);
+    return Stock().fromCode(stock.key);
+  }
 }
 
 class StockData {
@@ -51,7 +60,8 @@ class StockData {
 
   int currentPrice, lastPrice, historicalPrice;
   int bps, eps;
-  List<Earn>? earn;
+  List<Earn> earn = [];
+  List<Share> share = [];
   Price? price;
 
   StockData({
@@ -82,10 +92,20 @@ class StockData {
   }
 
   Future<bool> addEarn() async {
+    if (earn.isNotEmpty) return false;
     var data = await Api().read(url: '/stock/$code/earnFixed.json');
-    earn = List<Earn>.from(data['data']
-        .map((e) => Earn.fromJson(e))
-        .where((e) => e.valid as bool));
+    earn = List<Earn>.from(data['data'].map((e) => Earn.fromJson(e)))
+        .where((e) => e.valid)
+        .toList()
+        .sortedBy((e) => e.date!);
+    return true;
+  }
+
+  Future<bool> addShare() async {
+    if (share.isNotEmpty) return false;
+    var data = await Api().read(url: '/stock/$code/shareFixed.json');
+    share = List<Share>.from(data['data'].map((e) => Share.fromJson(e)));
+    share.sortByCompare((a) => a.amount, (a, b) => a - b);
     return true;
   }
 
@@ -134,18 +154,18 @@ class Price {
 }
 
 class Earn {
-  bool? valid;
-  String? number;
-  int? equity, profit, revenue, profitSum;
+  bool valid;
+  String number;
+  int equity, profit, revenue, profitSum;
   DateTime? date;
 
   Earn({
-    this.valid,
-    this.number,
-    this.equity,
-    this.profit,
-    this.revenue,
-    this.profitSum,
+    this.valid = false,
+    this.number = '',
+    this.equity = 0,
+    this.profit = 0,
+    this.revenue = 0,
+    this.profitSum = 0,
     this.date,
   });
 
@@ -162,4 +182,24 @@ class Earn {
   }
 }
 
-class Share {}
+class Share {
+  String number;
+  String name;
+  int amount;
+  DateTime? date;
+  Share({
+    this.number = '',
+    this.name = '',
+    this.amount = 0,
+    this.date,
+  });
+
+  factory Share.fromJson(Map json) {
+    return Share(
+      number: json['no'],
+      name: json['name'],
+      amount: json['amount'],
+      date: DateTime.parse(json['date']),
+    );
+  }
+}
