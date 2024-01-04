@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutterohddul/screen/menu.screen.dart';
 import 'package:flutterohddul/screen/splash.screen.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutterohddul/screen/profile.screen.dart';
 
 final GoRouter router = GoRouter(
   initialLocation: '/',

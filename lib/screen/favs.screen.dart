@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutterohddul/main.dart';
 import 'package:flutterohddul/utils/priceview.dart';
 import 'package:flutterohddul/data/api.dart';
 import 'package:flutterohddul/data/stock.dart';

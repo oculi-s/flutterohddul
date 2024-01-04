@@ -72,7 +72,7 @@ class LoginUser {
       if (json == null) return;
       var meta = await Api().read(url: '/user/$uid/meta.json');
       var favs = await Api().read(url: '/user/$uid/favs.json');
-      var pred = await Api().read(url: '/user/$uid/pred.json');
+      // var pred = await Api().read(url: '/user/$uid/pred.json');
 
       var profileUrl = json?['profile']?['profile_image_url'];
       var thumbnailUrl = json?['profile']?['thumbnail_image_url'];

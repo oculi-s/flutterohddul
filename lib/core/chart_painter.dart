@@ -59,8 +59,8 @@ class ChartPainter extends CustomPainter {
         )
           ..textDirection = TextDirection.ltr
           ..layout();
-    final nameTp = makeTP(stock.name!);
-    final codeTp = makeTP(stock.code!);
+    final nameTp = makeTP(stock.name);
+    final codeTp = makeTP(stock.code);
     nameTp.paint(canvas, Offset(x, 8));
     x += nameTp.width + 3;
     codeTp.paint(canvas, Offset(x, 8));

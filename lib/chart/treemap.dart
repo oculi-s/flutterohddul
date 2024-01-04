@@ -199,7 +199,6 @@ class _TreeMapWidgetState extends State<TreeMapWidget> {
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context);
     return Container(
       width: Screen(context).w,
       height: Screen(context).c,
