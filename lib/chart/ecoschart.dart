@@ -7,7 +7,7 @@ import 'package:flutterohddul/utils/base/base.dart';
 import 'package:flutterohddul/utils/base/vars.dart';
 import 'package:flutterohddul/utils/colors/colors.main.dart';
 import 'package:flutterohddul/utils/colors/colors.vars.dart';
-import 'package:flutterohddul/utils/formatter.dart';
+import 'package:flutterohddul/utils/extension.dart';
 import 'package:flutterohddul/utils/screen.utils.dart';
 import 'package:flutterohddul/utils/svgloader.dart';
 import 'package:intl/intl.dart';

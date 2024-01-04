@@ -1,6 +1,8 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterohddul/data/stock.dart';
 import 'package:flutterohddul/utils/base/base.dart';
+import 'package:flutterohddul/utils/colors/colors.convert.dart';
 import 'package:flutterohddul/utils/colors/colors.main.dart';
 import 'package:flutterohddul/utils/priceview.dart';
 import 'package:flutterohddul/utils/screen.utils.dart';
@@ -111,58 +113,65 @@ class StockSlide extends StatelessWidget {
                 // Waitfor 사용하면 오류
                 child: FutureBuilder(
                   future: stock.addShare(),
-                  builder: (context, snapshot) => snapshot.hasData
-                      ? PieChart(
-                          PieChartData(
-                            sections: List.from(stock.share.map(
-                              (e) {
-                                double ratio = e.amount / stock.amount * 100;
-                                StockData substock = Stock().hasName(e.name);
-                                Widget child = Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      e.name,
-                                      style:
-                                          theme.textTheme.bodyLarge!.copyWith(
-                                        color: substock.valid
-                                            ? theme.colorScheme.anchor
-                                            : null,
-                                        fontWeight: FontWeight.bold,
+                  builder: (context, snapshot) {
+                    return snapshot.hasData
+                        ? PieChart(
+                            PieChartData(
+                              sections: List.from(stock.share.map(
+                                (e) {
+                                  double ratio = e.amount / stock.amount * 100;
+                                  StockData substock = Stock().hasName(e.name);
+                                  Widget child = Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        e.name,
+                                        style:
+                                            theme.textTheme.bodyLarge!.copyWith(
+                                          color: substock.valid
+                                              ? theme.colorScheme.anchor
+                                              : null,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
-                                    ),
-                                    Text(
-                                      '${ratio.toStringAsFixed(2)}%',
-                                      style: theme.textTheme.labelMedium,
-                                    ),
-                                  ],
-                                );
-                                return PieChartSectionData(
-                                  showTitle: false,
-                                  badgeWidget: ratio < 5
-                                      ? SizedBox.shrink()
-                                      : substock.valid
-                                          ? Anchor(
-                                              stockhref: substock,
-                                              child: child,
-                                            )
-                                          : child,
-                                  value: e.amount.toDouble(),
-                                  color: theme.colorScheme.secondary,
-                                );
-                              },
-                            )),
-                          ),
-                        )
-                      : Center(
-                          child: Container(
-                            height: 10,
-                            child: LinearProgressIndicator(
-                              minHeight: 10,
-                              color: theme.colorScheme.background,
+                                      Text(
+                                        '${ratio.toStringAsFixed(2)}%',
+                                        style: theme.textTheme.labelMedium,
+                                      ),
+                                    ],
+                                  );
+                                  return PieChartSectionData(
+                                    showTitle: false,
+                                    badgeWidget: ratio < 5
+                                        ? SizedBox.shrink()
+                                        : substock.valid
+                                            ? Anchor(
+                                                stockhref: substock,
+                                                child: child,
+                                              )
+                                            : child,
+                                    value: e.amount.toDouble(),
+                                    color: e.date == null
+                                        ? theme.colorScheme.background
+                                            .darken(0.1)
+                                        : e == stock.share.last
+                                            ? theme.colorScheme.background
+                                            : theme.colorScheme.secondary,
+                                  );
+                                },
+                              )),
                             ),
-                          ),
-                        ),
+                          )
+                        : Center(
+                            child: Container(
+                              height: 10,
+                              child: LinearProgressIndicator(
+                                minHeight: 10,
+                                color: theme.colorScheme.background,
+                              ),
+                            ),
+                          );
+                  },
                 ),
               ),
               const SizedBox(height: 30),

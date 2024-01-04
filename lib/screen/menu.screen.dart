@@ -5,19 +5,14 @@ import 'package:flutterohddul/screen/favs.screen.dart';
 import 'package:flutterohddul/screen/market.screen.dart';
 
 class MenuScreen extends StatefulWidget {
-  int i;
-  MenuScreen({
-    this.i = 0,
-  });
-
   @override
   _MenuScreenState createState() => _MenuScreenState();
 }
 
 class _MenuScreenState extends State<MenuScreen> {
+  int i = 0;
   @override
   Widget build(BuildContext context) {
-    int i = widget.i;
     return SafeArea(
       child: Scaffold(
         body: SingleChildScrollView(

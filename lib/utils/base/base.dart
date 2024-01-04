@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutterohddul/core/router.dart';
 import 'package:flutterohddul/data/stock.dart';
 import 'package:flutterohddul/utils/colors/colors.main.dart';
-import 'package:flutterohddul/utils/formatter.dart';
+import 'package:flutterohddul/utils/extension.dart';
 import 'package:flutterohddul/utils/function/popstock.dart';
 
 class Section extends Container {

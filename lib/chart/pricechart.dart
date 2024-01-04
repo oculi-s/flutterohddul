@@ -7,7 +7,7 @@ import 'package:flutterohddul/data/candledata.dart';
 import 'package:flutterohddul/data/chartstyle.dart';
 import 'package:flutterohddul/data/painter.dart';
 import 'package:flutterohddul/data/stock.dart';
-import 'package:flutterohddul/utils/formatter.dart';
+import 'package:flutterohddul/utils/extension.dart';
 
 class PriceChartWidget extends StatefulWidget {
   final StockData stock;
