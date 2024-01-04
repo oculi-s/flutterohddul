@@ -12,6 +12,75 @@ class StockSlide extends StatelessWidget {
   StockData stock;
   StockSlide({required this.stock});
 
+  _sharePie(BuildContext context) {
+    var theme = Theme.of(context);
+    return SizedBox(
+      width: Screen(context).w,
+      height: 250,
+      // Waitfor 사용하면 오류
+      child: FutureBuilder(
+        future: stock.addShare(),
+        builder: (context, snapshot) {
+          return snapshot.hasData
+              ? PieChart(
+                  PieChartData(
+                    sections: List.from(stock.share.map(
+                      (e) {
+                        double ratio = e.amount / stock.amount * 100;
+                        StockData substock = Stock().hasName(e.name);
+                        Widget child = Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              e.name,
+                              style: theme.textTheme.bodyLarge!.copyWith(
+                                color: substock.valid
+                                    ? theme.colorScheme.anchor
+                                    : null,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              '${ratio.toStringAsFixed(2)}%',
+                              style: theme.textTheme.labelMedium,
+                            ),
+                          ],
+                        );
+                        return PieChartSectionData(
+                          showTitle: false,
+                          badgeWidget: ratio < 5
+                              ? SizedBox.shrink()
+                              : substock.valid
+                                  ? Anchor(
+                                      stockhref: substock,
+                                      child: child,
+                                    )
+                                  : child,
+                          value: e.amount.toDouble(),
+                          color: e.date == null
+                              ? theme.colorScheme.background.darken(0.1)
+                              : e == stock.share.last
+                                  ? theme.colorScheme.background
+                                  : theme.colorScheme.secondary,
+                        );
+                      },
+                    )),
+                  ),
+                )
+              : Center(
+                  child: Container(
+                    height: 10,
+                    child: LinearProgressIndicator(
+                      minHeight: 10,
+                      color: theme.colorScheme.background,
+                    ),
+                  ),
+                );
+        },
+      ),
+    );
+  }
+
   _stockInfoinSlide(BuildContext context) {
     var theme = Theme.of(context);
 
@@ -42,144 +111,72 @@ class StockSlide extends StatelessWidget {
       );
     }
 
-    return [
-      Expanded(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(height: 30),
-              SizedBox(
-                width: Screen(context).w,
-                height: 300,
-                child: const Placeholder(),
-              ),
-              const Divider(),
-              Row(
+    _earnRow() {
+      return Row(
+        children: [
+          Expanded(
+            child: WaitFor(
+              future: stock.addEarn(),
+              child: Row(
                 children: [
-                  Expanded(
-                    child: WaitFor(
-                      future: stock.addEarn(),
-                      child: Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 5,
-                            ),
-                            child: Column(
-                              children: [
-                                const Text('시총'),
-                                MarketCapView(
-                                  stock.marketCap,
-                                  style: theme.textTheme.bodySmall,
-                                )
-                              ],
-                            ),
-                          ),
-                          tile(
-                              title: 'BPS',
-                              value: stock.bps,
-                              ratio: stock.bpsRatio),
-                          tile(
-                              title: 'EPS',
-                              value: stock.eps,
-                              ratio: stock.epsRatio),
-                        ],
-                      ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 5,
                     ),
-                  ),
-                  Anchor(
-                    href: '/stock/${stock.code}',
-                    child: Row(
+                    child: Column(
                       children: [
-                        Text(
-                          '더보기',
-                          style: theme.textTheme.bodyMedium,
-                        ),
-                        Icon(
-                          Icons.chevron_right,
-                          color: theme.colorScheme.onPrimary,
-                        ),
+                        const Text('시총'),
+                        MarketCapView(
+                          stock.marketCap,
+                          style: theme.textTheme.bodySmall,
+                        )
                       ],
                     ),
                   ),
+                  tile(title: 'BPS', value: stock.bps, ratio: stock.bpsRatio),
+                  tile(title: 'EPS', value: stock.eps, ratio: stock.epsRatio),
                 ],
               ),
-              const Divider(),
-              const SizedBox(height: 30),
-              SizedBox(
-                width: Screen(context).w,
-                height: 250,
-                // Waitfor 사용하면 오류
-                child: FutureBuilder(
-                  future: stock.addShare(),
-                  builder: (context, snapshot) {
-                    return snapshot.hasData
-                        ? PieChart(
-                            PieChartData(
-                              sections: List.from(stock.share.map(
-                                (e) {
-                                  double ratio = e.amount / stock.amount * 100;
-                                  StockData substock = Stock().hasName(e.name);
-                                  Widget child = Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        e.name,
-                                        style:
-                                            theme.textTheme.bodyLarge!.copyWith(
-                                          color: substock.valid
-                                              ? theme.colorScheme.anchor
-                                              : null,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      Text(
-                                        '${ratio.toStringAsFixed(2)}%',
-                                        style: theme.textTheme.labelMedium,
-                                      ),
-                                    ],
-                                  );
-                                  return PieChartSectionData(
-                                    showTitle: false,
-                                    badgeWidget: ratio < 5
-                                        ? SizedBox.shrink()
-                                        : substock.valid
-                                            ? Anchor(
-                                                stockhref: substock,
-                                                child: child,
-                                              )
-                                            : child,
-                                    value: e.amount.toDouble(),
-                                    color: e.date == null
-                                        ? theme.colorScheme.background
-                                            .darken(0.1)
-                                        : e == stock.share.last
-                                            ? theme.colorScheme.background
-                                            : theme.colorScheme.secondary,
-                                  );
-                                },
-                              )),
-                            ),
-                          )
-                        : Center(
-                            child: Container(
-                              height: 10,
-                              child: LinearProgressIndicator(
-                                minHeight: 10,
-                                color: theme.colorScheme.background,
-                              ),
-                            ),
-                          );
-                  },
-                ),
-              ),
-              const SizedBox(height: 30),
-            ],
+            ),
           ),
+          Anchor(
+            href: '/stock/${stock.code}',
+            child: Row(
+              children: [
+                Text('더보기', style: theme.textTheme.bodyMedium),
+                Icon(Icons.chevron_right, color: theme.colorScheme.onPrimary),
+              ],
+            ),
+          ),
+        ],
+      );
+    }
+
+    return Expanded(
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            const SizedBox(height: 30),
+            SizedBox(
+              width: Screen(context).w,
+              height: 300,
+              child: const Placeholder(),
+            ),
+            Column(
+              children: [
+                const Divider(),
+                _earnRow(),
+                const Divider(),
+                const SizedBox(height: 30),
+                _sharePie(context),
+                const SizedBox(height: 30),
+              ],
+            ),
+          ],
         ),
       ),
-    ];
+    );
   }
 
   @override
@@ -249,7 +246,7 @@ class StockSlide extends StatelessWidget {
               ),
             ],
           ),
-          ..._stockInfoinSlide(context)
+          _stockInfoinSlide(context)
         ],
       ),
     );

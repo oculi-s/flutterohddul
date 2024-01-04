@@ -72,29 +72,39 @@ class _FavScreenState extends State<FavScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Section(
-      child: Log().user != null
-          ? Column(
-              children: List.from(
-                Log().user!.favs.map(
-                      (e) => e.runtimeType == StockData
-                          ? StockBlock(stock: e)
-                          : DividerBlock(text: e),
-                    ),
-              ),
-            )
-          : Column(
-              children: List.from(defaultList.map(
-                (stock) => stock.runtimeType == StockData
-                    ? StockBlock(stock: stock)
-                    : DividerBlock(text: stock),
-              )),
-            ),
+    return Column(
+      children: [
+        Section(
+          child: Row(
+            children: [IconButton(onPressed: () {}, icon: Icon(Icons.add))],
+          ),
+        ),
+        SizedBox(height: 5),
+        Section(
+          child: Log().user != null
+              ? Column(
+                  children: List.from(
+                    Log().user!.favs.map(
+                          (e) => e.runtimeType == StockData
+                              ? StockBlock(stock: e)
+                              : DividerBlock(text: e),
+                        ),
+                  ),
+                )
+              : Column(
+                  children: List.from(defaultList.map(
+                    (stock) => stock.runtimeType == StockData
+                        ? StockBlock(stock: stock)
+                        : DividerBlock(text: stock),
+                  )),
+                ),
+        ),
+      ],
     );
   }
 }
 
-class StockBlock extends StatelessWidget {
+class StockBlock extends StatefulWidget {
   final StockData stock;
 
   const StockBlock({
@@ -102,7 +112,20 @@ class StockBlock extends StatelessWidget {
     required this.stock,
   });
 
-  _stockListBarElement(BuildContext context) {
+  @override
+  State<StockBlock> createState() => _StockBlockState();
+}
+
+class _StockBlockState extends State<StockBlock> {
+  late bool _selected;
+
+  @override
+  initState() {
+    super.initState();
+    _selected = false;
+  }
+
+  _stockListBarElement(BuildContext context, [bool selected = false]) {
     var theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(
@@ -110,6 +133,8 @@ class StockBlock extends StatelessWidget {
         vertical: 5,
       ),
       decoration: BoxDecoration(
+        color:
+            selected ? theme.colorScheme.secondary : theme.colorScheme.primary,
         border: Border(
           bottom: BorderSide(
             width: 1.2,
@@ -131,7 +156,7 @@ class StockBlock extends StatelessWidget {
                 Radius.circular(50),
               ),
             ),
-            child: stock.group!.image(),
+            child: widget.stock.group!.image(),
           ),
           Expanded(
             child: Row(
@@ -140,9 +165,9 @@ class StockBlock extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(stock.name),
+                    Text(widget.stock.name),
                     Text(
-                      stock.code,
+                      widget.stock.code,
                       style: theme.textTheme.bodySmall,
                     ),
                   ],
@@ -150,16 +175,16 @@ class StockBlock extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    PriceView(stock.currentPrice),
+                    PriceView(widget.stock.currentPrice),
                     Row(children: [
                       PriceColorView(
-                        stock.priceChange,
+                        widget.stock.priceChange,
                         asPercent: false,
                         style: theme.textTheme.bodySmall!,
                       ),
                       const SizedBox(width: 10),
                       PriceColorView(
-                        stock.priceChangeRatio,
+                        widget.stock.priceChangeRatio,
                         asPercent: true,
                         style: theme.textTheme.bodySmall!,
                       ),
@@ -183,11 +208,24 @@ class StockBlock extends StatelessWidget {
           isScrollControlled: true,
           context: context,
           builder: (BuildContext context) {
-            return StockSlide(stock: stock);
+            return StockSlide(stock: widget.stock);
           },
         );
       },
-      child: _stockListBarElement(context),
+      onLongPressStart: (e) {
+        setState(() {
+          _selected = true;
+        });
+      },
+      onLongPressEnd: (e) {
+        setState(() {
+          _selected = false;
+        });
+      },
+      onLongPressMoveUpdate: (e) {
+        // print(e.globalPosition);
+      },
+      child: _stockListBarElement(context, _selected),
     );
   }
 }

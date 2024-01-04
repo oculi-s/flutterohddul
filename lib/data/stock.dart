@@ -105,11 +105,11 @@ class StockData {
     if (share.isNotEmpty) return false;
     var data = await Api().read(url: '/stock/$code/shareFixed.json');
     share = List<Share>.from(data['data'].map((e) => Share.fromJson(e)));
+    share.sortByCompare((a) => a.amount, (a, b) => a - b);
     int rest = amount - share.map((e) => e.amount).sum;
     if (rest > 0) {
       share.add(Share(amount: rest, date: null, name: '데이터없음', number: ''));
     }
-    share.sortByCompare((a) => a.amount, (a, b) => a - b);
     return true;
   }
 

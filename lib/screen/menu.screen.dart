@@ -10,7 +10,7 @@ class MenuScreen extends StatefulWidget {
 }
 
 class _MenuScreenState extends State<MenuScreen> {
-  int i = 0;
+  int i = 1;
   @override
   Widget build(BuildContext context) {
     return SafeArea(

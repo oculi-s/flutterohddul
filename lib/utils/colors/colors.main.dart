@@ -46,7 +46,7 @@ class MyTheme {
   }
   bool get _d => brightness == Brightness.dark;
   Color get _textColor => _d ? Color(0xffD1D4DC) : Color(0xff131722);
-  Color get _backgroundColor => _d ? Color(0xff2a2e39) : Color(0xffe0e3eb);
+  Color get _backgroundColor => _d ? Color(0xFF22252E) : Color(0xffe0e3eb);
   Color get _dividerColor => Color(0xff2A2E39);
 
   Color get _primary => _d ? Color(0xff131722) : Color(0xffFFFFFF);
