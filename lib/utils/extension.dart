@@ -1,3 +1,4 @@
+import 'package:flutterohddul/data/stock.dart';
 import 'package:intl/intl.dart' as intl;
 
 extension DoubleFormatter on double {
@@ -22,7 +23,13 @@ extension DoubleFormatter on double {
 }
 
 extension DTFormatter on DateTime {
-  String asString() {
-    return intl.DateFormat('yyyy-MM-dd hh:mm:ss').format(this);
-  }
+  String asString() => intl.DateFormat('yyyy-MM-dd hh:mm:ss').format(this);
+}
+
+extension IterExtension2d<T> on Iterable<Iterable<T>> {
+  List<T> flatten() => expand((e) => e).toList();
+}
+
+extension IterExtension1d on Iterable {
+  List stockOrString() => map((e) => (e is StockData ? e.code : e)).toList();
 }

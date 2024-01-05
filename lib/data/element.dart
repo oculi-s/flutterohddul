@@ -1,5 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:flutterohddul/chart/treemap.dart';
 import 'package:flutterohddul/data/api.dart';
+import 'package:flutterohddul/utils/colors/colors.vars.dart';
 import 'package:flutterohddul/utils/svgloader.dart';
 
 class Group {
@@ -54,6 +56,7 @@ class GroupData {
   int? lastPrice;
   int? historicalPrice;
   Rectangle? tree;
+  Color? get color => groupColor[name];
 
   GroupData({
     this.name,

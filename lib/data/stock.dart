@@ -2,6 +2,8 @@ import 'package:collection/collection.dart';
 import 'package:flutterohddul/data/api.dart';
 import 'package:flutterohddul/data/candledata.dart';
 import 'package:flutterohddul/data/element.dart';
+import 'package:flutterohddul/data/prediction.dart';
+import 'package:flutterohddul/utils/svgloader.dart';
 
 class Stock {
   Stock._();
@@ -9,6 +11,27 @@ class Stock {
   factory Stock() => _instance;
 
   Map<String, StockData> data = {};
+
+  List<StockData> filter(String v) {
+    v = v.toLowerCase();
+    if (data.containsKey(v)) return [data[v]!];
+    final res = Meta()
+        .meta
+        ?.data
+        ?.entries
+        .where((e) =>
+            (e.value['n'] as String).toLowerCase().contains(v) ||
+            e.key.contains(v))
+        .map((e) => fromCode(e.key))
+        .take(10)
+        .toList();
+    return res ?? [];
+  }
+
+  bool hasCode(String code) {
+    return Meta().meta?.data?[code] != null;
+  }
+
   StockData fromCode(String code) {
     final stock = Meta().meta?.data?.entries.firstWhereOrNull((e) {
       return e.key == code || e.value['n'] == code;
@@ -26,8 +49,8 @@ class Stock {
     data[code] = StockData(
       valid: true,
       code: stock.key,
-      name: stock.value['n'],
-      amount: stock.value['a'],
+      name: stock.value['n'] ?? '',
+      amount: stock.value['a'] ?? 0,
       marketType: stock.value['t'],
       group: Group().data[groupName],
       induty: Induty().data[indutyCode],
@@ -62,7 +85,10 @@ class StockData {
   int bps, eps;
   List<Earn> earn = [];
   List<Share> share = [];
+  List<PredData> pred = [];
   Price? price;
+
+  get img => group != null ? group?.image() : SvgLoader.asset('assets/svg.svg');
 
   StockData({
     required this.valid,
@@ -85,6 +111,9 @@ class StockData {
   double get bpsRatio => bps / currentPrice;
   double get epsRatio => eps / currentPrice;
   double get tick => currentPrice >= 1000000 ? 5 : 1;
+
+  int get up => Pred().count[code]?[0] ?? 0;
+  int get down => Pred().count[code]?[1] ?? 0;
 
   Future<bool> addPrice() async {
     price = await Price.read(this);

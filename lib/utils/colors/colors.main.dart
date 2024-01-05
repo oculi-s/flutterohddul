@@ -18,6 +18,8 @@ _appliedTextTheme(textStyle) {
 extension CustomColors on ColorScheme {
   Color get kakao => Color(0xffFEE500);
   Color get anchor => Color(0xFF9DC9D6);
+  Color get bull => Color(0xff22ab94);
+  Color get bear => Color(0xfff23645);
 }
 
 class MyTheme {
@@ -33,6 +35,7 @@ class MyTheme {
         background: _backgroundColor,
         primary: _primary,
         onPrimary: _onPrimary,
+        onPrimaryContainer: _onPrimaryContainer,
         secondary: _secondary,
         tertiary: _tertiary,
       ),
@@ -47,12 +50,14 @@ class MyTheme {
   bool get _d => brightness == Brightness.dark;
   Color get _textColor => _d ? Color(0xffD1D4DC) : Color(0xff131722);
   Color get _backgroundColor => _d ? Color(0xFF22252E) : Color(0xffe0e3eb);
-  Color get _dividerColor => Color(0xff2A2E39);
+  Color get _dividerColor => _d ? Color(0xFF1B1E25) : Color(0xFFCED1DB);
 
   Color get _primary => _d ? Color(0xff131722) : Color(0xffFFFFFF);
   Color get _onPrimary => _d ? Color(0xffAAAAAA) : Color(0xffAAAAAA);
-  Color get _secondary => _d ? Color(0xFF16223B) : Color(0xFF16223B);
-  Color get _tertiary => _d ? Color(0xFF3E5C97) : Color(0xFF17223D);
+  Color get _onPrimaryContainer => _d ? Color(0xFF000811) : Color(0xFFF1F1F1);
+
+  Color get _secondary => _d ? Color(0xFF16223B) : Color(0xFFAEB9D1);
+  Color get _tertiary => _d ? Color(0xFF3E5C97) : Color(0xFF2C4992);
 
   TextStyle get _textStyle => TextStyle(color: _textColor);
   late ThemeData theme;
@@ -60,9 +65,6 @@ class MyTheme {
 
 class AppColors {
   static const Color kakao = Color(0xffFEE500);
-
-  static const Color plus = Color(0xff22ab94);
-  static const Color minus = Color(0xfff23645);
 
   static const Color bgDarker = Color(0xFF030D18);
   static const Color bgDark = Color(0xFF010207);

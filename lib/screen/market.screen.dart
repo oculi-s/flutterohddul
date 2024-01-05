@@ -71,7 +71,7 @@ class _MarketScreenState extends State<MarketScreen> {
     data: null,
   );
 
-  int _index = 0;
+  int i = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +81,9 @@ class _MarketScreenState extends State<MarketScreen> {
       children: [
         BottomNavigationBar(
           backgroundColor: theme.colorScheme.primary,
-          currentIndex: _index,
+          selectedItemColor: theme.colorScheme.tertiary,
+          showUnselectedLabels: false,
+          currentIndex: i,
           items: _currentBar.child
               .map(
                 (e) => BottomNavigationBarItem(
@@ -90,9 +92,9 @@ class _MarketScreenState extends State<MarketScreen> {
                 ),
               )
               .toList(),
-          onTap: (i) {
+          onTap: (index) {
             setState(() {
-              _index = i;
+              i = index;
             });
           },
         ),
@@ -104,7 +106,7 @@ class _MarketScreenState extends State<MarketScreen> {
           Container(
             child: TreeMapWidget(),
           ),
-        ][_index],
+        ][i],
       ],
     );
   }

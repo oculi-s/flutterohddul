@@ -9,7 +9,7 @@ class PriceColorView extends StatelessWidget {
   const PriceColorView(
     this.value, {
     super.key,
-    required this.asPercent,
+    this.asPercent = false,
     required this.style,
   });
 

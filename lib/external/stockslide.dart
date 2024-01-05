@@ -1,4 +1,3 @@
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterohddul/data/stock.dart';
 import 'package:flutterohddul/utils/base/base.dart';
@@ -59,9 +58,12 @@ class StockSlide extends StatelessWidget {
                           value: e.amount.toDouble(),
                           color: e.date == null
                               ? theme.colorScheme.background.darken(0.1)
-                              : e == stock.share.last
-                                  ? theme.colorScheme.background
-                                  : theme.colorScheme.secondary,
+                              : stock.group?.color != null
+                                  ? stock.group?.color
+                                      ?.withAlpha((ratio + 100).toInt())
+                                  : e == stock.share.last
+                                      ? theme.colorScheme.background
+                                      : theme.colorScheme.secondary,
                         );
                       },
                     )),
@@ -92,20 +94,23 @@ class StockSlide extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Text(title),
+            Text(
+              title,
+              style: theme.textTheme.bodyLarge,
+            ),
             value != null
                 ? PriceView(
                     value,
-                    style: theme.textTheme.bodySmall,
+                    style: theme.textTheme.bodyMedium,
                   )
-                : const SizedBox.shrink(),
+                : Container(),
             const SizedBox(width: 3),
             ratio != null
                 ? PercentView(
                     ratio,
-                    style: theme.textTheme.bodySmall,
+                    style: theme.textTheme.bodyMedium,
                   )
-                : const SizedBox.shrink()
+                : Container()
           ],
         ),
       );
@@ -117,26 +122,32 @@ class StockSlide extends StatelessWidget {
           Expanded(
             child: WaitFor(
               future: stock.addEarn(),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 5,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 5,
+                      ),
+                      child: Column(
+                        children: [
+                          Text(
+                            '시총',
+                            style: theme.textTheme.bodyLarge,
+                          ),
+                          MarketCapView(
+                            stock.marketCap,
+                            style: theme.textTheme.bodyMedium,
+                          )
+                        ],
+                      ),
                     ),
-                    child: Column(
-                      children: [
-                        const Text('시총'),
-                        MarketCapView(
-                          stock.marketCap,
-                          style: theme.textTheme.bodySmall,
-                        )
-                      ],
-                    ),
-                  ),
-                  tile(title: 'BPS', value: stock.bps, ratio: stock.bpsRatio),
-                  tile(title: 'EPS', value: stock.eps, ratio: stock.epsRatio),
-                ],
+                    tile(title: 'BPS', value: stock.bps, ratio: stock.bpsRatio),
+                    tile(title: 'EPS', value: stock.eps, ratio: stock.epsRatio),
+                  ],
+                ),
               ),
             ),
           ),
@@ -183,7 +194,7 @@ class StockSlide extends StatelessWidget {
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     return Container(
-      height: Screen(context).h - 10,
+      height: Screen(context).c - 10,
       width: Screen(context).w,
       decoration: BoxDecoration(
         color: theme.colorScheme.primary,
@@ -201,7 +212,7 @@ class StockSlide extends StatelessWidget {
             width: 25,
             height: 5,
             decoration: BoxDecoration(
-              color: theme.colorScheme.background,
+              color: theme.colorScheme.onPrimary,
               borderRadius: const BorderRadius.all(
                 Radius.circular(50),
               ),
@@ -213,20 +224,21 @@ class StockSlide extends StatelessWidget {
             height: 60,
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: theme.colorScheme.background,
+              color: theme.colorScheme.onPrimaryContainer,
               borderRadius: const BorderRadius.all(
                 Radius.circular(50),
               ),
             ),
-            child: stock.group!.image(),
+            child: stock.img,
           ),
+          SizedBox(height: 10),
           Text(
             stock.name,
-            style: theme.textTheme.labelLarge,
+            style: theme.textTheme.headlineSmall,
           ),
           PriceView(
             stock.currentPrice,
-            style: theme.textTheme.labelLarge,
+            style: theme.textTheme.bodyLarge,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -234,7 +246,7 @@ class StockSlide extends StatelessWidget {
               PriceColorView(
                 stock.priceChange,
                 asPercent: false,
-                style: theme.textTheme.labelSmall,
+                style: theme.textTheme.bodyMedium,
               ),
               const SizedBox(
                 width: 5,
@@ -242,7 +254,7 @@ class StockSlide extends StatelessWidget {
               PriceColorView(
                 stock.priceChangeRatio,
                 asPercent: true,
-                style: theme.textTheme.labelSmall,
+                style: theme.textTheme.bodyMedium,
               ),
             ],
           ),

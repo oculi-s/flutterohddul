@@ -5,18 +5,26 @@ import 'package:flutterohddul/screen/favs.screen.dart';
 import 'package:flutterohddul/screen/market.screen.dart';
 
 class MenuScreen extends StatefulWidget {
+  // Widget child;
+  AppBar? appBar;
+  MenuScreen({
+    super.key,
+    // required this.child,
+    this.appBar,
+  });
+
   @override
   _MenuScreenState createState() => _MenuScreenState();
 }
 
 class _MenuScreenState extends State<MenuScreen> {
-  int i = 1;
+  int i = 0;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        appBar: widget.appBar,
         body: SingleChildScrollView(
-          padding: const EdgeInsets.all(5),
           child: Center(
             child: [
               FavScreen(),
@@ -59,9 +67,9 @@ class _MenuScreenState extends State<MenuScreen> {
           selectedItemColor: Theme.of(context).colorScheme.tertiary,
           unselectedItemColor: Theme.of(context).colorScheme.onPrimary,
           backgroundColor: Theme.of(context).colorScheme.primary,
-          onTap: (int _i) {
+          onTap: (int index) {
             setState(() {
-              i = _i;
+              i = index;
             });
           },
           showSelectedLabels: true,

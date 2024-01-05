@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
 class Screen {
-  BuildContext ctx;
+  BuildContext context;
   Screen(
-    this.ctx,
+    this.context,
   );
-  MediaQueryData get _media => MediaQuery.of(ctx);
+  MediaQueryData get _media => MediaQuery.of(context);
   double get w => _media.size.width;
   double get h => _media.size.height;
-  double get c => h - kToolbarHeight - kBottomNavigationBarHeight;
+  double get c => h - kBottomNavigationBarHeight; // - kToolbarHeight;
 
   Ratio get ratio => Ratio(this);
 }

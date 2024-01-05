@@ -221,9 +221,7 @@ class _TreeMapWidgetState extends State<TreeMapWidget> {
                     width: w * rect.dx / dim,
                     height: h * rect.dy / dim,
                     child: Container(
-                      color: (groupColor[name] ?? Colors.grey)
-                          .darken()
-                          .withOpacity(.8),
+                      color: (e.color ?? Colors.grey).darken().withOpacity(.8),
                       child: LayoutBuilder(
                         builder: (context, constraints) {
                           var w = constraints.maxWidth;

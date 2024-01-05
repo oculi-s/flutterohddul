@@ -92,7 +92,7 @@ class WaitFor extends StatelessWidget {
           ? child
           : Center(
               child: SizedBox(
-                height: 20,
+                height: 10,
                 child: LinearProgressIndicator(
                   minHeight: 10,
                   backgroundColor: Theme.of(context).colorScheme.background,

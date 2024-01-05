@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutterohddul/data/stock.dart';
+import 'package:flutterohddul/data/user.dart';
 import 'package:flutterohddul/env/env.dart';
 import 'package:http/http.dart' as http;
 
@@ -67,11 +68,14 @@ class Api {
   static final Api _instance = Api._();
   factory Api() => _instance;
 
+  final readUrl = Uri.parse('https://api.ohddul.com/read');
+  final writeUrl = Uri.parse('https://api.ohddul.com/write');
+  final saveUrl = Uri.parse('https://api.ohddul.com/save');
+
   Future<dynamic> read({
     String? url,
     StockData? stock,
   }) async {
-    final apiUrl = Uri.parse('https://api.ohddul.com/read');
     String entry() {
       if (url != null) {
         return url;
@@ -83,7 +87,7 @@ class Api {
 
     try {
       final res = await http.post(
-        apiUrl,
+        readUrl,
         headers: {
           'Content-Type': 'application/json',
         },
@@ -108,13 +112,12 @@ class Api {
 
   Future<bool> write({
     String? url,
-    Map<String, dynamic>? data,
+    dynamic data,
   }) async {
-    final apiUrl = Uri.parse('https://api.ohddul.com/write');
     try {
       if (url == null && data == null) return false;
       final res = await http.post(
-        apiUrl,
+        writeUrl,
         headers: {
           'Content-Type': 'application/json',
         },
@@ -136,15 +139,25 @@ class Api {
     }
   }
 
+  Future<bool> fav({
+    dynamic data,
+  }) async {
+    if (!Log().loggedin) {
+      print('No User logged in');
+      return false;
+    }
+    String uid = Log().user!.uid;
+    return await write(url: '/user/$uid/favs.json', data: data);
+  }
+
   Future<bool> save({
     String? url,
     String? fileUrl,
   }) async {
-    final apiUrl = Uri.parse('https://api.ohddul.com/save');
     try {
       if (url == null && fileUrl == null) return false;
       final res = await http.post(
-        apiUrl,
+        saveUrl,
         headers: {
           'Content-Type': 'application/json',
         },
@@ -171,9 +184,8 @@ class Api {
     String? url,
   ) async {
     try {
-      final apiUrl = Uri.parse('https://api.ohddul.com/read');
       final res = await http.post(
-        apiUrl,
+        readUrl,
         headers: {
           'Content-Type': 'application/json',
         },

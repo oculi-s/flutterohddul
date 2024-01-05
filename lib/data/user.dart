@@ -51,9 +51,11 @@ class Log {
   static final Log _instance = Log._();
   factory Log() => _instance;
   User? user;
+  bool get loggedin => user != null;
 
-  Future<void> login() async {
+  Future<bool> login() async {
     try {
+      print(await KakaoSdk.origin);
       await isKakaoTalkInstalled()
           ? await UserApi.instance.loginWithKakaoTalk()
           : await UserApi.instance.loginWithKakaoAccount();
@@ -61,9 +63,13 @@ class Log {
       String uid = kakao.id.toString();
       int now = DateTime.now().millisecondsSinceEpoch;
 
-      if (kakao.properties == null) return;
+      if (kakao.properties == null) return false;
       var meta = await Api().read(url: '/user/$uid/meta.json');
       var favs = await Api().read(url: '/user/$uid/favs.json');
+      if (favs is Map<String, dynamic>) {
+        favs = favs.keys.toList();
+        await Api().fav(data: favs);
+      }
       var pred = await Api().read(url: '/user/$uid/pred.json');
 
       var ac = kakao.kakaoAccount;
@@ -110,17 +116,28 @@ class Log {
         uid: uid,
         email: ac?.email,
         id: meta?['id'] ?? ac?.profile?.nickname ?? uid,
-        favs: List<StockData>.from(favs.keys.map((e) => Stock().fromCode(e))),
+        favs: favs
+            .map((e) => Stock().hasCode(e) ? Stock().fromCode(e) : e)
+            .toList(),
         profile: profile,
         thumbnail: thumbnail,
         pred: pred,
       );
+      return true;
     } catch (error) {
       print('카카오톡으로 로그인 실패 $error');
+      return false;
     }
   }
 
-  Future<void> logout() async {
-    await UserApi.instance.logout();
+  Future<bool> logout() async {
+    try {
+      await UserApi.instance.logout();
+      user = null;
+      return true;
+    } catch (error) {
+      print('카카오톡으로 로그아웃 실패 $error');
+      return false;
+    }
   }
 }

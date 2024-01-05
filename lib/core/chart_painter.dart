@@ -25,7 +25,7 @@ class ChartPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    _drawBasicMeta(canvas, params);
+    // _drawBasicMeta(canvas, params);
     // Draw time labels (dates) & price labels
     _drawTimeLabels(canvas, params);
     _drawPriceGridAndLabels(canvas, params);
@@ -199,7 +199,7 @@ class ChartPainter extends CustomPainter {
     canvas.translate(params.xShift, 0.0);
     // Draw highlight bar (selection box)
     final paintdash = Paint()
-      ..strokeWidth = .2
+      ..strokeWidth = .4
       ..color = params.style.selectionHighlightColor;
 
     double dashWidth = 5.0;
@@ -308,7 +308,7 @@ class ChartPainter extends CustomPainter {
     final labels = _info.keys.map((text) => makeTP(text)).toList();
     final values = _info.values.map((text) => makeTP(text, true)).toList();
 
-    double x = 10, y = 30;
+    double x = 10, y = 10;
     for (int i = 0; i < labels.length; i++) {
       labels[i].paint(canvas, Offset(x, y));
       x += labels[i].width + 2;
@@ -318,7 +318,7 @@ class ChartPainter extends CustomPainter {
     makeTP('(${diff.asPercent()})', true).paint(canvas, Offset(x, y));
 
     x = 10;
-    y = 50;
+    y += 20;
     final _infoTrends = {
       "BB": candle.line[0]?.asPrice() ?? "-",
       "하단": candle.line[1]?.asPrice() ?? "-",

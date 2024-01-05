@@ -7,7 +7,7 @@ class SvgLoader {
     String path, {
     double width = 30,
     double height = 30,
-    String def = 'assets/error.svg',
+    String def = 'assets/svg.svg',
   }) =>
       FutureBuilder(
         future: islocal(path, def, width, height),
@@ -17,7 +17,7 @@ class SvgLoader {
 
   static Future<SvgPicture> islocal(
     String path, [
-    String def = 'assets/error.svg',
+    String def = 'assets/svg.svg',
     double width = 30,
     double height = 30,
   ]) async =>
