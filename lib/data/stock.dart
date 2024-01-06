@@ -85,7 +85,7 @@ class StockData {
   int bps, eps;
   List<Earn> earn = [];
   List<Share> share = [];
-  List<PredData> pred = [];
+  List<PredQueueItem> pred = [];
   Price? price;
 
   get img => group != null ? group?.image() : SvgLoader.asset('assets/svg.svg');
@@ -112,8 +112,10 @@ class StockData {
   double get epsRatio => eps / currentPrice;
   double get tick => currentPrice >= 1000000 ? 5 : 1;
 
-  int get up => Pred().count[code]?[0] ?? 0;
-  int get down => Pred().count[code]?[1] ?? 0;
+  int get up => Pred().count.findQueue(up: true, code: code);
+  int get down => Pred().count.findQueue(up: false, code: code);
+  int get upall => Pred().count.findData(up: true, code: code) + up;
+  int get downall => Pred().count.findData(up: false, code: code) + down;
 
   Future<bool> addPrice() async {
     price = await Price.read(this);

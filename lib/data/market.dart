@@ -17,9 +17,9 @@ class Market {
 
   Future<bool> load() async {
     // if (isDataLoaded()) return false;
-    await baserate.read('/meta/rate.json', false);
-    await cpi.read('/meta/cpi.json');
-    await ppi.read('/meta/ppi.json');
+    await baserate.read('/meta/ecos/rate.json', false);
+    await cpi.read('/meta/ecos/cpi.json');
+    await ppi.read('/meta/ecos/ppi.json');
     await Group().addTree();
     return true;
   }

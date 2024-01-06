@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutterohddul/data/stock.dart';
 import 'package:flutterohddul/data/user.dart';
 import 'package:flutterohddul/env/env.dart';
+import 'package:flutterohddul/utils/extension.dart';
 import 'package:http/http.dart' as http;
 
 class Meta {
@@ -140,14 +141,15 @@ class Api {
   }
 
   Future<bool> fav({
-    dynamic data,
+    List data = const [],
   }) async {
     if (!Log().loggedin) {
       print('No User logged in');
       return false;
     }
+    Log().user!.favs = data.widgetToFavs();
     String uid = Log().user!.uid;
-    return await write(url: '/user/$uid/favs.json', data: data);
+    return await write(url: '/user/$uid/favs.json', data: data.widgetToFavs());
   }
 
   Future<bool> save({

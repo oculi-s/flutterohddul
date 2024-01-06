@@ -35,7 +35,7 @@ class LoginButton extends StatelessWidget {
             '카카오 로그인',
             style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                   color: Colors.black,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w600,
                   fontSize: 16,
                 ),
           )
@@ -82,7 +82,9 @@ shouldLoginDialog(context, [callback]) {
                   if (v) {
                     router.pop();
                   }
-                  callback();
+                  if (callback != null) {
+                    callback();
+                  }
                 },
               ),
             ],

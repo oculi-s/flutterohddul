@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutterohddul/data/prediction.dart';
 import 'package:flutterohddul/data/stock.dart';
 import 'package:flutterohddul/utils/base/base.dart';
 import 'package:flutterohddul/utils/colors/colors.convert.dart';
@@ -10,6 +11,20 @@ import 'package:fl_chart/fl_chart.dart';
 class StockSlide extends StatelessWidget {
   StockData stock;
   StockSlide({required this.stock});
+
+  _topslidebar(BuildContext context) {
+    var theme = Theme.of(context);
+    return Container(
+      width: 25,
+      height: 5,
+      decoration: BoxDecoration(
+        color: theme.colorScheme.onPrimary,
+        borderRadius: const BorderRadius.all(
+          Radius.circular(50),
+        ),
+      ),
+    );
+  }
 
   _sharePie(BuildContext context) {
     var theme = Theme.of(context);
@@ -83,7 +98,7 @@ class StockSlide extends StatelessWidget {
     );
   }
 
-  _stockInfoinSlide(BuildContext context) {
+  _earn(BuildContext context) {
     var theme = Theme.of(context);
 
     tile({required String title, value, ratio}) {
@@ -116,82 +131,113 @@ class StockSlide extends StatelessWidget {
       );
     }
 
-    _earnRow() {
-      return Row(
-        children: [
-          Expanded(
-            child: WaitFor(
-              future: stock.addEarn(),
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                child: Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 5,
-                      ),
-                      child: Column(
-                        children: [
-                          Text(
-                            '시총',
-                            style: theme.textTheme.bodyLarge,
-                          ),
-                          MarketCapView(
-                            stock.marketCap,
-                            style: theme.textTheme.bodyMedium,
-                          )
-                        ],
-                      ),
+    return Row(
+      children: [
+        Expanded(
+          child: WaitFor(
+            future: stock.addEarn(),
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 5,
                     ),
-                    tile(title: 'BPS', value: stock.bps, ratio: stock.bpsRatio),
-                    tile(title: 'EPS', value: stock.eps, ratio: stock.epsRatio),
-                  ],
-                ),
+                    child: Column(
+                      children: [
+                        Text(
+                          '시총',
+                          style: theme.textTheme.bodyLarge,
+                        ),
+                        MarketCapView(
+                          stock.marketCap,
+                          style: theme.textTheme.bodyMedium,
+                        )
+                      ],
+                    ),
+                  ),
+                  tile(title: 'BPS', value: stock.bps, ratio: stock.bpsRatio),
+                  tile(title: 'EPS', value: stock.eps, ratio: stock.epsRatio),
+                ],
               ),
             ),
           ),
-          Anchor(
-            href: '/stock/${stock.code}',
-            child: Row(
-              children: [
-                Text('더보기', style: theme.textTheme.bodyMedium),
-                Icon(Icons.chevron_right, color: theme.colorScheme.onPrimary),
-              ],
+        ),
+        Anchor(
+          href: '/stock/${stock.code}',
+          child: Row(
+            children: [
+              Text('더보기', style: theme.textTheme.bodyMedium),
+              Icon(Icons.chevron_right, color: theme.colorScheme.onPrimary),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  _priceLine(BuildContext context) {
+    return SizedBox(
+      width: Screen(context).w,
+      height: 300,
+      child: const Placeholder(),
+    );
+  }
+
+  _meta(BuildContext context) {
+    var theme = Theme.of(context);
+    return Column(
+      children: [
+        Container(
+          width: 60,
+          height: 60,
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.onPrimaryContainer,
+            borderRadius: const BorderRadius.all(
+              Radius.circular(50),
             ),
           ),
-        ],
-      );
-    }
-
-    return Expanded(
-      child: SingleChildScrollView(
-        child: Column(
+          child: stock.img,
+        ),
+        SizedBox(height: 10),
+        Text(
+          stock.name,
+          style: theme.textTheme.headlineSmall!.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        PriceView(
+          stock.currentPrice,
+          style: theme.textTheme.bodyLarge,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const SizedBox(height: 30),
-            SizedBox(
-              width: Screen(context).w,
-              height: 300,
-              child: const Placeholder(),
+            PriceColorView(
+              stock.priceChange,
+              asPercent: false,
+              style: theme.textTheme.bodyMedium,
             ),
-            Column(
-              children: [
-                const Divider(),
-                _earnRow(),
-                const Divider(),
-                const SizedBox(height: 30),
-                _sharePie(context),
-                const SizedBox(height: 30),
-              ],
+            const SizedBox(
+              width: 5,
+            ),
+            PriceColorView(
+              stock.priceChangeRatio,
+              asPercent: true,
+              style: theme.textTheme.bodyMedium,
             ),
           ],
-        ),
-      ),
+        )
+      ],
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    print(Pred().count);
     var theme = Theme.of(context);
     return Container(
       height: Screen(context).c - 10,
@@ -208,57 +254,44 @@ class StockSlide extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const SizedBox(height: 10),
-          Container(
-            width: 25,
-            height: 5,
-            decoration: BoxDecoration(
-              color: theme.colorScheme.onPrimary,
-              borderRadius: const BorderRadius.all(
-                Radius.circular(50),
-              ),
-            ),
-          ),
+          _topslidebar(context),
           const SizedBox(height: 20),
-          Container(
-            width: 60,
-            height: 60,
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: theme.colorScheme.onPrimaryContainer,
-              borderRadius: const BorderRadius.all(
-                Radius.circular(50),
-              ),
-            ),
-            child: stock.img,
-          ),
-          SizedBox(height: 10),
-          Text(
-            stock.name,
-            style: theme.textTheme.headlineSmall,
-          ),
-          PriceView(
-            stock.currentPrice,
-            style: theme.textTheme.bodyLarge,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          Stack(
             children: [
-              PriceColorView(
-                stock.priceChange,
-                asPercent: false,
-                style: theme.textTheme.bodyMedium,
+              Positioned(
+                left: 10,
+                child: Column(
+                  children: [
+                    Column(
+                      children: [
+                        BullBearBar(
+                          ratio: [stock.upall, stock.downall],
+                          width: 90,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(
-                width: 5,
-              ),
-              PriceColorView(
-                stock.priceChangeRatio,
-                asPercent: true,
-                style: theme.textTheme.bodyMedium,
-              ),
+              _meta(context),
             ],
           ),
-          _stockInfoinSlide(context)
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  const SizedBox(height: 30),
+                  _priceLine(context),
+                  const Divider(),
+                  _earn(context),
+                  const Divider(),
+                  const SizedBox(height: 30),
+                  _sharePie(context),
+                  const SizedBox(height: 30),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );

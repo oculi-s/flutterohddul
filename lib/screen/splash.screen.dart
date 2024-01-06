@@ -3,6 +3,7 @@ import 'package:flutterohddul/core/router.dart';
 import 'package:flutterohddul/data/api.dart';
 import 'package:flutterohddul/data/element.dart';
 import 'package:flutterohddul/data/market.dart';
+import 'package:flutterohddul/data/prediction.dart';
 import 'package:flutterohddul/utils/screen.utils.dart';
 import 'package:flutterohddul/utils/svgloader.dart';
 
@@ -21,6 +22,7 @@ class _SplashScreenState extends State<SplashScreen> {
       await Market().load();
       await Group().load();
       await Induty().load();
+      await Pred().count.load();
       router.replace('/menu');
       // Timer(const Duration(milliseconds: 1000), () {
       // });

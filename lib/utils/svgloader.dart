@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 
+Map<String, SvgPicture> _storage = {};
+
 class SvgLoader {
   static Widget asset(
     String path, {
@@ -9,11 +11,18 @@ class SvgLoader {
     double height = 30,
     String def = 'assets/svg.svg',
   }) =>
-      FutureBuilder(
-        future: islocal(path, def, width, height),
-        builder: (BuildContext context, snapshot) =>
-            snapshot.hasData ? snapshot.data! : CircularProgressIndicator(),
-      );
+      (_storage[path] != null
+          ? _storage[path]!
+          : FutureBuilder(
+              future: islocal(path, def, width, height),
+              builder: (BuildContext context, snapshot) {
+                if (snapshot.hasData) {
+                  _storage[path] = snapshot.data!;
+                  return snapshot.data!;
+                }
+                return CircularProgressIndicator();
+              },
+            ));
 
   static Future<SvgPicture> islocal(
     String path, [

@@ -22,8 +22,25 @@ extension DoubleFormatter on double {
   }
 }
 
-extension DTFormatter on DateTime {
-  String asString() => intl.DateFormat('yyyy-MM-dd hh:mm:ss').format(this);
+extension DateExtension on DateTime {
+  String asString([String format = 'yyy-MM-dd hh:mm:ss']) =>
+      intl.DateFormat(format).format(this);
+  int marketType() => (weekday == 0 || weekday == 6
+      ? 1
+      : (hour * 60 + minute < 539 ? -1 : (hour * 60 + minute > 940 ? 1 : 0)));
+  bool canPred() {
+    var n = DateTime.now();
+    if (weekday == 0) {
+      n = DateTime(n.year, n.month, n.day - 2, 15, 30, 0);
+    } else if (weekday == 6) {
+      n = DateTime(n.year, n.month, n.day - 1, 15, 30, 0);
+    } else if (marketType() == -1) {
+      n = DateTime(n.year, n.month, n.day - 1, 8, 59, 0);
+    } else {
+      n = DateTime(n.year, n.month, n.day, 8, 59, 0);
+    }
+    return isBefore(n);
+  }
 }
 
 extension IterExtension2d<T> on Iterable<Iterable<T>> {
@@ -31,5 +48,9 @@ extension IterExtension2d<T> on Iterable<Iterable<T>> {
 }
 
 extension IterExtension1d on Iterable {
-  List stockOrString() => map((e) => (e is StockData ? e.code : e)).toList();
+  List favsToWidget() =>
+      map((e) => e.startsWith('.') ? e.substring(1) : Stock().fromCode(e))
+          .toList();
+  List<String> widgetToFavs() =>
+      map((e) => e is StockData ? e.code : '.$e').toList();
 }

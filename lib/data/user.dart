@@ -1,8 +1,10 @@
 import 'dart:convert';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterohddul/data/api.dart';
-import 'package:flutterohddul/data/stock.dart';
+import 'package:flutterohddul/data/prediction.dart';
+import 'package:flutterohddul/utils/extension.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 
 class User {
@@ -10,9 +12,17 @@ class User {
   String? email;
   double rank;
   int? last, signed;
-  List<dynamic> favs;
-  Map<String, dynamic> meta, pred;
+  List<String> favs;
+  Map<String, dynamic> meta;
+  UserPred pred;
   Image? profile, thumbnail;
+
+  int predictionCode(code) {
+    var predItem = pred.findCode(code);
+    if (predItem == null) return 0;
+    if (predItem.predicted!.canPred()) return 0;
+    return predItem.up ? 1 : -1;
+  }
 
   User({
     this.uid = '',
@@ -21,17 +31,18 @@ class User {
     this.rank = 1000,
     this.favs = const [],
     this.meta = const {},
-    this.pred = const {},
+    UserPred? pred,
+    // this.pred = const UserPred(),
     this.profile,
     this.thumbnail,
-  });
+  }) : pred = pred ?? UserPred(uid: uid);
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
       uid: json['uid'].toString(),
       email: json['email'].toString(),
       id: json['id'].toString(),
-      favs: List.from(json['favs'].map((e) => Stock().fromCode(e))),
+      favs: json['favs'],
     );
   }
 
@@ -46,6 +57,41 @@ class User {
   }
 }
 
+class UserPred {
+  String uid;
+  List<PredDataItem> data = [];
+  List<PredQueueItem> queue = [];
+  UserPred({required this.uid});
+
+  Future<void> load() async {
+    Map json = await Api().read(url: '/user/$uid/pred.json');
+    data = List<PredDataItem>.from(
+        (json['data'] ?? []).map((e) => PredDataItem.fromJson(e)));
+    queue = List<PredQueueItem>.from(
+        (json['queue'] ?? []).map((e) => PredQueueItem.fromJson(e)));
+  }
+
+  PredQueueItem? findCode(String code) =>
+      queue.firstWhereOrNull((e) => e.code == code);
+
+  bool hasCode(String code) {
+    var pred = findCode(code);
+    return pred != null;
+  }
+
+  Future<void> add(PredQueueItem pred) async {
+    queue.add(pred);
+    await Api().write(url: '/user/$uid/pred.json', data: toJson());
+  }
+
+  Map toJson() {
+    return {
+      'data': data.map((e) => e.toJson()).toList(),
+      'queue': queue.map((e) => e.toJson()).toList()
+    };
+  }
+}
+
 class Log {
   Log._();
   static final Log _instance = Log._();
@@ -55,7 +101,6 @@ class Log {
 
   Future<bool> login() async {
     try {
-      print(await KakaoSdk.origin);
       await isKakaoTalkInstalled()
           ? await UserApi.instance.loginWithKakaoTalk()
           : await UserApi.instance.loginWithKakaoAccount();
@@ -70,7 +115,8 @@ class Log {
         favs = favs.keys.toList();
         await Api().fav(data: favs);
       }
-      var pred = await Api().read(url: '/user/$uid/pred.json');
+      UserPred pred = UserPred(uid: uid);
+      pred.load();
 
       var ac = kakao.kakaoAccount;
       var profileUrl = ac?.profile?.profileImageUrl;
@@ -116,9 +162,7 @@ class Log {
         uid: uid,
         email: ac?.email,
         id: meta?['id'] ?? ac?.profile?.nickname ?? uid,
-        favs: favs
-            .map((e) => Stock().hasCode(e) ? Stock().fromCode(e) : e)
-            .toList(),
+        favs: List<String>.from(favs),
         profile: profile,
         thumbnail: thumbnail,
         pred: pred,
