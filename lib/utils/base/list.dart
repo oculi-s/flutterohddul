@@ -4,7 +4,8 @@ class BulletList extends StatelessWidget {
   final List<Widget> children;
   final TextStyle? style;
 
-  BulletList({
+  const BulletList({
+    super.key,
     required this.children,
     this.style,
   });
@@ -13,7 +14,7 @@ class BulletList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.centerLeft,
-      padding: EdgeInsets.fromLTRB(16, 15, 16, 16),
+      padding: const EdgeInsets.fromLTRB(16, 15, 16, 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: children.map((child) {
@@ -21,7 +22,7 @@ class BulletList extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text('\u2022', style: style),
-              SizedBox(width: 5),
+              const SizedBox(width: 5),
               Expanded(
                 child: child,
               ),

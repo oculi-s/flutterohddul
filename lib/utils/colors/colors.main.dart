@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 _appliedTextTheme(textStyle) {
   return TextTheme(
@@ -16,10 +15,13 @@ _appliedTextTheme(textStyle) {
 }
 
 extension CustomColors on ColorScheme {
-  Color get kakao => Color(0xffFEE500);
-  Color get anchor => Color(0xFF9DC9D6);
-  Color get bull => Color(0xff22ab94);
-  Color get bear => Color(0xfff23645);
+  Color get kakao => const Color(0xffFEE500);
+
+  Color get anchor => const Color(0xFF9DC9D6);
+
+  Color get bull => const Color(0xff22ab94);
+
+  Color get bear => const Color(0xfff23645);
 }
 
 class MyTheme {
@@ -47,17 +49,30 @@ class MyTheme {
       textTheme: _appliedTextTheme(_textStyle),
     );
   }
+
   bool get _d => brightness == Brightness.dark;
-  Color get _textColor => _d ? Color(0xffD1D4DC) : Color(0xff131722);
-  Color get _backgroundColor => _d ? Color(0xFF22252E) : Color(0xffe0e3eb);
-  Color get _dividerColor => _d ? Color(0xFF242831) : Color(0xFFCED1DB);
 
-  Color get _primary => _d ? Color(0xFF10131D) : Color(0xffFFFFFF);
-  Color get _onPrimary => _d ? Color(0xffAAAAAA) : Color(0xffAAAAAA);
-  Color get _onPrimaryContainer => _d ? Color(0xFF000811) : Color(0xFFF1F1F1);
+  Color get _textColor =>
+      _d ? const Color(0xffD1D4DC) : const Color(0xff131722);
 
-  Color get _secondary => _d ? Color(0xFF16223B) : Color(0xFFAEB9D1);
-  Color get _tertiary => _d ? Color(0xFF3E5C97) : Color(0xFF2C4992);
+  Color get _backgroundColor =>
+      _d ? const Color(0xFF22252E) : const Color(0xffe0e3eb);
+
+  Color get _dividerColor =>
+      _d ? const Color(0xFF242831) : const Color(0xFFCED1DB);
+
+  Color get _primary => _d ? const Color(0xFF10131D) : const Color(0xffFFFFFF);
+
+  Color get _onPrimary =>
+      _d ? const Color(0xffAAAAAA) : const Color(0xffAAAAAA);
+
+  Color get _onPrimaryContainer =>
+      _d ? const Color(0xFF000811) : const Color(0xFFF1F1F1);
+
+  Color get _secondary =>
+      _d ? const Color(0xFF16223B) : const Color(0xFFAEB9D1);
+
+  Color get _tertiary => _d ? const Color(0xFF3E5C97) : const Color(0xFF2C4992);
 
   TextStyle get _textStyle => TextStyle(color: _textColor);
   late ThemeData theme;
@@ -73,7 +88,7 @@ class AppColors {
   static const Color bgMidBright = Color(0xFF16223B);
   static const Color bgBright = Color(0xFF17223D);
   static const Color bgBrighter = Color(0xFF26395E);
-  static const Color bgOpacity = Color(0xFF29344B4B);
+  static const Color bgOpacity = Color(0xFF29344B);
 
   static const Color textColor = Color(0xFFAAAAAA);
   static const Color textBright = Color(0xFFE5E5E5);

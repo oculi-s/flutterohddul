@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutterohddul/chart/linechart.dart';
 import 'package:flutterohddul/chart/pricechart.dart';
-import 'package:flutterohddul/core/router.dart';
 import 'package:flutterohddul/data/chartstyle.dart';
 import 'package:flutterohddul/data/stock.dart';
 import 'package:flutterohddul/utils/base/base.dart';
-import 'package:flutterohddul/utils/colors/colors.convert.dart';
-import 'package:flutterohddul/utils/colors/colors.main.dart';
-import 'package:flutterohddul/utils/extension.dart';
 import 'package:flutterohddul/utils/function/stocksearch.dart';
 import 'package:flutterohddul/utils/screen.utils.dart';
 

@@ -1,30 +1,27 @@
 import 'package:collection/collection.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
-
-import 'package:flutterohddul/core/router.dart';
 import 'package:flutterohddul/data/api.dart';
 import 'package:flutterohddul/data/prediction.dart';
-
+import 'package:flutterohddul/data/stock.dart';
+import 'package:flutterohddul/data/user.dart';
+import 'package:flutterohddul/external/stockslide.dart';
 import 'package:flutterohddul/utils/base/base.dart';
 import 'package:flutterohddul/utils/base/timer.dart';
 import 'package:flutterohddul/utils/base/vars.dart';
 import 'package:flutterohddul/utils/colors/colors.convert.dart';
 import 'package:flutterohddul/utils/colors/colors.main.dart';
+import 'package:flutterohddul/utils/extension.dart';
 import 'package:flutterohddul/utils/function/shouldlogin.dart';
 import 'package:flutterohddul/utils/function/stocksearch.dart';
 import 'package:flutterohddul/utils/function/textedit.dart';
 import 'package:flutterohddul/utils/priceview.dart';
-import 'package:flutterohddul/data/stock.dart';
-import 'package:flutterohddul/data/user.dart';
-
-import 'package:flutterohddul/external/stockslide.dart';
-import 'package:flutterohddul/utils/extension.dart';
 import 'package:flutterohddul/utils/screen.utils.dart';
 
 class FavScreen extends StatefulWidget {
   const FavScreen({super.key});
+
   @override
   State<FavScreen> createState() => _FavScreenState();
 }
@@ -91,7 +88,7 @@ class _FavScreenState extends State<FavScreen> {
                 child: const Text('다음예측 '),
               ),
               Container(
-                padding: EdgeInsets.all(5),
+                padding: const EdgeInsets.all(5),
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton2(
                     customButton: const Icon(Icons.add),
@@ -110,7 +107,7 @@ class _FavScreenState extends State<FavScreen> {
                       ),
                       offset: const Offset(0, -10),
                     ),
-                    items: [
+                    items: const [
                       DropdownMenuItem(value: 0, child: Text('섹션')),
                       DropdownMenuItem(value: 1, child: Text('종목')),
                     ],
@@ -218,16 +215,19 @@ class _FavScreenState extends State<FavScreen> {
 
 class DragDestination extends StatefulWidget {
   final Function onAccept;
+
   const DragDestination({
     super.key,
     required this.onAccept,
   });
+
   @override
   State<DragDestination> createState() => _DragDestinationState();
 }
 
 class _DragDestinationState extends State<DragDestination> {
   bool _willAccept = false;
+
   @override
   Widget build(BuildContext context) {
     return Container(

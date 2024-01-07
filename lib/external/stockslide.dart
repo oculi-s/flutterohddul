@@ -1,3 +1,4 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterohddul/chart/linechart.dart';
 import 'package:flutterohddul/core/router.dart';
@@ -8,10 +9,10 @@ import 'package:flutterohddul/utils/colors/colors.main.dart';
 import 'package:flutterohddul/utils/extension.dart';
 import 'package:flutterohddul/utils/priceview.dart';
 import 'package:flutterohddul/utils/screen.utils.dart';
-import 'package:fl_chart/fl_chart.dart';
 
 class StockSlide extends StatefulWidget {
   final StockData stock;
+
   const StockSlide({super.key, required this.stock});
 
   @override
@@ -213,7 +214,7 @@ class _StockSlideState extends State<StockSlide> {
 
     return Column(
       children: [
-        Container(
+        SizedBox(
           height: 240,
           width: Screen(context).w,
           child: WaitFor(

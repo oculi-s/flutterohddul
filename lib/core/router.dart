@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutterohddul/external/stock.dart';
 import 'package:flutterohddul/screen/favs.screen.dart';
 import 'package:flutterohddul/screen/market.screen.dart';
@@ -29,7 +28,7 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/favs',
       builder: (BuildContext context, GoRouterState state) {
-        return MenuScreen(
+        return const MenuScreen(
           i: 0,
           child: FavScreen(),
         );
@@ -48,7 +47,7 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/market',
       builder: (context, state) {
-        return MenuScreen(
+        return const MenuScreen(
           i: 3,
           child: MarketScreen(),
         );

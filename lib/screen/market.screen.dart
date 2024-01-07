@@ -10,12 +10,14 @@ class BarState {
   IconData? icon;
   List<BarState> child;
   dynamic data;
+
   BarState({
     required this.name,
     required this.icon,
     required this.child,
     required this.data,
   });
+
   BarState from(List<int> currentIndex) {
     return child[currentIndex[0]].child[currentIndex[1]];
   }
@@ -29,62 +31,22 @@ class MarketScreen extends StatefulWidget {
 }
 
 class _MarketScreenState extends State<MarketScreen> {
-  final _currentBar = BarState(
-    name: "",
-    icon: null,
-    child: [
-      BarState(
-        name: "세계경제",
-        icon: Icons.language_rounded,
-        child: [
-          BarState(
-            name: "기준금리",
-            icon: Icons.bar_chart_rounded,
-            child: [],
-            data: Market().baserate,
-          ),
-          BarState(
-            name: "CPI",
-            icon: Icons.trending_up_rounded,
-            child: [],
-            data: Market().cpi,
-          ),
-        ],
-        data: null,
-      ),
-      BarState(
-        name: "한국경제",
-        icon: Icons.flag_rounded,
-        child: [
-          BarState(
-            name: "시총비중 (그룹)",
-            icon: Icons.pie_chart_rounded,
-            child: [],
-            data: null,
-          ),
-        ],
-        data: null,
-      )
-    ],
-    data: null,
-  );
-
   final _names = ['기준금리', 'CPI', '그룹', '업종'];
   int i = 0;
 
   _customBar(BuildContext context) {
     var theme = Theme.of(context);
-    button(text, _i) {
+    button(text, j) {
       return GestureDetector(
         onTap: () {
           setState(() {
-            i = _i;
+            i = j;
           });
         },
         child: Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: i == _i ? theme.dividerColor : Colors.transparent,
+            color: i == j ? theme.dividerColor : Colors.transparent,
             borderRadius: const BorderRadius.all(Radius.circular(5)),
           ),
           child: Text(text, style: theme.textTheme.bodySmall),
@@ -94,7 +56,7 @@ class _MarketScreenState extends State<MarketScreen> {
 
     return Section(
       child: Container(
-        padding: EdgeInsets.all(10),
+        padding: const EdgeInsets.all(10),
         child: Row(
           children: _names.mapIndexed((i, e) => button(e, i)).toList(),
         ),
@@ -108,7 +70,7 @@ class _MarketScreenState extends State<MarketScreen> {
       mainAxisSize: MainAxisSize.min,
       children: [
         _customBar(context),
-        SizedBox(height: 2),
+        const SizedBox(height: 2),
         [
           EcosChartWidget(
             data: Market().baserate,

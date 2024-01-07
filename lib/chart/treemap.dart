@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutterohddul/data/api.dart';
 import 'package:flutterohddul/data/element.dart';
 import 'package:flutterohddul/utils/base/base.dart';
 import 'package:flutterohddul/utils/colors/colors.convert.dart';
@@ -15,6 +14,7 @@ class SquarifyData {
   late double totalSize;
   late double totalArea = dim * dim;
   late int length;
+
   SquarifyData(List values) {
     data =
         values.map((value) => DataPoint(values.indexOf(value), value)).toList();
@@ -23,6 +23,7 @@ class SquarifyData {
     length = values.length;
     normalize();
   }
+
   void sortDescending() {
     data.sort((a, b) => b.value.compareTo(a.value));
   }
@@ -40,7 +41,9 @@ class DataPoint {
   double value;
   late double normalizedValue;
   int id;
+
   DataPoint(this.id, this.value);
+
   void normalize(double totalArea, double totalSize) {
     normalizedValue = value * totalArea / totalSize;
   }
@@ -50,8 +53,11 @@ class Rectangle {
   double x, y, dx, dy;
   double? value;
   int? id;
+
   Rectangle(this.x, this.y, this.dx, this.dy, this.id, this.value);
+
   Rectangle.fromDimensions(this.x, this.y, this.dx, this.dy);
+
   @override
   String toString() {
     return '!SquarifyRect(x: $x, y: $y, dx: $dx, dy: $dy, id: $id, value: $value)\n';
@@ -88,13 +94,13 @@ class Squarify {
   }
 
   double worstRatio(List<DataPoint> values, double dx, double dy) {
-    double _max = 0;
+    double m = 0;
     for (var dataPoint in layout(values, 0, 0, dx, dy)) {
       double rectDx = dataPoint.dx;
       double rectDy = dataPoint.dy;
-      _max = max(_max, max(rectDx / rectDy, rectDy / rectDx));
+      m = max(m, max(rectDx / rectDy, rectDy / rectDx));
     }
-    return _max;
+    return m;
   }
 
   List<Rectangle> layout(
@@ -194,7 +200,7 @@ class _TreeMapWidgetState extends State<TreeMapWidget> {
   Widget build(BuildContext context) {
     return Section(
       child: Container(
-        padding: EdgeInsets.all(8),
+        padding: const EdgeInsets.all(8),
         height: Screen(context).c - 60,
         child: LayoutBuilder(builder: (context, constraints) {
           var w = constraints.maxWidth;
@@ -231,7 +237,8 @@ class _TreeMapWidgetState extends State<TreeMapWidget> {
                             child: FittedBox(
                               fit: BoxFit.contain,
                               child: Container(
-                                padding: EdgeInsets.symmetric(horizontal: 10),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 10),
                                 child: Text(
                                   '${(rect.value! * 100).toStringAsFixed(1)}%',
                                   style: TextStyle(

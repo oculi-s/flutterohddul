@@ -15,13 +15,13 @@ class EcosChartWidget extends StatefulWidget {
   final EcosData data;
   final Duration duration;
 
-  EcosChartWidget({
+  const  EcosChartWidget({super.key,
     required this.data,
     required this.duration,
   });
 
   @override
-  _EcosChartWidgetState createState() => _EcosChartWidgetState();
+  State<EcosChartWidget> createState() => _EcosChartWidgetState();
 }
 
 class _EcosChartWidgetState extends State<EcosChartWidget> {
@@ -162,14 +162,15 @@ class _EcosChartWidgetState extends State<EcosChartWidget> {
                           interval: 1,
                           reservedSize: 40,
                           getTitlesWidget: (double value, TitleMeta meta) {
-                            if (value == meta.min || value == meta.max)
+                            if (value == meta.min || value == meta.max) {
                               return const Text('');
+                            }
                             return SideTitleWidget(
+                              axisSide: meta.axisSide,
                               child: Text(
                                 value.toString(),
                                 style: theme.textTheme.bodySmall,
                               ),
-                              axisSide: meta.axisSide,
                             );
                           },
                         ),
@@ -182,8 +183,9 @@ class _EcosChartWidgetState extends State<EcosChartWidget> {
                           getTitlesWidget: (double value, TitleMeta meta) {
                             final d = DateTime.fromMillisecondsSinceEpoch(
                                 value.toInt());
-                            if (value == meta.min || value == meta.max)
+                            if (value == meta.min || value == meta.max) {
                               return const Text('');
+                            }
                             return SideTitleWidget(
                               axisSide: meta.axisSide,
                               child: Text(

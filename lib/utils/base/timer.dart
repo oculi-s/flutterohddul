@@ -1,26 +1,30 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 class TimerWidget extends StatefulWidget {
   final Widget? child;
   final DateTime to;
-  TimerWidget({
+
+  const TimerWidget({
+    super.key,
     this.child,
     required this.to,
   });
+
   @override
-  _TimerWidgetState createState() => _TimerWidgetState();
+  State<TimerWidget> createState() => _TimerWidgetState();
 }
 
 class _TimerWidgetState extends State<TimerWidget> {
-  late Timer _timer = Timer(Duration(days: 1), () {});
+  late Timer _timer = Timer(const Duration(days: 1), () {});
   Duration _remainingTime = Duration.zero;
 
   @override
   void initState() {
     super.initState();
     _calculateRemainingTime();
-    _timer = Timer.periodic(Duration(seconds: 1), (Timer timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
       _calculateRemainingTime();
     });
   }

@@ -12,7 +12,7 @@ class Market {
   EcosData ppi = EcosData(valid: false);
 
   bool isDataLoaded() {
-    return baserate.valid! && cpi.valid! && ppi.valid!;
+    return baserate.valid && cpi.valid && ppi.valid;
   }
 
   Future<bool> load() async {

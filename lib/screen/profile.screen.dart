@@ -5,8 +5,10 @@ import 'package:flutterohddul/utils/colors/colors.main.dart';
 import 'package:flutterohddul/utils/function/shouldlogin.dart';
 
 class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
+
   @override
-  _ProfileScreenState createState() => _ProfileScreenState();
+  State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
@@ -25,7 +27,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 }),
           Row(
             children: [
-              Text('내 예측'),
+              const Text('내 예측'),
               Text(Log().user?.pred.toString() ?? ''),
             ],
           )
@@ -45,7 +47,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         await Log().logout();
         setState(() {});
       },
-      child: Text('Logout'),
+      child: const Text('Logout'),
     );
   }
 }

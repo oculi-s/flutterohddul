@@ -1,5 +1,5 @@
 import 'dart:ui';
-import 'package:flutter/widgets.dart';
+
 import 'package:flutterohddul/data/candledata.dart';
 import 'package:flutterohddul/data/chartstyle.dart';
 import 'package:flutterohddul/data/stock.dart';
@@ -35,14 +35,14 @@ class PainterParams {
     required this.tapPosition,
   });
 
-  double get chartWidth => // width without price labels
-      size.width - style.priceLabelWidth;
+  double get chartWidth => size.width - style.priceLabelWidth;
 
-  double get chartHeight => // height without time labels
-      size.height - style.timeLabelHeight;
+  double get chartHeight => size.height - style.timeLabelHeight;
 
   double get volumeHeight => chartHeight * style.volumeHeightFactor;
+
   double get priceHeight => chartHeight - volumeHeight;
+
   double get rangePrice => maxPrice - minPrice;
 
   int getCandleIndexFromOffset(double x) {
@@ -53,14 +53,15 @@ class PainterParams {
 
   double fitHeight(double dy) =>
       maxPrice - dy / priceHeight * (maxPrice - minPrice);
+
   double fitWidth(double dx) => maxVol - dx / chartWidth * (maxVol - minVol);
 
   double fitPrice(double y) =>
       priceHeight * (maxPrice - y) / (maxPrice - minPrice);
 
   double fitVolume(double y) {
-    final gap = 12; // the gap between price bars and volume bars
-    final baseAmount = 2; // display at least "something" for the lowest volume
+    const gap = 12; // the gap between price bars and volume bars
+    const baseAmount = 2; // display at least "something" for the lowest volume
 
     if (maxVol == minVol) {
       // Apparently max and min values (in the current visible range, at least)
@@ -83,7 +84,7 @@ class PainterParams {
   }
 
   static PainterParams lerp(PainterParams a, PainterParams b, double t) {
-    double lerpField(double getField(PainterParams p)) =>
+    double lerpField(double Function(PainterParams p) getField) =>
         lerpDouble(getField(a), getField(b), t)!;
     return PainterParams(
       stock: b.stock,

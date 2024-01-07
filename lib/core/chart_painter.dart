@@ -7,6 +7,7 @@ import 'package:flutterohddul/data/painter.dart';
 import 'package:flutterohddul/utils/extension.dart';
 
 String priceLabel(double p) => p.asPrice();
+
 String timeLabel(DateTime d, int visibleDataCount, [bool isTapped = false]) {
   final date = d.toIso8601String().split("T").first.split("-");
   if (isTapped) {
@@ -218,7 +219,7 @@ class ChartPainter extends CustomPainter {
               pos.dy - priceTp.height / 2,
             ) &
             Size(params.style.priceLabelWidth, 16),
-        Radius.circular(0),
+        const Radius.circular(0),
       ),
       Paint()..color = params.style.overlayGridBackgroundColor,
     );
@@ -246,7 +247,7 @@ class ChartPainter extends CustomPainter {
               params.chartHeight,
             ) &
             Size(timeTp.width + 10, 16),
-        Radius.circular(0),
+        const Radius.circular(0),
       ),
       Paint()..color = params.style.overlayGridBackgroundColor,
     );

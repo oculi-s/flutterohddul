@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutterohddul/data/stock.dart';
 
 class StockExternal extends StatefulWidget {
-  String? code;
-  StockExternal({
+  final String? code;
+  const StockExternal({
     super.key,
     required this.code,
   });

@@ -20,7 +20,7 @@ class SvgLoader {
                   _storage[path] = snapshot.data!;
                   return snapshot.data!;
                 }
-                return CircularProgressIndicator();
+                return const CircularProgressIndicator();
               },
             ));
 

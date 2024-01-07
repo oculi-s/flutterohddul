@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
 import 'package:flutterohddul/data/candledata.dart';
 import 'package:flutterohddul/data/stock.dart';
 import 'package:flutterohddul/utils/colors/colors.main.dart';
@@ -14,7 +14,8 @@ class LineChartWidget extends StatefulWidget {
   final double Function(Candle) getter;
   final String Function(double) parse;
 
-  LineChartWidget({
+  const LineChartWidget({
+    super.key,
     required this.stock,
     required this.after,
     required this.getter,
@@ -23,39 +24,20 @@ class LineChartWidget extends StatefulWidget {
   });
 
   @override
-  _LineChartWidgetState createState() => _LineChartWidgetState();
+  State<LineChartWidget> createState() => _LineChartWidgetState();
 }
 
 class _LineChartWidgetState extends State<LineChartWidget> {
-  _lineWidget({
-    required BuildContext context,
-    required double Function(dynamic) getter,
-    Color? color,
-  }) {
-    var theme = Theme.of(context);
-    return LineChartBarData(
-      isCurved: true,
-      spots: widget.stock
-          .priceRange(widget.after)
-          .map((e) => FlSpot(e.d.ms.toDouble(), getter(e)))
-          .toList(),
-      dotData: const FlDotData(show: false),
-      color: color ??
-          groupColor[widget.stock.group?.name] ??
-          theme.colorScheme.bull,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     return LineChart(
       LineChartData(
-        gridData: FlGridData(show: false),
+        gridData: const FlGridData(show: false),
         titlesData: FlTitlesData(
-          rightTitles: AxisTitles(),
-          topTitles: AxisTitles(),
-          leftTitles: AxisTitles(),
+          rightTitles: const AxisTitles(),
+          topTitles: const AxisTitles(),
+          leftTitles: const AxisTitles(),
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
@@ -64,7 +46,9 @@ class _LineChartWidgetState extends State<LineChartWidget> {
               reservedSize: 30,
               getTitlesWidget: (double value, TitleMeta meta) {
                 final d = DateTime.fromMillisecondsSinceEpoch(value.toInt());
-                if (value == meta.min || value == meta.max) return Text('');
+                if (value == meta.min || value == meta.max) {
+                  return const Text('');
+                }
                 return SideTitleWidget(
                   axisSide: meta.axisSide,
                   child: Text(
@@ -99,20 +83,20 @@ class _LineChartWidgetState extends State<LineChartWidget> {
             tooltipBgColor: theme.colorScheme.secondary,
             showOnTopOfTheChartBoxArea: true,
             tooltipMargin: 0,
-            tooltipPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+            tooltipPadding:
+                const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
             getTooltipItems: (List<LineBarSpot> spots) {
               spots.sort((a, b) => a.barIndex - b.barIndex);
-              var _names = ['시가', '상단', '이평', '하단'];
               var res = [
                 LineTooltipItem(
                   '',
-                  TextStyle(),
+                  const TextStyle(),
                   children: [
                     TextSpan(
                       text: widget.parse(spots[0].y),
                       style: theme.textTheme.bodySmall,
                     ),
-                    TextSpan(text: '\n'),
+                    const TextSpan(text: '\n'),
                     TextSpan(
                       text: DateTime.fromMillisecondsSinceEpoch(
                               spots[0].x.toInt())

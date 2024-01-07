@@ -8,7 +8,7 @@ extension DoubleFormatter on double {
   }
 
   String asPercent() {
-    final format = "##0.00";
+    const format = "##0.00";
     final v = intl.NumberFormat(format, "en_US").format(this);
     return "$v%";
   }
@@ -34,6 +34,7 @@ extension DoubleFormatter on double {
 
 extension Dt on DateTime {
   int get ms => millisecondsSinceEpoch;
+
   String asString([String format = 'yyy-MM-dd hh:mm:ss']) =>
       intl.DateFormat(format).format(this);
 
@@ -52,6 +53,7 @@ extension Dt on DateTime {
   int marketType() => (weekday == 0 || weekday == 6
       ? 1
       : (hour * 60 + minute < 539 ? -1 : (hour * 60 + minute > 940 ? 1 : 0)));
+
   bool canPred() {
     return isBefore(shouldnotExistAfter());
   }
@@ -118,6 +120,7 @@ extension IterExtension1d on Iterable {
   List favsToWidget() =>
       map((e) => e.startsWith('.') ? e.substring(1) : Stock().fromCode(e))
           .toList();
+
   List<String> widgetToFavs() =>
       map((e) => e is StockData ? e.code : '.$e').toList();
 }

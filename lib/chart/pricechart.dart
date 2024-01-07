@@ -7,7 +7,6 @@ import 'package:flutterohddul/data/candledata.dart';
 import 'package:flutterohddul/data/chartstyle.dart';
 import 'package:flutterohddul/data/painter.dart';
 import 'package:flutterohddul/data/stock.dart';
-import 'package:flutterohddul/utils/extension.dart';
 
 class PriceChartWidget extends StatefulWidget {
   final StockData stock;
@@ -26,7 +25,7 @@ class PriceChartWidget extends StatefulWidget {
         super(key: key);
 
   @override
-  _PriceChartWidgetState createState() => _PriceChartWidgetState();
+  State<PriceChartWidget> createState() => _PriceChartWidgetState();
 }
 
 class _PriceChartWidgetState extends State<PriceChartWidget> {
@@ -40,6 +39,7 @@ class _PriceChartWidgetState extends State<PriceChartWidget> {
   late Offset _initialFocalPoint;
 
   late List<Candle> p;
+
   @override
   void initState() {
     super.initState();
@@ -196,8 +196,10 @@ class _PriceChartWidgetState extends State<PriceChartWidget> {
 
   double _getMinCandleWidth(double w) =>
       w / min(widget.maxCandleCount, p.length);
+
   double _getMaxCandleWidth(double w) =>
       w / min(widget.minCandleCount, p.length);
+
   double _getMaxStartOffset(double w, double candleWidth) {
     final count = w / candleWidth;
     final start = p.length - count;

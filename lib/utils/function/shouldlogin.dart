@@ -9,7 +9,7 @@ import 'package:flutterohddul/utils/svgloader.dart';
 class LoginButton extends StatelessWidget {
   final ValueChanged callback;
 
-  LoginButton({
+  const LoginButton({
     super.key,
     required this.callback,
   });
@@ -30,7 +30,7 @@ class LoginButton extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SvgLoader.asset('assets/img/KakaoLogo.svg', height: 15),
-          SizedBox(width: 3),
+          const SizedBox(width: 3),
           Text(
             '카카오 로그인',
             style: Theme.of(context).textTheme.bodyLarge!.copyWith(
@@ -54,8 +54,8 @@ shouldLoginDialog(context, [callback]) {
       return Dialog(
         backgroundColor: theme.colorScheme.primary.darken(),
         child: Container(
-          constraints: BoxConstraints(maxWidth: 400),
-          padding: EdgeInsets.all(30),
+          constraints: const BoxConstraints(maxWidth: 400),
+          padding: const EdgeInsets.all(30),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -66,18 +66,18 @@ shouldLoginDialog(context, [callback]) {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 20),
-              Text('로그인하시면 다음의 서비스를 이용할 수 있습니다.'),
+              const SizedBox(height: 20),
+              const Text('로그인하시면 다음의 서비스를 이용할 수 있습니다.'),
               BulletList(
-                children: [
+                style: theme.textTheme.bodySmall,
+                children: const [
                   Text('2500개 종목의 주가 예측'),
                   Text('관심종목 설정과 편집'),
                   Text('의견게시판에 의견 올리기'),
                   Text('시황정보 모아보기'),
                 ],
-                style: theme.textTheme.bodySmall,
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               LoginButton(
                 callback: (v) {
                   if (v) {
