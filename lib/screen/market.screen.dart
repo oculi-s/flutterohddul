@@ -2,6 +2,8 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterohddul/chart/ecoschart.dart';
 import 'package:flutterohddul/chart/treemap.dart';
+import 'package:flutterohddul/data/api.dart';
+import 'package:flutterohddul/data/element.dart';
 import 'package:flutterohddul/data/market.dart';
 import 'package:flutterohddul/utils/base/base.dart';
 
@@ -33,6 +35,7 @@ class MarketScreen extends StatefulWidget {
 class _MarketScreenState extends State<MarketScreen> {
   final _names = ['기준금리', 'CPI', '그룹', '업종'];
   int i = 0;
+  final _indutyFiltered = Induty().data.where((e) => e.code.length == 3);
 
   _customBar(BuildContext context) {
     var theme = Theme.of(context);
@@ -80,8 +83,33 @@ class _MarketScreenState extends State<MarketScreen> {
             data: Market().cpi,
             duration: const Duration(days: 365 * 4),
           ),
-          Container(
-            child: TreeMapWidget(),
+          TreeMapWidget(
+            take: 20,
+            values: Group().price,
+            colors: Group().colors,
+            children: Group().image,
+          ),
+          TreeMapWidget(
+            take: 12,
+            values: _indutyFiltered.map((e) => e.currentPrice).toList(),
+            colors: _indutyFiltered.map((e) => e.color).toList(),
+            children: _indutyFiltered
+                .map((e) => Column(
+                      children: [
+                        e.icon ?? Container(),
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          child: Text(
+                            e.name,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ))
+                .toList(),
           ),
         ][i],
       ],

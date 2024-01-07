@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutterohddul/data/candledata.dart';
 import 'package:flutterohddul/data/stock.dart';
 import 'package:flutterohddul/utils/colors/colors.main.dart';
-import 'package:flutterohddul/utils/colors/colors.vars.dart';
 import 'package:flutterohddul/utils/extension.dart';
 import 'package:intl/intl.dart';
 
@@ -71,7 +70,7 @@ class _LineChartWidgetState extends State<LineChartWidget> {
                 .toList(),
             dotData: const FlDotData(show: false),
             color: widget.color ??
-                groupColor[widget.stock.group?.name] ??
+                widget.stock.group?.color ??
                 theme.colorScheme.bull,
           )
           // _lineWidget(context: context, getter: (e) => e.c),
@@ -86,7 +85,7 @@ class _LineChartWidgetState extends State<LineChartWidget> {
             tooltipPadding:
                 const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
             getTooltipItems: (List<LineBarSpot> spots) {
-              spots.sort((a, b) => a.barIndex - b.barIndex);
+              spots.sortedBy2((e) => e.barIndex);
               var res = [
                 LineTooltipItem(
                   '',

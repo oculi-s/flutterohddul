@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+
 import 'package:flutterohddul/data/api.dart';
 import 'package:flutterohddul/data/prediction.dart';
 import 'package:flutterohddul/data/stock.dart';
@@ -85,19 +86,17 @@ class _FavScreenState extends State<FavScreen> {
             children: [
               TimerWidget(
                 to: DateTime.now().whenToPredNext(),
-                child: const Text('다음예측 '),
+                child: const Text('다음예측까지 '),
               ),
               Container(
                 padding: const EdgeInsets.all(5),
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton2(
-                    customButton: const Icon(Icons.add),
+                    customButton: Icon(
+                      Icons.add,
+                      color: theme.colorScheme.inversePrimary,
+                    ),
                     isExpanded: true,
-                    // dropdownStyleData: DropdownStyleData(
-                    //   offset: Offset(-20, 0),
-                    //   width: 200,
-                    //   maxHeight: 100,
-                    // ),
                     dropdownStyleData: DropdownStyleData(
                       width: 160,
                       padding: const EdgeInsets.symmetric(vertical: 6),
@@ -105,7 +104,6 @@ class _FavScreenState extends State<FavScreen> {
                         borderRadius: BorderRadius.circular(4),
                         color: theme.colorScheme.secondary,
                       ),
-                      offset: const Offset(0, -10),
                     ),
                     items: const [
                       DropdownMenuItem(value: 0, child: Text('섹션')),
@@ -146,7 +144,10 @@ class _FavScreenState extends State<FavScreen> {
                     _edit = !_edit;
                   });
                 },
-                icon: Icon(_edit ? Icons.check : Icons.edit),
+                icon: Icon(
+                  _edit ? Icons.check : Icons.edit,
+                  color: theme.colorScheme.inversePrimary,
+                ),
               )
             ],
           ),

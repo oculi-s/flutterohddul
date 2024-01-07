@@ -15,10 +15,7 @@ class Section extends Container {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(color: Theme
-          .of(context)
-          .colorScheme
-          .primary),
+      decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary),
       child: child,
     );
   }
@@ -39,20 +36,14 @@ class Last extends StatelessWidget {
       children: [
         Text(
           '마지막 업데이트 ',
-          style: Theme
-              .of(context)
-              .textTheme
-              .bodySmall,
+          style: Theme.of(context).textTheme.bodySmall,
         ),
         Text(
           ((data.last ??
-              DateTime.fromMillisecondsSinceEpoch(data['last']) ??
-              DateTime.now()) as DateTime)
+                  DateTime.fromMillisecondsSinceEpoch(data['last']) ??
+                  DateTime.now()) as DateTime)
               .asString(),
-          style: Theme
-              .of(context)
-              .textTheme
-              .bodySmall,
+          style: Theme.of(context).textTheme.bodySmall,
         ),
       ],
     );
@@ -108,18 +99,15 @@ class WaitFor extends StatelessWidget {
         return snapshot.hasData && (condition?.call() ?? true)
             ? child
             : other ??
-            Container(
-              height: 10,
-              constraints: BoxConstraints(
-                maxWidth: Screen(context).ratio.w(.5),
-              ),
-              child: LinearProgressIndicator(
-                backgroundColor: Theme
-                    .of(context)
-                    .colorScheme
-                    .background,
-              ),
-            );
+                Container(
+                  height: 10,
+                  constraints: BoxConstraints(
+                    maxWidth: Screen(context).ratio.w(.5),
+                  ),
+                  child: LinearProgressIndicator(
+                    backgroundColor: Theme.of(context).colorScheme.background,
+                  ),
+                );
       },
     );
   }
@@ -137,21 +125,18 @@ class RadiusButton extends ElevatedButton {
     this.radius = 50,
     this.backgroundColor,
   }) : super(
-    onPressed: onPressed,
-    child: child,
-    style: ButtonStyle(
-      backgroundColor: MaterialStateProperty.all<Color>(
-          backgroundColor ?? Theme
-              .of(context)
-              .colorScheme
-              .primary),
-      shape: MaterialStateProperty.all<OutlinedBorder>(
-        RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(radius),
-        ),
-      ),
-    ),
-  );
+          onPressed: onPressed,
+          child: child,
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all<Color>(
+                backgroundColor ?? Theme.of(context).colorScheme.primary),
+            shape: MaterialStateProperty.all<OutlinedBorder>(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(radius),
+              ),
+            ),
+          ),
+        );
 }
 
 class BullBearBar extends StatelessWidget {
@@ -164,10 +149,9 @@ class BullBearBar extends StatelessWidget {
     required this.ratio,
     required this.width,
     this.height = 20,
-  })
-      : bull = ratio[0] == 0 && ratio[1] == 0
-      ? 0.5
-      : (ratio[0]) / (ratio[0] + ratio[1]),
+  })  : bull = ratio[0] == 0 && ratio[1] == 0
+            ? 0.5
+            : (ratio[0]) / (ratio[0] + ratio[1]),
         bear = ratio[0] == 0 && ratio[1] == 0
             ? 0.5
             : (ratio[1]) / (ratio[0] + ratio[1]);
@@ -197,11 +181,18 @@ class BullBearBar extends StatelessWidget {
             padding: const EdgeInsets.all(2),
             child: Row(
               children: [
-                const Icon(Icons.thumb_up, size: 15),
+                Icon(
+                  Icons.thumb_up,
+                  size: 15,
+                  color: theme.colorScheme.primary,
+                ),
                 const SizedBox(width: 3),
                 Text(
                   ratio[0].toString(),
-                  style: theme.textTheme.labelLarge,
+                  style: theme.textTheme.labelLarge!.copyWith(
+                    color: theme.colorScheme.primary,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
@@ -216,10 +207,17 @@ class BullBearBar extends StatelessWidget {
               children: [
                 Text(
                   ratio[1].toString(),
-                  style: theme.textTheme.labelLarge,
+                  style: theme.textTheme.labelLarge!.copyWith(
+                    color: theme.colorScheme.primary,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(width: 3),
-                const Icon(Icons.thumb_down, size: 15),
+                Icon(
+                  Icons.thumb_down,
+                  size: 15,
+                  color: theme.colorScheme.primary,
+                ),
               ],
             ),
           ),

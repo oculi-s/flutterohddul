@@ -1,5 +1,4 @@
 import 'package:flutterohddul/data/api.dart';
-import 'package:flutterohddul/data/element.dart';
 import 'package:intl/intl.dart';
 
 class Market {
@@ -20,7 +19,6 @@ class Market {
     await baserate.read('/meta/ecos/rate.json', false);
     await cpi.read('/meta/ecos/cpi.json');
     await ppi.read('/meta/ecos/ppi.json');
-    await Group().addTree();
     return true;
   }
 }

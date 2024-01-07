@@ -52,7 +52,7 @@ shouldLoginDialog(context, [callback]) {
     context: context,
     builder: (context) {
       return Dialog(
-        backgroundColor: theme.colorScheme.primary.darken(),
+        backgroundColor: theme.colorScheme.secondary,
         child: Container(
           constraints: const BoxConstraints(maxWidth: 400),
           padding: const EdgeInsets.all(30),
@@ -67,14 +67,17 @@ shouldLoginDialog(context, [callback]) {
                 ),
               ),
               const SizedBox(height: 20),
-              const Text('로그인하시면 다음의 서비스를 이용할 수 있습니다.'),
+              Text(
+                '로그인하시면 다음의 서비스를 이용할 수 있습니다.',
+                style: theme.textTheme.bodyMedium,
+              ),
               BulletList(
-                style: theme.textTheme.bodySmall,
-                children: const [
-                  Text('2500개 종목의 주가 예측'),
-                  Text('관심종목 설정과 편집'),
-                  Text('의견게시판에 의견 올리기'),
-                  Text('시황정보 모아보기'),
+                style: theme.textTheme.bodyLarge,
+                children: [
+                  Text('2500개 종목의 주가 예측', style: theme.textTheme.bodyLarge),
+                  Text('관심종목 설정과 편집', style: theme.textTheme.bodyLarge),
+                  Text('의견게시판에 의견 올리기', style: theme.textTheme.bodyLarge),
+                  Text('시황정보 모아보기', style: theme.textTheme.bodyLarge),
                 ],
               ),
               const SizedBox(height: 10),

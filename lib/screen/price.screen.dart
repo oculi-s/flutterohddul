@@ -59,7 +59,7 @@ class _PriceScreenState extends State<PriceScreen> {
                   Text(
                     '${stock.name} ${stock.code}',
                     style: theme.textTheme.headlineSmall!.copyWith(
-                      color: theme.colorScheme.onPrimary,
+                      color: theme.colorScheme.inversePrimary,
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),

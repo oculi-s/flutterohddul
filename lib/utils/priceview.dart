@@ -20,7 +20,11 @@ class PriceColorView extends StatelessWidget {
           ? '+${asPercent ? value.toStringAsFixed(2) : NumberFormat('#,###,###').format(value)}${asPercent ? '%' : ''}'
           : '${asPercent ? value.toStringAsFixed(2) : NumberFormat('#,###,###').format(value)}${asPercent ? '%' : ''}',
       style: style?.copyWith(
-        color: value > 0 ? Colors.green : Colors.red,
+        color: value == 0
+            ? Colors.grey
+            : value > 0
+                ? Colors.green
+                : Colors.red,
       ),
     );
   }

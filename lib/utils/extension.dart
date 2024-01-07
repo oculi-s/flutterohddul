@@ -131,3 +131,11 @@ extension ElementAtOrNull<E> on List<E> {
     return elementAt(index);
   }
 }
+
+extension MyIterable<E> on Iterable<E> {
+  List<E> sortedBy2(Comparable Function(E e) key) =>
+      toList()..sort((a, b) => key(a).compareTo(key(b)));
+  void sortBy2(Comparable Function(E e) key) {
+    (this as List<E>).sort((a, b) => key(a).compareTo(key(b)));
+  }
+}

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutterohddul/utils/colors/colors.convert.dart';
 
 _appliedTextTheme(textStyle) {
   return TextTheme(
@@ -11,16 +12,16 @@ _appliedTextTheme(textStyle) {
     displaySmall: textStyle,
     displayMedium: textStyle,
     displayLarge: textStyle,
+    headlineSmall: textStyle,
+    headlineMedium: textStyle,
+    headlineLarge: textStyle,
   );
 }
 
 extension CustomColors on ColorScheme {
   Color get kakao => const Color(0xffFEE500);
-
   Color get anchor => const Color(0xFF9DC9D6);
-
   Color get bull => const Color(0xff22ab94);
-
   Color get bear => const Color(0xfff23645);
 }
 
@@ -38,6 +39,7 @@ class MyTheme {
         primary: _primary,
         onPrimary: _onPrimary,
         onPrimaryContainer: _onPrimaryContainer,
+        inversePrimary: _primary.invert(),
         secondary: _secondary,
         tertiary: _tertiary,
       ),
@@ -51,28 +53,14 @@ class MyTheme {
   }
 
   bool get _d => brightness == Brightness.dark;
-
-  Color get _textColor =>
-      _d ? const Color(0xffD1D4DC) : const Color(0xff131722);
-
-  Color get _backgroundColor =>
-      _d ? const Color(0xFF22252E) : const Color(0xffe0e3eb);
-
-  Color get _dividerColor =>
-      _d ? const Color(0xFF242831) : const Color(0xFFCED1DB);
-
-  Color get _primary => _d ? const Color(0xFF10131D) : const Color(0xffFFFFFF);
-
-  Color get _onPrimary =>
-      _d ? const Color(0xffAAAAAA) : const Color(0xffAAAAAA);
-
-  Color get _onPrimaryContainer =>
-      _d ? const Color(0xFF000811) : const Color(0xFFF1F1F1);
-
-  Color get _secondary =>
-      _d ? const Color(0xFF16223B) : const Color(0xFFAEB9D1);
-
-  Color get _tertiary => _d ? const Color(0xFF3E5C97) : const Color(0xFF2C4992);
+  Color get _textColor => _d ? Color(0xffD1D4DC) : Color(0xff131722);
+  Color get _backgroundColor => _d ? Color(0xFF22252E) : Color(0xffe0e3eb);
+  Color get _dividerColor => _d ? Color(0xFF242831) : Color(0xFFE9EDF9);
+  Color get _primary => _d ? Color(0xFF10131D) : Color(0xffFFFFFF);
+  Color get _onPrimary => _d ? Color(0xffAAAAAA) : Color(0xffAAAAAA);
+  Color get _onPrimaryContainer => _d ? Color(0xFF000811) : Color(0xFFF1F1F1);
+  Color get _secondary => _d ? Color(0xFF16223B) : Color(0xFF6F8CCB);
+  Color get _tertiary => _d ? Color(0xFF3E5C97) : Color(0xFF2C4992);
 
   TextStyle get _textStyle => TextStyle(color: _textColor);
   late ThemeData theme;

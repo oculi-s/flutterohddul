@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:collection/collection.dart';
 import 'package:country_flags/country_flags.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterohddul/data/market.dart';
@@ -15,7 +16,8 @@ class EcosChartWidget extends StatefulWidget {
   final EcosData data;
   final Duration duration;
 
-  const  EcosChartWidget({super.key,
+  const EcosChartWidget({
+    super.key,
     required this.data,
     required this.duration,
   });
@@ -149,8 +151,9 @@ class _EcosChartWidgetState extends State<EcosChartWidget> {
           child: Column(
             children: [
               Container(
-                padding: const EdgeInsets.all(5),
-                height: 400,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 30),
+                height: 450,
                 child: LineChart(
                   LineChartData(
                     titlesData: FlTitlesData(
@@ -202,46 +205,52 @@ class _EcosChartWidgetState extends State<EcosChartWidget> {
                       border: Border.all(color: theme.dividerColor, width: 1),
                     ),
                     maxX: DateTime.now().ms.toDouble(),
-                    lineBarsData: List<LineChartBarData>.from(
-                      countryName.keys
-                          .map((e) => _ecosChartElement(e))
-                          .where((e) => e != null),
-                    ),
+                    lineBarsData: List<LineChartBarData>.from(countryName.keys
+                        .map((e) => _ecosChartElement(e))
+                        .where((e) => e != null)),
                     lineTouchData: LineTouchData(
                       enabled: true,
                       touchTooltipData: LineTouchTooltipData(
+                        fitInsideVertically: true,
                         fitInsideHorizontally: true,
                         tooltipBgColor: theme.colorScheme.primary,
                         getTooltipItems: (List<LineBarSpot> touchedBarSpots) {
-                          touchedBarSpots
-                              .sort((a, b) => a.barIndex - b.barIndex);
-                          var res = touchedBarSpots.map((e) {
+                          return touchedBarSpots
+                              .sortedBy2((a) => a.barIndex)
+                              .mapIndexed((i, e) {
                             return LineTooltipItem(
-                              '●  ',
-                              TextStyle(
-                                color: countryColor.entries
-                                    .where((e) => _visible[e.key])
-                                    .toList()[e.barIndex]
-                                    .value,
-                              ),
+                              i == 0
+                                  ? '${DateTime.fromMillisecondsSinceEpoch(e.x.toInt()).asString('yyyy-MM')}\n'
+                                  : '',
+                              theme.textTheme.bodyMedium!,
                               children: [
+                                TextSpan(
+                                    text: '●  ',
+                                    style: TextStyle(
+                                      color: countryColor.entries
+                                          .where((e) => _visible[e.key])
+                                          .toList()[e.barIndex]
+                                          .value,
+                                    )),
                                 TextSpan(
                                   text: countryName.entries
                                       .where((e) => _visible[e.key])
                                       .toList()[e.barIndex]
                                       .value,
-                                  style: theme.textTheme.bodyMedium,
+                                  style: theme.textTheme.bodyMedium!
+                                      .copyWith(fontWeight: FontWeight.bold),
                                 ),
                                 const TextSpan(text: '  '),
                                 const TextSpan(),
                                 TextSpan(
-                                    text: e.y.toString(),
-                                    style: const TextStyle()),
+                                  text: e.y.toString(),
+                                  style: theme.textTheme.bodyMedium!
+                                      .copyWith(fontWeight: FontWeight.bold),
+                                ),
                               ],
                               textAlign: TextAlign.left,
                             );
                           }).toList();
-                          return res;
                         },
                       ),
                     ),
