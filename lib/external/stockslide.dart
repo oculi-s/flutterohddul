@@ -5,6 +5,7 @@ import 'package:flutterohddul/data/stock.dart';
 import 'package:flutterohddul/utils/base/base.dart';
 import 'package:flutterohddul/utils/colors/colors.convert.dart';
 import 'package:flutterohddul/utils/colors/colors.main.dart';
+import 'package:flutterohddul/utils/extension.dart';
 import 'package:flutterohddul/utils/priceview.dart';
 import 'package:flutterohddul/utils/screen.utils.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -223,6 +224,8 @@ class _StockSlideState extends State<StockSlide> {
               child: LineChartWidget(
                 stock: widget.stock,
                 after: DateTime.now().subtract(Duration(days: _days)),
+                getter: (e) => e.c,
+                parse: (e) => e.asPrice(),
               ),
             ),
           ),

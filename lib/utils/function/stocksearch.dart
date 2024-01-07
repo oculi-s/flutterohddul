@@ -23,8 +23,8 @@ class _SearchResultDialogState extends State<SearchResultDialog> {
     return Dialog(
       backgroundColor: theme.colorScheme.primary.darken(.1),
       child: Container(
-        constraints: BoxConstraints(maxWidth: 400),
-        padding: EdgeInsets.all(10),
+        constraints: const BoxConstraints(maxWidth: 400),
+        padding: const EdgeInsets.all(10),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -42,9 +42,10 @@ class _SearchResultDialogState extends State<SearchResultDialog> {
               onSubmitted: (v) {
                 if (_result.isNotEmpty) {
                   widget.onPressItem(_result.first.code);
+                  router.pop();
                 }
               },
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 enabledBorder: InputBorder.none,
                 contentPadding: EdgeInsets.all(8),
                 hintText: '종목 코드 / 종목명',
@@ -54,7 +55,7 @@ class _SearchResultDialogState extends State<SearchResultDialog> {
                     r'[a-z|A-Z|0-9|ㄱ-ㅎ|ㅏ-ㅣ|가-힣|ᆞ|ᆢ|ᄀᆞ|ᄂᆞ|ᄃᆞ|ᄅᆞ|ᄆᆞ|ᄇᆞ|ᄉᆞ|ᄋᆞ|ᄌᆞ|ᄎᆞ|ᄏᆞ|ᄐᆞ|ᄑᆞ|ᄒᆞ]')),
               ],
             ),
-            Container(
+            SizedBox(
               height: 400,
               child: SingleChildScrollView(
                 child: Column(
@@ -93,7 +94,7 @@ class _SearchResultDialogState extends State<SearchResultDialog> {
                                       e.priceChange,
                                       style: theme.textTheme.bodySmall,
                                     ),
-                                    SizedBox(width: 3),
+                                    const SizedBox(width: 3),
                                     PriceColorView(
                                       e.priceChangeRatio,
                                       style: theme.textTheme.bodySmall,

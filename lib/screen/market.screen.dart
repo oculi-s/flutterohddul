@@ -1,7 +1,9 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterohddul/chart/ecoschart.dart';
 import 'package:flutterohddul/chart/treemap.dart';
 import 'package:flutterohddul/data/market.dart';
+import 'package:flutterohddul/utils/base/base.dart';
 
 class BarState {
   String name;
@@ -67,36 +69,53 @@ class _MarketScreenState extends State<MarketScreen> {
     data: null,
   );
 
+  final _names = ['기준금리', 'CPI', '그룹', '업종'];
   int i = 0;
+
+  _customBar(BuildContext context) {
+    var theme = Theme.of(context);
+    button(text, _i) {
+      return GestureDetector(
+        onTap: () {
+          setState(() {
+            i = _i;
+          });
+        },
+        child: Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: i == _i ? theme.dividerColor : Colors.transparent,
+            borderRadius: const BorderRadius.all(Radius.circular(5)),
+          ),
+          child: Text(text, style: theme.textTheme.bodySmall),
+        ),
+      );
+    }
+
+    return Section(
+      child: Container(
+        padding: EdgeInsets.all(10),
+        child: Row(
+          children: _names.mapIndexed((i, e) => button(e, i)).toList(),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context);
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        BottomNavigationBar(
-          backgroundColor: theme.colorScheme.primary,
-          selectedItemColor: theme.colorScheme.tertiary,
-          showUnselectedLabels: false,
-          currentIndex: i,
-          items: _currentBar.child
-              .map(
-                (e) => BottomNavigationBarItem(
-                  icon: Icon(e.icon),
-                  label: e.name,
-                ),
-              )
-              .toList(),
-          onTap: (index) {
-            setState(() {
-              i = index;
-            });
-          },
-        ),
+        _customBar(context),
+        SizedBox(height: 2),
         [
           EcosChartWidget(
             data: Market().baserate,
+            duration: const Duration(days: 365 * 4),
+          ),
+          EcosChartWidget(
+            data: Market().cpi,
             duration: const Duration(days: 365 * 4),
           ),
           Container(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutterohddul/data/candledata.dart';
 import 'package:flutterohddul/data/stock.dart';
 import 'package:flutterohddul/utils/colors/colors.main.dart';
 import 'package:flutterohddul/utils/colors/colors.vars.dart';
@@ -9,10 +10,16 @@ import 'package:intl/intl.dart';
 class LineChartWidget extends StatefulWidget {
   final StockData stock;
   final DateTime after;
+  final Color? color;
+  final double Function(Candle) getter;
+  final String Function(double) parse;
 
   LineChartWidget({
     required this.stock,
     required this.after,
+    required this.getter,
+    required this.parse,
+    this.color,
   });
 
   @override
@@ -76,11 +83,12 @@ class _LineChartWidgetState extends State<LineChartWidget> {
             isCurved: true,
             spots: widget.stock
                 .priceRange(widget.after)
-                .map((e) => FlSpot(e.d.ms.toDouble(), e.c))
+                .map((e) => FlSpot(e.d.ms.toDouble(), widget.getter(e)))
                 .toList(),
             dotData: const FlDotData(show: false),
-            color:
-                groupColor[widget.stock.group?.name] ?? theme.colorScheme.bull,
+            color: widget.color ??
+                groupColor[widget.stock.group?.name] ??
+                theme.colorScheme.bull,
           )
           // _lineWidget(context: context, getter: (e) => e.c),
         ],
@@ -90,6 +98,7 @@ class _LineChartWidgetState extends State<LineChartWidget> {
             fitInsideHorizontally: true,
             tooltipBgColor: theme.colorScheme.secondary,
             showOnTopOfTheChartBoxArea: true,
+            tooltipMargin: 0,
             tooltipPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
             getTooltipItems: (List<LineBarSpot> spots) {
               spots.sort((a, b) => a.barIndex - b.barIndex);
@@ -100,7 +109,7 @@ class _LineChartWidgetState extends State<LineChartWidget> {
                   TextStyle(),
                   children: [
                     TextSpan(
-                      text: spots[0].y.asPrice(),
+                      text: widget.parse(spots[0].y),
                       style: theme.textTheme.bodySmall,
                     ),
                     TextSpan(text: '\n'),
@@ -119,6 +128,7 @@ class _LineChartWidgetState extends State<LineChartWidget> {
           ),
         ),
       ),
+      duration: Duration.zero,
     );
   }
 }

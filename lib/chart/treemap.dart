@@ -15,17 +15,14 @@ class SquarifyData {
   late double totalSize;
   late double totalArea = dim * dim;
   late int length;
-
   SquarifyData(List values) {
     data =
         values.map((value) => DataPoint(values.indexOf(value), value)).toList();
     sortDescending();
-
     totalSize = sumValues(data);
     length = values.length;
     normalize();
   }
-
   void sortDescending() {
     data.sort((a, b) => b.value.compareTo(a.value));
   }
@@ -43,9 +40,7 @@ class DataPoint {
   double value;
   late double normalizedValue;
   int id;
-
   DataPoint(this.id, this.value);
-
   void normalize(double totalArea, double totalSize) {
     normalizedValue = value * totalArea / totalSize;
   }
@@ -55,11 +50,8 @@ class Rectangle {
   double x, y, dx, dy;
   double? value;
   int? id;
-
   Rectangle(this.x, this.y, this.dx, this.dy, this.id, this.value);
-
   Rectangle.fromDimensions(this.x, this.y, this.dx, this.dy);
-
   @override
   String toString() {
     return '!SquarifyRect(x: $x, y: $y, dx: $dx, dy: $dy, id: $id, value: $value)\n';
@@ -70,24 +62,20 @@ class Squarify {
   List<Rectangle> squarify(
       List<DataPoint> values, double x, double y, double dx, double dy) {
     List<Rectangle> rects = [];
-
     if (values.isEmpty) return rects;
     if (values.length == 1) {
       rects.add(
           Rectangle(x, y, dx, dy, values[0].id, values[0].normalizedValue));
       return rects;
     }
-
     int i = 1;
     while (i < values.length &&
         worstRatio(values.sublist(0, i), dx, dy) >=
             worstRatio(values.sublist(0, i + 1), dx, dy)) {
       i += 1;
     }
-
     List<DataPoint> current = values.sublist(0, i);
     List<DataPoint> remaining = values.sublist(i);
-
     if (dx > 0 && dy > 0) {
       Rectangle currentLeftover = leftover(current, x, y, dx, dy);
       rects.addAll(layout(current, x, y, dx, dy));
@@ -177,6 +165,9 @@ class TreeMapWidget extends StatefulWidget {
 }
 
 class _TreeMapWidgetState extends State<TreeMapWidget> {
+  bool _groupOnly = true;
+  List<SquarifyData> data = [];
+
   @override
   void initState() {
     super.initState();
@@ -202,64 +193,64 @@ class _TreeMapWidgetState extends State<TreeMapWidget> {
   @override
   Widget build(BuildContext context) {
     return Section(
-      child: Column(
-        children: [
-          Container(
-            padding: EdgeInsets.all(8),
-            height: Screen(context).c,
-            child: LayoutBuilder(builder: (context, constraints) {
-              var w = constraints.maxWidth;
-              var h = constraints.maxHeight;
-              return Stack(
-                children:
-                    Group().data.values.where((e) => e.tree != null).map((e) {
-                  var name = e.name;
-                  var rect = e.tree!;
-                  return Positioned(
-                    left: w * rect.x / dim,
-                    top: h * rect.y / dim,
-                    width: w * rect.dx / dim,
-                    height: h * rect.dy / dim,
-                    child: Container(
-                      color: (e.color ?? Colors.grey).darken().withOpacity(.8),
-                      child: LayoutBuilder(
-                        builder: (context, constraints) {
-                          var w = constraints.maxWidth;
-                          var h = constraints.maxHeight;
-                          return Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                width: w * 0.6,
-                                height: h * 0.2,
-                                child: e.image(w * 0.6, h * 0.3),
-                              ),
-                              FittedBox(
-                                fit: BoxFit.contain,
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 10),
-                                  child: Text(
-                                    '${(rect.value! * 100).toStringAsFixed(1)}%',
-                                    style: TextStyle(
-                                      fontSize: h * .2,
-                                      color:
-                                          groupTextColor[name] ?? Colors.white,
-                                    ),
+      child: Container(
+        padding: EdgeInsets.all(8),
+        height: Screen(context).c - 60,
+        child: LayoutBuilder(builder: (context, constraints) {
+          var w = constraints.maxWidth;
+          var h = constraints.maxHeight;
+          return Stack(
+            children: Group().data.values.where((e) => e.tree != null).map((e) {
+              var name = e.name;
+              var rect = e.tree!;
+              return Positioned(
+                left: w * rect.x / dim,
+                top: h * rect.y / dim,
+                width: w * rect.dx / dim,
+                height: h * rect.dy / dim,
+                child: Container(
+                  color: (e.color ?? Colors.grey).darken().withOpacity(.8),
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      var w = constraints.maxWidth;
+                      var h = constraints.maxHeight;
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: w * 0.6,
+                            height: h * 0.2,
+                            child: e.image(w * 0.6, h * 0.3),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _groupOnly = !_groupOnly;
+                              });
+                            },
+                            child: FittedBox(
+                              fit: BoxFit.contain,
+                              child: Container(
+                                padding: EdgeInsets.symmetric(horizontal: 10),
+                                child: Text(
+                                  '${(rect.value! * 100).toStringAsFixed(1)}%',
+                                  style: TextStyle(
+                                    fontSize: h * .2,
+                                    color: groupTextColor[name] ?? Colors.white,
                                   ),
                                 ),
                               ),
-                            ],
-                          );
-                        },
-                      ),
-                    ),
-                  );
-                }).toList(),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
               );
-            }),
-          ),
-          Last(data: Meta().price),
-        ],
+            }).toList(),
+          );
+        }),
       ),
     );
   }

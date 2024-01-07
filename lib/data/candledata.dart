@@ -5,7 +5,7 @@ class Candle {
   final double o, c, v;
   late double h, l;
 
-  List<double?> line;
+  List<double?> bb;
 
   Candle({
     required this.d,
@@ -14,7 +14,9 @@ class Candle {
     required this.v,
     required this.h,
     required this.l,
-  }) : line = [];
+  }) : bb = [];
+
+  double get percentb => (c - bb[2]!) / (bb[0]! - bb[2]!);
 }
 
 void addma(List<Candle> candles, [int period = 7]) {
@@ -32,7 +34,7 @@ void addma(List<Candle> candles, [int period = 7]) {
     result.add([ma]);
   }
   for (int i = 0; i < candles.length; i++) {
-    candles[i].line.addAll(result[i]);
+    candles[i].bb.addAll(result[i]);
   }
 }
 
@@ -57,6 +59,6 @@ Future<void> addbollinger(List<Candle> candles, [int period = 7]) async {
     result.add([ma + 2 * std, ma, ma - 2 * std]);
   }
   for (int i = 0; i < candles.length; i++) {
-    candles[i].line.addAll(result[i]);
+    candles[i].bb.addAll(result[i]);
   }
 }

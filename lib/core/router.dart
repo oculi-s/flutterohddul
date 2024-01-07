@@ -9,6 +9,14 @@ import 'package:flutterohddul/screen/profile.screen.dart';
 import 'package:flutterohddul/screen/splash.screen.dart';
 import 'package:go_router/go_router.dart';
 
+Widget _transition(context, animation, secondaryAnimation, child) =>
+    CupertinoPageTransition(
+      primaryRouteAnimation: animation,
+      secondaryRouteAnimation: secondaryAnimation,
+      linearTransition: false,
+      child: child,
+    );
+
 final GoRouter router = GoRouter(
   initialLocation: '/',
   routes: <RouteBase>[
@@ -30,7 +38,7 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/chart/:code',
       builder: (context, state) {
-        String? code = state.pathParameters['code'];
+        String code = state.pathParameters['code'] ?? '005930';
         return MenuScreen(
           i: 1,
           child: PriceScreen(code: code),
@@ -48,10 +56,13 @@ final GoRouter router = GoRouter(
     ),
     GoRoute(
       path: '/profile',
-      builder: (context, state) {
-        return MenuScreen(
-          i: 4,
-          child: ProfileScreen(),
+      pageBuilder: (context, state) {
+        return CustomTransitionPage(
+          child: MenuScreen(
+            i: 4,
+            child: ProfileScreen(),
+          ),
+          transitionsBuilder: _transition,
         );
       },
     ),

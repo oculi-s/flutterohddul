@@ -111,34 +111,23 @@ class _FavScreenState extends State<FavScreen> {
                       offset: const Offset(0, -10),
                     ),
                     items: [
-                      DropdownMenuItem(
-                        value: 0,
-                        child: Text('섹션'),
-                      ),
-                      DropdownMenuItem(
-                        value: 1,
-                        child: Text('종목'),
-                      ),
+                      DropdownMenuItem(value: 0, child: Text('섹션')),
+                      DropdownMenuItem(value: 1, child: Text('종목')),
                     ],
                     onChanged: (value) {
                       if (shouldLoginDialog(context, _onlogin)) return;
-                      value == 0
-                          ? showDialog(
-                              context: context,
-                              builder: (context) {
-                                return TextEditingDialog(
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return value == 0
+                              ? TextEditingDialog(
                                   editText: (s) {
                                     widgets.add(s);
                                     Api().fav(data: widgets);
                                     setState(() {});
                                   },
-                                );
-                              },
-                            )
-                          : showDialog(
-                              context: context,
-                              builder: (context) {
-                                return SearchResultDialog(onPressItem: (e) {
+                                )
+                              : SearchResultDialog(onPressItem: (e) {
                                   var s = Stock().hasCode(e)
                                       ? Stock().fromCode(e)
                                       : e;
@@ -147,8 +136,8 @@ class _FavScreenState extends State<FavScreen> {
                                   Api().fav(data: widgets);
                                   setState(() {});
                                 });
-                              },
-                            );
+                        },
+                      );
                     },
                   ),
                 ),

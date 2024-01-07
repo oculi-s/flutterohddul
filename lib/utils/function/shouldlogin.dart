@@ -73,6 +73,7 @@ shouldLoginDialog(context, [callback]) {
                   Text('2500개 종목의 주가 예측'),
                   Text('관심종목 설정과 편집'),
                   Text('의견게시판에 의견 올리기'),
+                  Text('시황정보 모아보기'),
                 ],
                 style: theme.textTheme.bodySmall,
               ),

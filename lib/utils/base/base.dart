@@ -79,12 +79,14 @@ class WaitFor extends StatelessWidget {
   Future future;
   Widget child;
   Widget? other;
+  bool? Function()? condition;
 
   WaitFor({
     super.key,
     required this.future,
     required this.child,
     this.other,
+    this.condition,
   });
 
   @override
@@ -92,7 +94,7 @@ class WaitFor extends StatelessWidget {
     return FutureBuilder(
       future: future,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
-        return snapshot.hasData
+        return snapshot.hasData && (condition?.call() ?? true)
             ? child
             : other ??
                 Container(

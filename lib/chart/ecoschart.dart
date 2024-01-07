@@ -7,6 +7,7 @@ import 'package:flutterohddul/utils/base/base.dart';
 import 'package:flutterohddul/utils/base/vars.dart';
 import 'package:flutterohddul/utils/colors/colors.vars.dart';
 import 'package:flutterohddul/utils/extension.dart';
+import 'package:flutterohddul/utils/function/shouldlogin.dart';
 import 'package:flutterohddul/utils/svgloader.dart';
 import 'package:intl/intl.dart';
 
@@ -74,6 +75,7 @@ class _EcosChartWidgetState extends State<EcosChartWidget> {
     return Expanded(
       child: GestureDetector(
         onTap: () {
+          if (shouldLoginDialog(context)) return;
           setState(() {
             if (_visible[code] == true) {
               if (_visible.values.where((e) => e).length == 1) {
@@ -138,24 +140,22 @@ class _EcosChartWidgetState extends State<EcosChartWidget> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        SizedBox(height: 5),
         Row(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: countryName.keys.map(_toggleCountryElement).toList(),
         ),
-        SizedBox(height: 5),
         Section(
           child: Column(
             children: [
               Container(
-                padding: EdgeInsets.all(5),
+                padding: const EdgeInsets.all(5),
                 height: 400,
                 child: LineChart(
                   LineChartData(
                     titlesData: FlTitlesData(
-                      rightTitles: AxisTitles(),
-                      topTitles: AxisTitles(),
+                      rightTitles: const AxisTitles(),
+                      topTitles: const AxisTitles(),
                       leftTitles: AxisTitles(
                         sideTitles: SideTitles(
                           showTitles: true,
@@ -163,7 +163,7 @@ class _EcosChartWidgetState extends State<EcosChartWidget> {
                           reservedSize: 40,
                           getTitlesWidget: (double value, TitleMeta meta) {
                             if (value == meta.min || value == meta.max)
-                              return Text('');
+                              return const Text('');
                             return SideTitleWidget(
                               child: Text(
                                 value.toString(),
@@ -183,7 +183,7 @@ class _EcosChartWidgetState extends State<EcosChartWidget> {
                             final d = DateTime.fromMillisecondsSinceEpoch(
                                 value.toInt());
                             if (value == meta.min || value == meta.max)
-                              return Text('');
+                              return const Text('');
                             return SideTitleWidget(
                               axisSide: meta.axisSide,
                               child: Text(
@@ -231,9 +231,10 @@ class _EcosChartWidgetState extends State<EcosChartWidget> {
                                   style: theme.textTheme.bodyMedium,
                                 ),
                                 const TextSpan(text: '  '),
-                                TextSpan(),
+                                const TextSpan(),
                                 TextSpan(
-                                    text: e.y.toString(), style: TextStyle()),
+                                    text: e.y.toString(),
+                                    style: const TextStyle()),
                               ],
                               textAlign: TextAlign.left,
                             );

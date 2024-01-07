@@ -8,6 +8,12 @@ extension DoubleFormatter on double {
   }
 
   String asPercent() {
+    final format = "##0.00";
+    final v = intl.NumberFormat(format, "en_US").format(this);
+    return "$v%";
+  }
+
+  String asPercentChange() {
     final format = this < 100 ? "##0.00" : "#,###";
     final v = intl.NumberFormat(format, "en_US").format(this);
     return "${this >= 0 ? '+' : ''}$v%";
@@ -114,4 +120,11 @@ extension IterExtension1d on Iterable {
           .toList();
   List<String> widgetToFavs() =>
       map((e) => e is StockData ? e.code : '.$e').toList();
+}
+
+extension ElementAtOrNull<E> on List<E> {
+  E? at(int index) {
+    if (index < 0 || index >= length) return null;
+    return elementAt(index);
+  }
 }

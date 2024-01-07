@@ -4,28 +4,29 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterohddul/data/candledata.dart';
 import 'package:flutterohddul/data/painter.dart';
-import 'package:flutterohddul/data/stock.dart';
 import 'package:flutterohddul/utils/extension.dart';
 
-typedef TimeLabelGetter = String Function(DateTime d, int visibleDataCount,
-    [bool isTapped]);
-typedef PriceLabelGetter = String Function(double price);
-typedef OverlayInfoGetter = Map<String, String> Function(Candle candle);
+String priceLabel(double p) => p.asPrice();
+String timeLabel(DateTime d, int visibleDataCount, [bool isTapped = false]) {
+  final date = d.toIso8601String().split("T").first.split("-");
+  if (isTapped) {
+    return "${date[0]}-${date[1]}-${date[2]}";
+  } else if (visibleDataCount > 20) {
+    return "${date[0]}-${date[1]}";
+  } else {
+    return "${date[1]}-${date[2]}";
+  }
+}
 
 class ChartPainter extends CustomPainter {
   final PainterParams params;
-  final TimeLabelGetter getTimeLabel;
-  final PriceLabelGetter getPriceLabel;
 
   ChartPainter({
     required this.params,
-    required this.getTimeLabel,
-    required this.getPriceLabel,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
-    // _drawBasicMeta(canvas, params);
     // Draw time labels (dates) & price labels
     _drawTimeLabels(canvas, params);
     _drawPriceGridAndLabels(canvas, params);
@@ -47,26 +48,6 @@ class ChartPainter extends CustomPainter {
     }
   }
 
-  void _drawBasicMeta(canvas, PainterParams params) {
-    double x = 10;
-    StockData stock = params.stock;
-
-    TextPainter makeTP(String text) => TextPainter(
-          text: TextSpan(
-            text: text,
-            style: params.style.stockMetaStyle,
-          ),
-        )
-          ..textDirection = TextDirection.ltr
-          ..layout();
-    final nameTp = makeTP(stock.name);
-    final codeTp = makeTP(stock.code);
-    nameTp.paint(canvas, Offset(x, 8));
-    x += nameTp.width + 3;
-    codeTp.paint(canvas, Offset(x, 8));
-    x += nameTp.width + 3;
-  }
-
   void _drawTimeLabels(canvas, PainterParams params) {
     // We draw one time label per 90 pixels of screen width
     final lineCount = params.chartWidth ~/ 90;
@@ -86,7 +67,7 @@ class ChartPainter extends CustomPainter {
         );
         final timeTp = TextPainter(
           text: TextSpan(
-            text: getTimeLabel(candle.d, visibleDataCount),
+            text: timeLabel(candle.d, visibleDataCount),
             style: params.style.timeLabelStyle,
           ),
         )
@@ -116,7 +97,7 @@ class ChartPainter extends CustomPainter {
       );
       final priceTp = TextPainter(
         text: TextSpan(
-          text: getPriceLabel(y),
+          text: priceLabel(y),
           style: params.style.priceLabelStyle,
         ),
       )
@@ -174,13 +155,13 @@ class ChartPainter extends CustomPainter {
       );
     }
     // Draw trend line
-    for (int j = 0; j < candle.line.length; j++) {
+    for (int j = 0; j < candle.bb.length; j++) {
       final trendLinePaint = params.style.trendLineStyles.at(j) ?? Paint()
         ..strokeWidth = 1
         ..strokeCap = StrokeCap.round;
 
-      final pt = candle.line.at(j); // current data point
-      final prevPt = params.candles.at(i - 1)?.line.at(j);
+      final pt = candle.bb.at(j); // current data point
+      final prevPt = params.candles.at(i - 1)?.bb.at(j);
       if (pt != null && prevPt != null) {
         canvas.drawLine(
           Offset(x - params.candleWidth, params.fitPrice(prevPt)),
@@ -228,7 +209,7 @@ class ChartPainter extends CustomPainter {
     double y = params.fitHeight(pos.dy);
     final priceTp = TextPainter(
       text: TextSpan(
-        text: getPriceLabel(y),
+        text: priceLabel(y),
         style: params.style.overlayGridTextStyle,
       ),
     )
@@ -256,7 +237,7 @@ class ChartPainter extends CustomPainter {
 
     final timeTp = TextPainter(
       text: TextSpan(
-        text: getTimeLabel(candle.d, params.candles.length, true),
+        text: timeLabel(candle.d, params.candles.length, true),
         style: params.style.overlayGridTextStyle,
       ),
     )
@@ -315,14 +296,14 @@ class ChartPainter extends CustomPainter {
       values[i].paint(canvas, Offset(x, y));
       x += values[i].width + 5;
     }
-    makeTP('(${diff.asPercent()})', true).paint(canvas, Offset(x, y));
+    makeTP('(${diff.asPercentChange()})', true).paint(canvas, Offset(x, y));
 
     x = 10;
     y += 20;
     final _infoTrends = {
-      "BB": candle.line[0]?.asPrice() ?? "-",
-      "하단": candle.line[1]?.asPrice() ?? "-",
-      "상단": candle.line[2]?.asPrice() ?? "-",
+      "BB": candle.bb[0]?.asPrice() ?? "-",
+      "하단": candle.bb[1]?.asPrice() ?? "-",
+      "상단": candle.bb[2]?.asPrice() ?? "-",
     };
 
     TextPainter makeTrendsTP(String text, int i, [bool isPrice = false]) =>
@@ -343,7 +324,7 @@ class ChartPainter extends CustomPainter {
     final valuesTrends = _infoTrends.values
         .mapIndexed((index, text) => makeTrendsTP(text, index, true))
         .toList();
-    for (int i = 0; i < candle.line.length; i++) {
+    for (int i = 0; i < candle.bb.length; i++) {
       labelsTrends[i].paint(canvas, Offset(x, y));
       x += labelsTrends[i].width + 2;
       valuesTrends[i].paint(canvas, Offset(x, y));
@@ -432,11 +413,4 @@ class ChartPainter extends CustomPainter {
   @override
   bool shouldRepaint(ChartPainter oldDelegate) =>
       params.shouldRepaint(oldDelegate.params);
-}
-
-extension ElementAtOrNull<E> on List<E> {
-  E? at(int index) {
-    if (index < 0 || index >= length) return null;
-    return elementAt(index);
-  }
 }
