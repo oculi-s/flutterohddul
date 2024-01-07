@@ -59,7 +59,7 @@ class _TreeMapWidgetState extends State<TreeMapWidget> {
                       var w = constraints.maxWidth;
                       var h = constraints.maxHeight;
                       return Container(
-                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -77,7 +77,7 @@ class _TreeMapWidgetState extends State<TreeMapWidget> {
                                 fit: BoxFit.contain,
                                 child: Text(
                                   '${(rect.value! * 100).toStringAsFixed(1)}%',
-                                  style: TextStyle(color: Colors.white),
+                                  style: const TextStyle(color: Colors.white),
                                 ),
                               ),
                             ),

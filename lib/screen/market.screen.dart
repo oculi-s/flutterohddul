@@ -2,7 +2,6 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterohddul/chart/ecoschart.dart';
 import 'package:flutterohddul/chart/treemap.dart';
-import 'package:flutterohddul/data/api.dart';
 import 'package:flutterohddul/data/element.dart';
 import 'package:flutterohddul/data/market.dart';
 import 'package:flutterohddul/utils/base/base.dart';
@@ -98,10 +97,10 @@ class _MarketScreenState extends State<MarketScreen> {
                       children: [
                         e.icon ?? Container(),
                         Container(
-                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
                           child: Text(
                             e.name,
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
                             ),
