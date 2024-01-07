@@ -61,17 +61,16 @@ extension Dt on DateTime {
   // api의 pred에 대응
   DateTime shouldnotExistAfter() {
     var n = DateTime.now();
-    if (weekday == 0 || weekday == 6) {
-      // 주말은 금요일 3시반 이후 데이터가 없어야
-      n = n.edit(hour: 15, minute: 30, second: 0);
-      if (weekday == 0) {
-        n = n.edit(day: n.day - 2);
-      } else {
+    if (weekday == 0 || weekday == 6 || (weekday == 1 && marketType() == -1)) {
+      // 주말과 월요일 장전은 금요일 3시반 이후 데이터가 없어야
+      n = n.edit(hour: 15, minute: 29, second: 0);
+      while (n.weekday != 5) {
         n = n.edit(day: n.day - 1);
       }
     } else {
       // 주중은 당일 9시 이후 데이터가 없어야
-      n = n.edit(hour: 8, minute: 59, second: 0);
+      // 장전에는 전날 9시 이후 데이터가 없어야
+      n = n.edit(hour: 9, minute: 0, second: 0);
       if (marketType() == -1) {
         n = n.edit(day: n.day - 1);
       }
