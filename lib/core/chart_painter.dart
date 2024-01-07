@@ -27,11 +27,8 @@ class ChartPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    // Draw time labels (dates) & price labels
     _drawTimeLabels(canvas, params);
     _drawPriceGridAndLabels(canvas, params);
-
-    // Draw prices, volumes & trend line
     canvas.save();
     canvas.clipRect(Offset.zero & Size(params.chartWidth, params.chartHeight));
     canvas.translate(params.xShift, 0);
@@ -39,8 +36,6 @@ class ChartPainter extends CustomPainter {
       _drawSingleDay(canvas, params, i);
     }
     canvas.restore();
-
-    // Draw tap highlight & overlay
     if (params.tapPosition != null) {
       if (params.tapPosition!.dx < params.chartWidth) {
         _drawTapHighlightAndOverlay(canvas, params);
@@ -49,7 +44,6 @@ class ChartPainter extends CustomPainter {
   }
 
   void _drawTimeLabels(canvas, PainterParams params) {
-    // We draw one time label per 90 pixels of screen width
     final lineCount = params.chartWidth ~/ 90;
     final gap = 1 / (lineCount + 1);
     for (int i = 1; i <= lineCount; i++) {
@@ -125,6 +119,30 @@ class ChartPainter extends CustomPainter {
     final color = open > close
         ? params.style.priceLossColor
         : params.style.priceGainColor;
+    final List<Offset> points = [];
+    final path = Path();
+    for (int j = 0; j < candle.bb.length; j++) {
+      final trendLinePaint = params.style.trendLineStyles.at(j) ?? Paint()
+        ..strokeWidth = 1
+        ..strokeCap = StrokeCap.round;
+
+      final pt = candle.bb.at(j);
+      final prevPt = params.candles.at(i - 1)?.bb.at(j);
+      if (pt != null && prevPt != null) {
+        var p = Offset(x - params.candleWidth, params.fitPrice(prevPt));
+        var q = Offset(x, params.fitPrice(pt));
+        canvas.drawLine(p, q, trendLinePaint);
+        if (j == 0) points.addAll([p, q]);
+        if (j == 2) points.addAll([q, p]);
+      }
+    }
+    path.addPolygon(points, true);
+    final areaPaint = params.style.areaStyle ?? Paint()
+      ..color = Colors.blue.withOpacity(.05)
+      ..style = PaintingStyle.fill;
+    // ..color = Colors.blue.shade300
+    canvas.drawPath(path, areaPaint);
+
     canvas.drawLine(
       Offset(x, params.fitPrice(open)),
       Offset(x, params.fitPrice(close)),
@@ -139,7 +157,6 @@ class ChartPainter extends CustomPainter {
         ..strokeWidth = thinWidth
         ..color = color,
     );
-    // Draw volume bar
     final volume = candle.v;
     canvas.drawLine(
       Offset(x, params.chartHeight),
@@ -148,22 +165,6 @@ class ChartPainter extends CustomPainter {
         ..strokeWidth = thickWidth
         ..color = params.style.volumeColor,
     );
-    // Draw trend line
-    for (int j = 0; j < candle.bb.length; j++) {
-      final trendLinePaint = params.style.trendLineStyles.at(j) ?? Paint()
-        ..strokeWidth = 1
-        ..strokeCap = StrokeCap.round;
-
-      final pt = candle.bb.at(j); // current data point
-      final prevPt = params.candles.at(i - 1)?.bb.at(j);
-      if (pt != null && prevPt != null) {
-        canvas.drawLine(
-          Offset(x - params.candleWidth, params.fitPrice(prevPt)),
-          Offset(x, params.fitPrice(pt)),
-          trendLinePaint,
-        );
-      }
-    }
   }
 
   void _drawTapHighlightAndOverlay(canvas, PainterParams params) {
@@ -273,15 +274,15 @@ class ChartPainter extends CustomPainter {
         )
           ..textDirection = TextDirection.ltr
           ..layout();
-    final _info = {
+    final info = {
       "O": candle.o.asPrice(),
       "H": candle.h.asPrice(),
       "L": candle.l.asPrice(),
       "C": candle.c.asPrice(),
     };
-    if (_info.isEmpty) return;
-    final labels = _info.keys.map((text) => makeTP(text)).toList();
-    final values = _info.values.map((text) => makeTP(text, true)).toList();
+    if (info.isEmpty) return;
+    final labels = info.keys.map((text) => makeTP(text)).toList();
+    final values = info.values.map((text) => makeTP(text, true)).toList();
 
     double x = 10, y = 10;
     for (int i = 0; i < labels.length; i++) {
@@ -294,7 +295,7 @@ class ChartPainter extends CustomPainter {
 
     x = 10;
     y += 20;
-    final _infoTrends = {
+    final infoTrends = {
       "BB": candle.bb[0]?.asPrice() ?? "-",
       "하단": candle.bb[1]?.asPrice() ?? "-",
       "상단": candle.bb[2]?.asPrice() ?? "-",
@@ -312,10 +313,10 @@ class ChartPainter extends CustomPainter {
         )
           ..textDirection = TextDirection.ltr
           ..layout();
-    final labelsTrends = _infoTrends.keys
+    final labelsTrends = infoTrends.keys
         .mapIndexed((index, text) => makeTrendsTP(text, index))
         .toList();
-    final valuesTrends = _infoTrends.values
+    final valuesTrends = infoTrends.values
         .mapIndexed((index, text) => makeTrendsTP(text, index, true))
         .toList();
     for (int i = 0; i < candle.bb.length; i++) {

@@ -99,9 +99,9 @@ class _PriceScreenState extends State<PriceScreen> {
                   stockMetaStyle: theme.textTheme.labelLarge!,
                   overlayTextStyle: theme.textTheme.bodySmall!,
                   trendLineStyles: [
-                    Paint()..color = Colors.blue,
-                    Paint()..color = Colors.orange,
-                    Paint()..color = Colors.blue,
+                    Paint()..color = Colors.blue.withOpacity(.8),
+                    Paint()..color = Colors.orange.withOpacity(.8),
+                    Paint()..color = Colors.blue.withOpacity(.8),
                   ],
                   volumeColor: theme.colorScheme.background,
                 ),

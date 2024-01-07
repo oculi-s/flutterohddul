@@ -18,7 +18,7 @@ class PriceChartWidget extends StatefulWidget {
   const PriceChartWidget({
     Key? key,
     required this.stock,
-    this.minCandleCount = 90,
+    this.minCandleCount = 40,
     this.maxCandleCount = 250 * 5,
     ChartStyle? style,
     this.subChart,
