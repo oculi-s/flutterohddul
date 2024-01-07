@@ -1,40 +1,43 @@
 import 'package:flutter/material.dart';
-import 'package:flutterohddul/screen/profile.screen.dart';
-import 'package:flutterohddul/screen/price.screen.dart';
-import 'package:flutterohddul/screen/favs.screen.dart';
-import 'package:flutterohddul/screen/market.screen.dart';
+import 'package:flutterohddul/core/router.dart';
 
 class MenuScreen extends StatefulWidget {
-  // Widget child;
-  AppBar? appBar;
-  MenuScreen({
+  final int? i;
+  final Widget child;
+  final AppBar? appBar;
+  const MenuScreen({
     super.key,
-    // required this.child,
+    required this.child,
+    this.i,
     this.appBar,
   });
 
   @override
-  _MenuScreenState createState() => _MenuScreenState();
+  State<MenuScreen> createState() => _MenuScreenState();
 }
 
 class _MenuScreenState extends State<MenuScreen> {
   int i = 0;
+  final _href = [
+    '/favs',
+    '/chart/005930',
+    '/community',
+    '/market',
+    '/profile',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    i = widget.i ?? 0;
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         appBar: widget.appBar,
-        body: SingleChildScrollView(
-          child: Center(
-            child: [
-              FavScreen(),
-              const PriceScreen(),
-              const Placeholder(),
-              MarketScreen(),
-              ProfileScreen(),
-            ][i],
-          ),
-        ),
+        body: SingleChildScrollView(child: Center(child: widget.child)),
         bottomNavigationBar: BottomNavigationBar(
           items: [
             BottomNavigationBarItem(
@@ -70,6 +73,7 @@ class _MenuScreenState extends State<MenuScreen> {
           onTap: (int index) {
             setState(() {
               i = index;
+              router.go(_href[i]);
             });
           },
           showSelectedLabels: true,

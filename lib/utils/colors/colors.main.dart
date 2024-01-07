@@ -50,9 +50,9 @@ class MyTheme {
   bool get _d => brightness == Brightness.dark;
   Color get _textColor => _d ? Color(0xffD1D4DC) : Color(0xff131722);
   Color get _backgroundColor => _d ? Color(0xFF22252E) : Color(0xffe0e3eb);
-  Color get _dividerColor => _d ? Color(0xFF1B1E25) : Color(0xFFCED1DB);
+  Color get _dividerColor => _d ? Color(0xFF242831) : Color(0xFFCED1DB);
 
-  Color get _primary => _d ? Color(0xff131722) : Color(0xffFFFFFF);
+  Color get _primary => _d ? Color(0xFF10131D) : Color(0xffFFFFFF);
   Color get _onPrimary => _d ? Color(0xffAAAAAA) : Color(0xffAAAAAA);
   Color get _onPrimaryContainer => _d ? Color(0xFF000811) : Color(0xFFF1F1F1);
 

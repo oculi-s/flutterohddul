@@ -1,16 +1,20 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
+
 import 'package:flutterohddul/core/router.dart';
 import 'package:flutterohddul/data/api.dart';
 import 'package:flutterohddul/data/prediction.dart';
 
 import 'package:flutterohddul/utils/base/base.dart';
+import 'package:flutterohddul/utils/base/timer.dart';
 import 'package:flutterohddul/utils/base/vars.dart';
 import 'package:flutterohddul/utils/colors/colors.convert.dart';
 import 'package:flutterohddul/utils/colors/colors.main.dart';
 import 'package:flutterohddul/utils/function/shouldlogin.dart';
 import 'package:flutterohddul/utils/function/stocksearch.dart';
+import 'package:flutterohddul/utils/function/textedit.dart';
 import 'package:flutterohddul/utils/priceview.dart';
 import 'package:flutterohddul/data/stock.dart';
 import 'package:flutterohddul/data/user.dart';
@@ -20,8 +24,9 @@ import 'package:flutterohddul/utils/extension.dart';
 import 'package:flutterohddul/utils/screen.utils.dart';
 
 class FavScreen extends StatefulWidget {
+  const FavScreen({super.key});
   @override
-  _FavScreenState createState() => _FavScreenState();
+  State<FavScreen> createState() => _FavScreenState();
 }
 
 class _FavScreenState extends State<FavScreen> {
@@ -73,6 +78,7 @@ class _FavScreenState extends State<FavScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context);
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -80,23 +86,72 @@ class _FavScreenState extends State<FavScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              IconButton(
-                onPressed: () {
-                  if (shouldLoginDialog(context, _onlogin)) return;
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return SearchResultDialog(onPressItem: (e) {
-                        var s = Stock().hasCode(e) ? Stock().fromCode(e) : e;
-                        if (widgets.contains(s)) return;
-                        widgets.add(s);
-                        Api().fav(data: widgets);
-                        setState(() {});
-                      });
+              TimerWidget(
+                to: DateTime.now().whenToPredNext(),
+                child: const Text('다음예측 '),
+              ),
+              Container(
+                padding: EdgeInsets.all(5),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton2(
+                    customButton: const Icon(Icons.add),
+                    isExpanded: true,
+                    // dropdownStyleData: DropdownStyleData(
+                    //   offset: Offset(-20, 0),
+                    //   width: 200,
+                    //   maxHeight: 100,
+                    // ),
+                    dropdownStyleData: DropdownStyleData(
+                      width: 160,
+                      padding: const EdgeInsets.symmetric(vertical: 6),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(4),
+                        color: theme.colorScheme.secondary,
+                      ),
+                      offset: const Offset(0, -10),
+                    ),
+                    items: [
+                      DropdownMenuItem(
+                        value: 0,
+                        child: Text('섹션'),
+                      ),
+                      DropdownMenuItem(
+                        value: 1,
+                        child: Text('종목'),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      if (shouldLoginDialog(context, _onlogin)) return;
+                      value == 0
+                          ? showDialog(
+                              context: context,
+                              builder: (context) {
+                                return TextEditingDialog(
+                                  editText: (s) {
+                                    widgets.add(s);
+                                    Api().fav(data: widgets);
+                                    setState(() {});
+                                  },
+                                );
+                              },
+                            )
+                          : showDialog(
+                              context: context,
+                              builder: (context) {
+                                return SearchResultDialog(onPressItem: (e) {
+                                  var s = Stock().hasCode(e)
+                                      ? Stock().fromCode(e)
+                                      : e;
+                                  if (widgets.contains(s)) return;
+                                  widgets.add(s);
+                                  Api().fav(data: widgets);
+                                  setState(() {});
+                                });
+                              },
+                            );
                     },
-                  );
-                },
-                icon: Icon(Icons.add),
+                  ),
+                ),
               ),
               IconButton(
                 onPressed: () {
@@ -105,7 +160,7 @@ class _FavScreenState extends State<FavScreen> {
                     _edit = !_edit;
                   });
                 },
-                icon: _edit ? Icon(Icons.check) : Icon(Icons.edit),
+                icon: Icon(_edit ? Icons.check : Icons.edit),
               )
             ],
           ),
@@ -173,13 +228,11 @@ class _FavScreenState extends State<FavScreen> {
 }
 
 class DragDestination extends StatefulWidget {
-  Function onAccept;
-
-  DragDestination({
+  final Function onAccept;
+  const DragDestination({
     super.key,
     required this.onAccept,
   });
-
   @override
   State<DragDestination> createState() => _DragDestinationState();
 }
@@ -190,7 +243,9 @@ class _DragDestinationState extends State<DragDestination> {
   Widget build(BuildContext context) {
     return Container(
       height: _willAccept ? 20 : 3,
-      decoration: BoxDecoration(color: Theme.of(context).dividerColor),
+      decoration: BoxDecoration(
+        color: Theme.of(context).dividerColor.withOpacity(.5),
+      ),
       child: DragTarget(
         builder: (context, data, rejects) {
           return Container();
@@ -219,8 +274,8 @@ class _DragDestinationState extends State<DragDestination> {
 class StockBlock extends StatefulWidget {
   final StockData stock;
   final Function onDelete, onLogin;
-  bool edit;
-  int predicted;
+  final bool edit;
+  late int predicted;
   final int i;
 
   StockBlock({
@@ -246,11 +301,11 @@ class _StockBlockState extends State<StockBlock> {
     _selected = false;
   }
 
-  _child([bool _isfeedback = false]) {
+  _child([bool isfeedback = false]) {
     double colorfactor = widget.edit ? 0.02 : 0;
     var theme = Theme.of(context);
     return Opacity(
-      opacity: _isfeedback ? 0.7 : 1,
+      opacity: isfeedback ? 0.7 : 1,
       child: Dismissible(
         direction: widget.edit
             ? DismissDirection.endToStart
@@ -290,7 +345,7 @@ class _StockBlockState extends State<StockBlock> {
             color: theme.colorScheme.bull.darken(.1),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 28),
-          child: Column(
+          child: const Column(
             mainAxisSize: MainAxisSize.min,
             children: [Icon(Icons.thumb_up), Text('오')],
           ),
@@ -304,8 +359,8 @@ class _StockBlockState extends State<StockBlock> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: widget.edit
-                ? [Icon(Icons.delete), Text('삭제')]
-                : [Icon(Icons.thumb_down), Text('떨')],
+                ? [const Icon(Icons.delete), const Text('삭제')]
+                : [const Icon(Icons.thumb_down), const Text('떨')],
           ),
         ),
         child: Container(
@@ -443,21 +498,19 @@ class TextBlock extends StatefulWidget {
 
 class _TextBlockState extends State<TextBlock> {
   bool _selected = false;
-  late TextEditingController _editingController;
 
   @override
   void initState() {
     super.initState();
-    _editingController = TextEditingController(text: widget.text);
   }
 
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
 
-    _child([bool _isfeedback = false]) {
+    child([bool isfeedback = false]) {
       return Opacity(
-        opacity: _isfeedback ? 0.7 : 1,
+        opacity: isfeedback ? 0.7 : 1,
         child: Container(
           height: 30,
           width: Screen(context).w,
@@ -467,7 +520,7 @@ class _TextBlockState extends State<TextBlock> {
           ),
           alignment: Alignment.centerLeft,
           decoration: BoxDecoration(
-              color: _isfeedback
+              color: isfeedback
                   ? theme.colorScheme.primary
                   : _selected
                       ? theme.colorScheme.secondary
@@ -483,78 +536,19 @@ class _TextBlockState extends State<TextBlock> {
     return GestureDetector(
       onTap: () {
         if (shouldLoginDialog(context, widget.onLogin)) return;
-        _editingController.text = widget.text;
         showDialog(
           context: context,
           builder: (context) {
-            return Dialog(
-              backgroundColor: theme.colorScheme.onPrimaryContainer,
-              child: Container(
-                padding: EdgeInsets.all(20.0),
-                height: 150,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TextField(
-                      autofocus: true,
-                      controller: _editingController,
-                      onSubmitted: (v) {
-                        widget.editText(v);
-                        router.pop();
-                      },
-                      cursorColor: theme.colorScheme.onPrimary,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: BorderSide.none,
-                        ),
-                        fillColor: theme.colorScheme.secondary,
-                        filled: true,
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        RadiusButton(
-                          context: context,
-                          radius: 10,
-                          backgroundColor: theme.colorScheme.secondary,
-                          onPressed: () {
-                            router.pop();
-                          },
-                          child: Text(
-                            '취소',
-                            style: theme.textTheme.bodyLarge,
-                          ),
-                        ),
-                        SizedBox(width: 10),
-                        RadiusButton(
-                          context: context,
-                          radius: 10,
-                          backgroundColor: theme.colorScheme.secondary,
-                          onPressed: () {
-                            widget.editText(_editingController.text);
-                            router.pop();
-                          },
-                          child: Text(
-                            '확인',
-                            style: theme.textTheme.bodyLarge,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            );
+            return TextEditingDialog(
+                text: widget.text, editText: widget.editText);
           },
         );
       },
       child: LongPressDraggable(
         axis: Axis.vertical,
         data: widget.i,
-        feedback: _child(true),
-        child: _child(),
+        feedback: child(true),
+        child: child(),
         onDragStarted: () {
           if (shouldLoginDialog(context, widget.onLogin)) return;
           setState(() {

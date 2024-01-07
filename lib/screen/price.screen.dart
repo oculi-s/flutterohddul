@@ -7,12 +7,15 @@ import 'package:flutterohddul/utils/function/stocksearch.dart';
 import 'package:flutterohddul/utils/screen.utils.dart';
 
 class PriceScreen extends StatefulWidget {
+  final String? code;
+
   const PriceScreen({
     super.key,
+    this.code,
   });
 
   @override
-  _PriceScreenState createState() => _PriceScreenState();
+  State<PriceScreen> createState() => _PriceScreenState();
 }
 
 class _PriceScreenState extends State<PriceScreen> {
@@ -21,11 +24,10 @@ class _PriceScreenState extends State<PriceScreen> {
   @override
   void initState() {
     super.initState();
-    stock = Stock().fromCode('005930');
+    stock = Stock().fromCode(widget.code ?? '005930');
   }
 
-  bool _visible = false;
-  double _customAppbarHeight = 60;
+  final double _customAppbarHeight = 60;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +37,7 @@ class _PriceScreenState extends State<PriceScreen> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Section(
-          child: Container(
+          child: SizedBox(
             height: _customAppbarHeight,
             child: TextButton(
               onPressed: () {
@@ -68,47 +70,38 @@ class _PriceScreenState extends State<PriceScreen> {
           ),
         ),
         Section(
-          child: Container(
+          child: SizedBox(
             height: Screen(context).c - _customAppbarHeight,
             child: LayoutBuilder(builder: (context, constraints) {
-              return FutureBuilder(
+              return WaitFor(
                 future: stock.addPrice(),
-                builder: (context, snapshot) => (stock.price?.candles != null &&
-                        stock.price!.candles.isNotEmpty)
-                    ? Column(
-                        children: [
-                          Container(
-                            height: constraints.maxHeight * .8,
-                            child: PriceChartWidget(
-                              stock: stock,
-                              candles: stock.price?.candles ?? [],
-                              initialVisibleCandleCount: 100,
-                              style: ChartStyle(
-                                selectionHighlightColor:
-                                    theme.colorScheme.onPrimary,
-                                stockMetaStyle: theme.textTheme.labelLarge!,
-                                overlayTextStyle: theme.textTheme.bodySmall!,
-                                trendLineStyles: [
-                                  Paint()..color = Colors.orange,
-                                  Paint()..color = Colors.blue,
-                                  Paint()..color = Colors.blue,
-                                ],
-                                volumeColor: theme.colorScheme.background,
-                              ),
-                            ),
-                          ),
-                          Container(
-                            height: constraints.maxHeight * .2,
-                            child: Placeholder(),
-                          )
-                        ],
-                      )
-                    : Container(
-                        width: double.infinity,
-                        height: 450,
-                        alignment: Alignment.center,
-                        child: const CircularProgressIndicator(),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: constraints.maxHeight * .8,
+                      child: PriceChartWidget(
+                        stock: stock,
+                        candles: stock.price,
+                        initialVisibleCandleCount: 100,
+                        style: ChartStyle(
+                          selectionHighlightColor: theme.colorScheme.onPrimary,
+                          stockMetaStyle: theme.textTheme.labelLarge!,
+                          overlayTextStyle: theme.textTheme.bodySmall!,
+                          trendLineStyles: [
+                            Paint()..color = Colors.blue,
+                            Paint()..color = Colors.orange,
+                            Paint()..color = Colors.blue,
+                          ],
+                          volumeColor: theme.colorScheme.background,
+                        ),
                       ),
+                    ),
+                    SizedBox(
+                      height: constraints.maxHeight * .2,
+                      child: const Placeholder(),
+                    )
+                  ],
+                ),
               );
             }),
           ),

@@ -1,10 +1,6 @@
-import 'dart:math';
-
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterohddul/core/router.dart';
 import 'package:flutterohddul/data/stock.dart';
-import 'package:flutterohddul/utils/colors/colors.convert.dart';
 import 'package:flutterohddul/utils/colors/colors.main.dart';
 import 'package:flutterohddul/utils/extension.dart';
 import 'package:flutterohddul/utils/function/popstock.dart';
@@ -82,34 +78,32 @@ class Anchor extends StatelessWidget {
 class WaitFor extends StatelessWidget {
   Future future;
   Widget child;
+  Widget? other;
 
   WaitFor({
     super.key,
     required this.future,
     required this.child,
+    this.other,
   });
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: future,
-      builder: (context, snapshot) {
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
         return snapshot.hasData
             ? child
-            : LayoutBuilder(builder: (context, constraints) {
-                return Center(
-                  child: Container(
-                    height: 10,
-                    constraints: BoxConstraints(
-                      maxWidth: min(constraints.maxWidth * .8,
-                          Screen(context).ratio.w(.5)),
-                    ),
-                    child: LinearProgressIndicator(
-                      backgroundColor: Theme.of(context).colorScheme.background,
-                    ),
+            : other ??
+                Container(
+                  height: 10,
+                  constraints: BoxConstraints(
+                    maxWidth: Screen(context).ratio.w(.5),
+                  ),
+                  child: LinearProgressIndicator(
+                    backgroundColor: Theme.of(context).colorScheme.background,
                   ),
                 );
-              });
       },
     );
   }
@@ -167,7 +161,7 @@ class BullBearBar extends StatelessWidget {
               theme.colorScheme.bull.withOpacity(.8),
               theme.colorScheme.bear.withOpacity(.8),
             ],
-            stops: [bull, bear],
+            stops: [bull - .1, bear + .1],
           )),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -176,7 +170,6 @@ class BullBearBar extends StatelessWidget {
         children: [
           Container(
             alignment: Alignment.center,
-            // color: theme.colorScheme.bull.darken(),
             width: width * bull,
             height: height,
             padding: EdgeInsets.all(2),
@@ -193,7 +186,6 @@ class BullBearBar extends StatelessWidget {
           ),
           Container(
             alignment: Alignment.center,
-            // color: theme.colorScheme.bear.darken(.3),
             width: width * bear,
             height: height,
             padding: EdgeInsets.all(2),

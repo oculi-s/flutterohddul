@@ -20,26 +20,87 @@ extension DoubleFormatter on double {
     const suffixes = ["K", "M", "B", "T", "Q"];
     return "${s[0]}.${s[1]}${suffixes[s.length - 2]}";
   }
+
+  double toFixed(digit) {
+    return double.parse(toStringAsFixed(digit));
+  }
 }
 
-extension DateExtension on DateTime {
+extension Dt on DateTime {
+  int get ms => millisecondsSinceEpoch;
   String asString([String format = 'yyy-MM-dd hh:mm:ss']) =>
       intl.DateFormat(format).format(this);
+
+  DateTime edit(
+      {int? year, int? month, int? day, int? hour, int? minute, int? second}) {
+    return DateTime(
+      year ?? this.year,
+      month ?? this.month,
+      day ?? this.day,
+      hour ?? this.hour,
+      minute ?? this.minute,
+      second ?? this.second,
+    );
+  }
+
   int marketType() => (weekday == 0 || weekday == 6
       ? 1
       : (hour * 60 + minute < 539 ? -1 : (hour * 60 + minute > 940 ? 1 : 0)));
   bool canPred() {
+    return isBefore(shouldnotExistAfter());
+  }
+
+  // api의 pred에 대응
+  DateTime shouldnotExistAfter() {
     var n = DateTime.now();
-    if (weekday == 0) {
-      n = DateTime(n.year, n.month, n.day - 2, 15, 30, 0);
-    } else if (weekday == 6) {
-      n = DateTime(n.year, n.month, n.day - 1, 15, 30, 0);
-    } else if (marketType() == -1) {
-      n = DateTime(n.year, n.month, n.day - 1, 8, 59, 0);
+    if (weekday == 0 || weekday == 6) {
+      // 주말은 금요일 3시반 이후 데이터가 없어야
+      n = n.edit(hour: 15, minute: 30, second: 0);
+      if (weekday == 0) {
+        n = n.edit(day: n.day - 2);
+      } else {
+        n = n.edit(day: n.day - 1);
+      }
     } else {
-      n = DateTime(n.year, n.month, n.day, 8, 59, 0);
+      // 주중은 당일 9시 이후 데이터가 없어야
+      n = n.edit(hour: 8, minute: 59, second: 0);
+      if (marketType() == -1) {
+        n = n.edit(day: n.day - 1);
+      }
     }
-    return isBefore(n);
+    return n;
+  }
+
+  DateTime whenToPredNext() {
+    var mkt = marketType();
+    var n = DateTime.now();
+    n = n.edit(hour: 9, minute: 0, second: 0);
+    if (weekday == 0) {
+      n = n.edit(day: n.day + 1);
+    } else if (weekday == 6) {
+      n = n.edit(day: n.day + 2);
+    } else if (weekday == 5 && 0 <= mkt) {
+      n = n.edit(day: n.day + 3);
+    } else if (0 <= mkt) {
+      n = n.edit(day: n.day + 1);
+    }
+    return n;
+  }
+
+  DateTime whenToScore() {
+    var mkt = marketType();
+    var n = this;
+    n = n.edit(hour: 15, minute: 30, second: 0);
+    if (weekday == 0) {
+      n = n.edit(day: n.day + 1);
+    } else if (weekday == 6) {
+      n = n.edit(day: n.day + 2);
+    } else if (weekday == 5 && 0 <= mkt) {
+      n = n.edit(day: n.day + 3);
+    } else if (0 <= mkt) {
+      n = n.edit(day: n.day + 1);
+    }
+    return n;
   }
 }
 

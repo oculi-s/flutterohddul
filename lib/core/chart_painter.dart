@@ -7,7 +7,7 @@ import 'package:flutterohddul/data/painter.dart';
 import 'package:flutterohddul/data/stock.dart';
 import 'package:flutterohddul/utils/extension.dart';
 
-typedef TimeLabelGetter = String Function(int timestamp, int visibleDataCount,
+typedef TimeLabelGetter = String Function(DateTime d, int visibleDataCount,
     [bool isTapped]);
 typedef PriceLabelGetter = String Function(double price);
 typedef OverlayInfoGetter = Map<String, String> Function(Candle candle);
@@ -86,7 +86,7 @@ class ChartPainter extends CustomPainter {
         );
         final timeTp = TextPainter(
           text: TextSpan(
-            text: getTimeLabel(candle.timestamp, visibleDataCount),
+            text: getTimeLabel(candle.d, visibleDataCount),
             style: params.style.timeLabelStyle,
           ),
         )
@@ -256,7 +256,7 @@ class ChartPainter extends CustomPainter {
 
     final timeTp = TextPainter(
       text: TextSpan(
-        text: getTimeLabel(candle.timestamp, params.candles.length, true),
+        text: getTimeLabel(candle.d, params.candles.length, true),
         style: params.style.overlayGridTextStyle,
       ),
     )

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutterohddul/data/api.dart';
 import 'package:flutterohddul/data/stock.dart';
 import 'package:flutterohddul/data/user.dart';
+import 'package:flutterohddul/utils/extension.dart';
 
 class Pred {
   Pred._();
@@ -121,7 +122,7 @@ class PredDataItem {
       ...queue.toJson(),
       "s": toPrice,
       "p": ox,
-      "scored": scored?.millisecondsSinceEpoch,
+      "scored": scored?.ms,
     };
   }
 }

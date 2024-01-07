@@ -27,6 +27,7 @@ dependencies:
   flutter_secure_storage: ^9.0.0
   collection: ^1.18.0
   flutter_slidable: ^3.0.1
+  dropdown_button2: ^2.3.9
 
 dev_dependencies:
   flutter_test:

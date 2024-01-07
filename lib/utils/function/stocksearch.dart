@@ -23,6 +23,7 @@ class _SearchResultDialogState extends State<SearchResultDialog> {
     return Dialog(
       backgroundColor: theme.colorScheme.primary.darken(.1),
       child: Container(
+        constraints: BoxConstraints(maxWidth: 400),
         padding: EdgeInsets.all(10),
         child: Column(
           mainAxisSize: MainAxisSize.min,

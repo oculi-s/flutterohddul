@@ -1,10 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutterohddul/data/stock.dart';
 import 'package:flutterohddul/external/stock.dart';
-import 'package:flutterohddul/external/stockslide.dart';
 import 'package:flutterohddul/screen/favs.screen.dart';
+import 'package:flutterohddul/screen/market.screen.dart';
 import 'package:flutterohddul/screen/menu.screen.dart';
+import 'package:flutterohddul/screen/price.screen.dart';
+import 'package:flutterohddul/screen/profile.screen.dart';
 import 'package:flutterohddul/screen/splash.screen.dart';
 import 'package:go_router/go_router.dart';
 
@@ -18,30 +19,49 @@ final GoRouter router = GoRouter(
       },
     ),
     GoRoute(
-      path: '/menu',
-      // pageBuilder: (context, state) {
-      //   return CustomTransitionPage(
-      //     child: IntroScreen(),
-      //     transitionDuration: const Duration(milliseconds: 600),
-      //     transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      //       return FadeTransition(
-      //         opacity: animation,
-      //         child: child,
-      //       );
-      //     },
-      //   );
-      // },
+      path: '/favs',
       builder: (BuildContext context, GoRouterState state) {
-        return MenuScreen();
+        return MenuScreen(
+          i: 0,
+          child: FavScreen(),
+        );
       },
     ),
-    // GoRoute(
-    //   path: '/stock/:code',
-    //   builder: (context, state) {
-
-    //     // return MenuScreen(i: 0);
-    //   },
-    // ),
+    GoRoute(
+      path: '/chart/:code',
+      builder: (context, state) {
+        String? code = state.pathParameters['code'];
+        return MenuScreen(
+          i: 1,
+          child: PriceScreen(code: code),
+        );
+      },
+    ),
+    GoRoute(
+      path: '/market',
+      builder: (context, state) {
+        return MenuScreen(
+          i: 3,
+          child: MarketScreen(),
+        );
+      },
+    ),
+    GoRoute(
+      path: '/profile',
+      builder: (context, state) {
+        return MenuScreen(
+          i: 4,
+          child: ProfileScreen(),
+        );
+      },
+    ),
+    GoRoute(
+      path: '/stock/:code',
+      builder: (context, state) {
+        String? code = state.pathParameters['code'];
+        return StockExternal(code: code);
+      },
+    ),
     // GoRoute(
     //   path: '/price/:code',
     //   pageBuilder: (context, state) {

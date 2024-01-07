@@ -5,10 +5,8 @@ import 'package:flutterohddul/data/market.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutterohddul/utils/base/base.dart';
 import 'package:flutterohddul/utils/base/vars.dart';
-import 'package:flutterohddul/utils/colors/colors.main.dart';
 import 'package:flutterohddul/utils/colors/colors.vars.dart';
 import 'package:flutterohddul/utils/extension.dart';
-import 'package:flutterohddul/utils/screen.utils.dart';
 import 'package:flutterohddul/utils/svgloader.dart';
 import 'package:intl/intl.dart';
 
@@ -44,13 +42,8 @@ class _EcosChartWidgetState extends State<EcosChartWidget> {
     var cdata = widget.data.data[name]!;
     final raw = widget.data.withPrev ? cdata.yoy : cdata.data;
     List<FlSpot> spots = raw!
-        .where((e) =>
-            e.d!.millisecondsSinceEpoch >
-            DateTime.now().subtract(widget.duration).millisecondsSinceEpoch)
-        .map((e) => FlSpot(
-              e.d!.millisecondsSinceEpoch.toDouble(),
-              e.v!,
-            ))
+        .where((e) => e.d!.ms > DateTime.now().subtract(widget.duration).ms)
+        .map((e) => FlSpot(e.d!.ms.toDouble(), e.v!))
         .toList();
 
     var color = countryColor[code] ??
@@ -206,7 +199,7 @@ class _EcosChartWidgetState extends State<EcosChartWidget> {
                       show: true,
                       border: Border.all(color: theme.dividerColor, width: 1),
                     ),
-                    maxX: DateTime.now().millisecondsSinceEpoch.toDouble(),
+                    maxX: DateTime.now().ms.toDouble(),
                     lineBarsData: List<LineChartBarData>.from(
                       countryName.keys
                           .map((e) => _ecosChartElement(e))
@@ -252,7 +245,7 @@ class _EcosChartWidgetState extends State<EcosChartWidget> {
                   ),
                 ),
               ),
-              Last(data: widget.data),
+              // Last(data: widget.data),
             ],
           ),
         ),

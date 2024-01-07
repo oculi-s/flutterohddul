@@ -72,10 +72,10 @@ class PriceChartWidget extends StatefulWidget {
     this.overlayInfo,
     this.onTap,
   })  : style = style ?? const ChartStyle(),
-        assert(candles.length >= 3,
-            "InteractiveChart requires 3 or more CandleData"),
-        assert(initialVisibleCandleCount >= 3,
-            "initialVisibleCandleCount must be more 3 or more"),
+        // assert(candles.length >= 3,
+        //     "InteractiveChart requires 3 or more CandleData"),
+        // assert(initialVisibleCandleCount >= 3,
+        //     "initialVisibleCandleCount must be more 3 or more"),
         super(key: key);
 
   @override
@@ -112,7 +112,8 @@ class _PriceChartWidgetState extends State<PriceChartWidget> {
         // Find the visible data range
         final int start = (_startOffset / _candleWidth).floor();
         final int count = (w / _candleWidth).ceil();
-        final int end = (start + count).clamp(start, widget.candles.length);
+        final int end = (start + count)
+            .clamp(min(start, widget.candles.length), widget.candles.length);
         final candlesInRange = widget.candles.getRange(start, end).toList();
         if (end < widget.candles.length) {
           // Put in an extra item, since it can become visible when scrolling
@@ -132,23 +133,11 @@ class _PriceChartWidgetState extends State<PriceChartWidget> {
         final fractionCandle = _startOffset - start * _candleWidth;
         final xShift = halfCandle - fractionCandle;
 
-        // Calculate min and max among the visible data
-        double? highest(Candle c) {
-          if (c.h != null) return c.h;
-          if (c.o != null && c.c != null) return max(c.o!, c.c!);
-          return c.o ?? c.c;
-        }
-
-        double? lowest(Candle c) {
-          if (c.l != null) return c.l;
-          if (c.o != null && c.c != null) return min(c.o!, c.c!);
-          return c.o ?? c.c;
-        }
-
         final maxPrice =
-            candlesInRange.map(highest).whereType<double>().reduce(max) * 1.02;
+            candlesInRange.map((c) => c.h).whereType<double>().reduce(max) *
+                1.1;
         final minPrice =
-            candlesInRange.map(lowest).whereType<double>().reduce(min) * .98;
+            candlesInRange.map((c) => c.l).whereType<double>().reduce(min) * .9;
         final maxVol = candlesInRange
             .map((c) => c.v)
             .whereType<double>()
@@ -293,13 +282,9 @@ class _PriceChartWidgetState extends State<PriceChartWidget> {
     return max(0, candleWidth * start);
   }
 
-  String defaultTimeLabel(int timestamp, int visibleDataCount,
+  String defaultTimeLabel(DateTime d, int visibleDataCount,
       [bool isTapped = false]) {
-    final date = DateTime.fromMillisecondsSinceEpoch(timestamp)
-        .toIso8601String()
-        .split("T")
-        .first
-        .split("-");
+    final date = d.toIso8601String().split("T").first.split("-");
     if (isTapped) {
       return "${date[0]}-${date[1]}-${date[2]}";
     } else if (visibleDataCount > 20) {

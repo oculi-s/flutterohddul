@@ -60,6 +60,7 @@ class _MainAppState extends State<MainApp> {
         });
       },
       child: MaterialApp.router(
+        title: "오떨",
         routerConfig: router,
         debugShowCheckedModeBanner: false,
         theme: MyTheme(brightness: brightness).theme,

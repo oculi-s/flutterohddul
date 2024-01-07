@@ -17,6 +17,16 @@ class User {
   UserPred pred;
   Image? profile, thumbnail;
 
+  bool canPred(code) {
+    var predItem = pred.findCode(code);
+    if (predItem == null) return true;
+    return predItem.predicted!.canPred();
+  }
+
+  DateTime whenToPredNext() {
+    return DateTime.now().whenToPredNext();
+  }
+
   int predictionCode(code) {
     var predItem = pred.findCode(code);
     if (predItem == null) return 0;

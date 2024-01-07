@@ -1,18 +1,7 @@
-import 'package:country_flags/country_flags.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:flutterohddul/chart/ecoschart.dart';
 import 'package:flutterohddul/chart/treemap.dart';
 import 'package:flutterohddul/data/market.dart';
-import 'package:flutterohddul/utils/base/base.dart';
-import 'package:flutterohddul/utils/base/vars.dart';
-import 'package:flutterohddul/utils/colors/colors.vars.dart';
-import 'package:flutterohddul/utils/screen.utils.dart';
-
-class MarketScreen extends StatefulWidget {
-  @override
-  _MarketScreenState createState() => _MarketScreenState();
-}
 
 class BarState {
   String name;
@@ -28,6 +17,13 @@ class BarState {
   BarState from(List<int> currentIndex) {
     return child[currentIndex[0]].child[currentIndex[1]];
   }
+}
+
+class MarketScreen extends StatefulWidget {
+  const MarketScreen({super.key});
+
+  @override
+  State<MarketScreen> createState() => _MarketScreenState();
 }
 
 class _MarketScreenState extends State<MarketScreen> {
@@ -101,7 +97,7 @@ class _MarketScreenState extends State<MarketScreen> {
         [
           EcosChartWidget(
             data: Market().baserate,
-            duration: Duration(days: 365 * 4),
+            duration: const Duration(days: 365 * 4),
           ),
           Container(
             child: TreeMapWidget(),

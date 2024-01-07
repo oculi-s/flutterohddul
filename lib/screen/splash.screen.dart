@@ -23,7 +23,7 @@ class _SplashScreenState extends State<SplashScreen> {
       await Group().load();
       await Induty().load();
       await Pred().count.load();
-      router.replace('/menu');
+      router.replace('/favs');
       // Timer(const Duration(milliseconds: 1000), () {
       // });
     });

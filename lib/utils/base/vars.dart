@@ -30,3 +30,8 @@ const defaultFavs = [
   '035420',
   '035720'
 ];
+
+const visibleCountries = [
+  "KR",
+  "US",
+];
