@@ -122,38 +122,32 @@ class ChartPainter extends CustomPainter {
     final close = candle.c;
     final high = candle.h;
     final low = candle.l;
-    if (open != null && close != null) {
-      final color = open > close
-          ? params.style.priceLossColor
-          : params.style.priceGainColor;
-      canvas.drawLine(
-        Offset(x, params.fitPrice(open)),
-        Offset(x, params.fitPrice(close)),
-        Paint()
-          ..strokeWidth = thickWidth
-          ..color = color,
-      );
-      if (high != null && low != null) {
-        canvas.drawLine(
-          Offset(x, params.fitPrice(high)),
-          Offset(x, params.fitPrice(low)),
-          Paint()
-            ..strokeWidth = thinWidth
-            ..color = color,
-        );
-      }
-    }
+    final color = open > close
+        ? params.style.priceLossColor
+        : params.style.priceGainColor;
+    canvas.drawLine(
+      Offset(x, params.fitPrice(open)),
+      Offset(x, params.fitPrice(close)),
+      Paint()
+        ..strokeWidth = thickWidth
+        ..color = color,
+    );
+    canvas.drawLine(
+      Offset(x, params.fitPrice(high)),
+      Offset(x, params.fitPrice(low)),
+      Paint()
+        ..strokeWidth = thinWidth
+        ..color = color,
+    );
     // Draw volume bar
     final volume = candle.v;
-    if (volume != null) {
-      canvas.drawLine(
-        Offset(x, params.chartHeight),
-        Offset(x, params.fitVolume(volume)),
-        Paint()
-          ..strokeWidth = thickWidth
-          ..color = params.style.volumeColor,
-      );
-    }
+    canvas.drawLine(
+      Offset(x, params.chartHeight),
+      Offset(x, params.fitVolume(volume)),
+      Paint()
+        ..strokeWidth = thickWidth
+        ..color = params.style.volumeColor,
+    );
     // Draw trend line
     for (int j = 0; j < candle.bb.length; j++) {
       final trendLinePaint = params.style.trendLineStyles.at(j) ?? Paint()
@@ -266,7 +260,7 @@ class ChartPainter extends CustomPainter {
   }
 
   void _drawTapOHLCInfo(canvas, PainterParams params, Candle candle) {
-    double diff = (candle.c! - candle.o!) / candle.o! * 100;
+    double diff = (candle.c - candle.o) / candle.o * 100;
     TextStyle priceStyle = diff > 0
         ? params.style.overlayPriceGainStyle
         : params.style.overlayPriceLossStyle;
@@ -280,10 +274,10 @@ class ChartPainter extends CustomPainter {
           ..textDirection = TextDirection.ltr
           ..layout();
     final _info = {
-      "O": candle.o?.asPrice() ?? "-",
-      "H": candle.h?.asPrice() ?? "-",
-      "L": candle.l?.asPrice() ?? "-",
-      "C": candle.c?.asPrice() ?? "-",
+      "O": candle.o.asPrice(),
+      "H": candle.h.asPrice(),
+      "L": candle.l.asPrice(),
+      "C": candle.c.asPrice(),
     };
     if (_info.isEmpty) return;
     final labels = _info.keys.map((text) => makeTP(text)).toList();
