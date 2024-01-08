@@ -43,25 +43,24 @@ class Group {
         .toList();
   }
 
-  GroupData? fromName(String name) =>
-      data.firstWhereOrNull((e) => e.name == name);
+  GroupData? fromName(name) => data.firstWhereOrNull((e) => e.name == name);
 }
 
 class GroupData {
-  String? name;
-  List<String>? children;
+  String name;
+  List<String> children;
   Widget Function() image = () => SvgLoader.asset('assets/error.svg');
-  int? currentPrice;
-  int? lastPrice;
-  int? historicalPrice;
+  int currentPrice;
+  int lastPrice;
+  int historicalPrice;
   Color? get color => groupColor[name];
 
   GroupData({
-    this.name,
-    this.children,
-    this.currentPrice,
-    this.lastPrice,
-    this.historicalPrice,
+    this.name = '',
+    this.children = const [],
+    this.currentPrice = 0,
+    this.lastPrice = 0,
+    this.historicalPrice = 0,
     required this.image,
   });
 
@@ -104,13 +103,12 @@ class Induty {
             currentPrice: indutydata?['p'],
           );
         })
-        .sortedBy2((a) => (a.currentPrice ?? 0))
+        .sortedBy2((a) => a.currentPrice)
         .reversed
         .toList();
   }
 
-  IndutyData? fromCode(String code) =>
-      data.firstWhereOrNull((e) => e.code == code);
+  IndutyData? fromCode(code) => data.firstWhereOrNull((e) => e.code == code);
 }
 
 class IndutyData {
