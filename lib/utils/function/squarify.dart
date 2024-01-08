@@ -1,12 +1,10 @@
 import 'dart:math';
 import 'package:collection/collection.dart';
 
-double dim = 1;
-
 class SquarifyData {
   late List<DataPoint> data;
   late double totalSize;
-  late double totalArea = dim * dim;
+  late double totalArea = 1;
 
   SquarifyData(List values) {
     data = values.mapIndexed((i, v) => DataPoint(i, v)).toList();

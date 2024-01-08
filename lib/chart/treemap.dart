@@ -47,10 +47,10 @@ class _TreeMapWidgetState extends State<TreeMapWidget> {
           return Stack(
             children: rectangles.mapIndexed((i, rect) {
               return Positioned(
-                left: w * rect.x / dim,
-                top: h * rect.y / dim,
-                width: w * rect.dx / dim,
-                height: h * rect.dy / dim,
+                left: w * rect.x,
+                top: h * rect.y,
+                width: w * rect.dx,
+                height: h * rect.dy,
                 child: Container(
                   decoration: BoxDecoration(
                       color: (widget.colors?[i] ?? Colors.grey).darken(.15)),
@@ -60,28 +60,33 @@ class _TreeMapWidgetState extends State<TreeMapWidget> {
                       var h = constraints.maxHeight;
                       return Container(
                         padding: EdgeInsets.symmetric(horizontal: 10),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              width: w * .8,
-                              constraints: BoxConstraints(maxHeight: h * .4),
-                              child: FittedBox(
-                                fit: BoxFit.fitWidth,
-                                child: widget.children[i],
-                              ),
-                            ),
-                            SizedBox(
-                              width: w,
-                              child: FittedBox(
-                                fit: BoxFit.contain,
-                                child: Text(
-                                  '${(rect.value! * 100).toStringAsFixed(1)}%',
-                                  style: TextStyle(color: Colors.white),
+                        child: FittedBox(
+                          fit: BoxFit.contain,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                width: w * .6,
+                                constraints: BoxConstraints(maxHeight: h * .4),
+                                child: FittedBox(
+                                  child: Container(
+                                    alignment: Alignment.bottomCenter,
+                                    child: widget.children[i],
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                              SizedBox(
+                                width: w * .6,
+                                height: h * .2,
+                                child: FittedBox(
+                                  child: Text(
+                                    '${(rect.value! * 100).toStringAsFixed(1)}%',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       );
                     },

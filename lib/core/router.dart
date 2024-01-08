@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutterohddul/data/api.dart';
 import 'package:flutterohddul/external/stock.dart';
 import 'package:flutterohddul/screen/favs.screen.dart';
 import 'package:flutterohddul/screen/market.screen.dart';
@@ -28,6 +29,7 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/favs',
       builder: (BuildContext context, GoRouterState state) {
+        if (Meta().meta == null) router.go('/');
         return const MenuScreen(
           i: 0,
           child: FavScreen(),
