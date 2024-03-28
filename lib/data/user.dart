@@ -111,9 +111,15 @@ class Log {
 
   Future<bool> login() async {
     try {
-      await isKakaoTalkInstalled()
-          ? await UserApi.instance.loginWithKakaoTalk()
-          : await UserApi.instance.loginWithKakaoAccount();
+      if (await isKakaoTalkInstalled()) {
+        try {
+          await UserApi.instance.loginWithKakaoTalk();
+        } catch (e) {
+          await UserApi.instance.loginWithKakaoAccount();
+        }
+      } else {
+        await UserApi.instance.loginWithKakaoAccount();
+      }
       final kakao = await UserApi.instance.me();
       String uid = kakao.id.toString();
       int now = DateTime.now().millisecondsSinceEpoch;

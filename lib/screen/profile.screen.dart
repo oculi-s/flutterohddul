@@ -4,6 +4,16 @@ import 'package:flutterohddul/utils/base/base.dart';
 import 'package:flutterohddul/utils/colors/colors.main.dart';
 import 'package:flutterohddul/utils/function/shouldlogin.dart';
 
+class Profile extends StatelessWidget {
+  final User user;
+  const Profile({super.key, required this.user});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
+  }
+}
+
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
@@ -25,6 +35,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     setState() {}
                   }
                 }),
+          Card(child: Text(Log().user?.id ?? '')),
+          Row(
+            children: [
+              Text(Log().user?.id ?? ''),
+            ],
+          ),
           Row(
             children: [
               const Text('내 예측'),
